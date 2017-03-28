@@ -1,0 +1,16 @@
+{
+    "version": "0.1.0",
+    "tasks": [{
+            "taskName": "hello",
+            "command": "echo",
+            "args": ["hello", "${file}"],
+            "isShellCommand": true
+        },
+        {
+            "taskName": "bye",
+            "command": "grep",
+            "args": ["args", "${file}"],
+            "isShellCommand": true
+        }
+    ]
+}
