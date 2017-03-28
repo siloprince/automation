@@ -1,0 +1,26 @@
+{
+    "type": "object",
+    "description": "This is address book format",
+    "default": {
+        "first_name": "Don",
+        "last_name": "Joe",
+        "birdthday": "1970/01/01"
+    },
+    "properties": {
+        "first_name": { "type": "string" },
+        "last_name": { "type": "string" },
+        "birthday": { "type": "string", "pattern": "^20[0-9]{2}/[0-9]{2}/[0-9]{2}$" },
+        "address": {
+            "type": "object",
+            "properties": {
+                "street_address": { "type": "string" },
+                "city": { "type": "string" },
+                "state": { "type": "string" },
+                "country": {
+                    "type": "string",
+                    "enum": ["Japan", "United States", "China"]
+                }
+            }
+        }
+    }
+}
