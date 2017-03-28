@@ -7,9 +7,19 @@
         "birdthday": "1970/01/01"
     },
     "properties": {
-        "first_name": { "type": "string" },
-        "last_name": { "type": "string" },
-        "birthday": { "type": "string", "pattern": "^20[0-9]{2}/[0-9]{2}/[0-9]{2}$" },
+        "first_name": {
+            "type": "string",
+            "description": "your given name"
+        },
+        "last_name": {
+            "type": "string",
+            "description": "family name"
+        },
+        "birthday": {
+            "type": "string",
+            "description": "YYYY/mm/DD",
+            "pattern": "^20[0-9]{2}/[0-9]{2}/[0-9]{2}$"
+        },
         "address": {
             "type": "object",
             "properties": {
@@ -22,5 +32,6 @@
                 }
             }
         }
-    }
+    },
+    "required": ["last_name"]
 }
