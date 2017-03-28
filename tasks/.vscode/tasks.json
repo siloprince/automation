@@ -1,9 +1,9 @@
 {
     "version": "0.1.0",
     "tasks": [{
-            "taskName": "hello",
-            "command": "echo",
-            "args": ["hello", "${file}"],
+            "taskName": "0",
+            "command": "bash",
+            "args": ["${workspaceRoot}/.bin/task0.bash"],
             "isShellCommand": true
         },
         {
