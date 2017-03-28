@@ -1,11 +1,6 @@
 {
     "type": "object",
     "description": "This is address book format",
-    "default": {
-        "first_name": "Don",
-        "last_name": "Joe",
-        "birdthday": "1970/01/01"
-    },
     "properties": {
         "first_name": {
             "type": "string",
@@ -38,9 +33,9 @@
         "label": "XXXXXXX",
         "description": "yyyyyyy",
         "body": {
-            "last_name": "$1",
-            "first_name": "$2",
-            "birdthday": "$3"
+            "first_name": "Don",
+            "last_name": "Joe",
+            "birdthday": "1970/01/01"
         }
     }]
 }
