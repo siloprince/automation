@@ -4,11 +4,14 @@
     let config = {
         "id": "xxx",
         "stage": {
-            "width": 1000,
-            "height":1000
+            "width": 300,
+            "height":300
         },
         "iteration": {
-            "delta": 1000
+            "delta": 1000,
+            "scaleLimit": 0.1,
+            "stepLimit": 10000,
+            "shapeCount": true
         },
         "polygons": [
             "<polygon class='square' points='0 0, 30 0, 30 30, 0 30' fill='#aaaaaa' stroke='#0000ff'/>"
@@ -37,37 +40,75 @@
         ]
     };
     init();
-    function polygonSVG(polygon,x, y, args) {
+    function polygonSVG(polygon,x, y, r, s, args) {
         let stage = args.stage;
         let polygonStr = config.polygons[polygon];
-        stage.insertAdjacentHTML('beforeend',`<g transform="translate(${x},${y})">${polygonStr}</g>`);
-    }    
+        stage.insertAdjacentHTML('beforeend',`<g transform="translate(${x},${y})rotate(${r})scale(${s},${s})">${polygonStr}</g>`);
+    }   
+    function clear(args) {
+        let stage = args.stage;
+        stage.innerHTML = '';
+    } 
     function rules(args) {
+        let patternShapes = {};
         for (let ri=0;ri<config.rules.length;ri++) {
             let rule = config.rules[ri];
             let pattern = rule.pattern;
-            console.dir(rule);
-            console.log(pattern)
             for (let pi=0;pi<pattern.length;pi++) {
                 let shapes = getPolygons(pattern[pi],{ noDup: true });
+                if (!(pattern[pi] in patternShapes)) {
+                    patternShapes[pattern[pi]] = shapes;
+                }
+            }
+        }
+        clear(args);
+        let count=0;
+        for (let ri=0;ri<config.rules.length;ri++) {
+            let rule = config.rules[ri];
+            let pattern = rule.pattern;
+            for (let pi=0;pi<pattern.length;pi++) { 
+                let shapes = patternShapes[pattern[pi]];       
                 for (let si = 0; si < shapes.length; si++) {
                     let shape = shapes[si];
                     let nexts = rule.next;
                     for (let ni=0;ni<nexts.length;ni++) {
-                        console.log(ni);
                         let next = nexts[ni];
-                        let x = 0;
+                        let x = shape.x;
                         if ('dx' in next) {
-                            x = shape.x + next.dx;
+                            x = (shape.x + next.dx)%config.stage.width;
                         }
-                        let y = 0;
+                        let y = shape.y;
                         if ('dy' in next) {
-                            y = shape.y + next.dy;
+                            y = (shape.y + next.dy)%config.stage.height;
                         }
-                        polygonSVG(next.polygon, x, y, args);
+                        let r = shape.r;
+                        if ('dr' in next) {
+                            r = (shape.r + next.dr)%360;
+                        }
+                        let s = shape.s;
+                        if ('ds' in next) {
+                            s = (shape.s * next.ds);
+                            if (s > 1) {
+                                continue;
+                            }
+                            if (s < -1) {
+                                continue;
+                            }
+                            if ('scaleLimit' in config.iteration) {
+                                if (Math.abs(s) < Math.abs(config.iteration.scaleLimit) ) {
+                                    continue;
+                                }
+                            }
+                        }     
+                        console.log(x+' '+y+' '+r+' '+s);            
+                        polygonSVG(next.polygon, x, y, r, s, args);
+                        count++;
                     }
                 }
             }
+        }
+        if ('shapeCount' in config.iteration && config.iteration.shapeCount) {
+            console.warn('shapeCount:'+count);
         }
     }
     function init() {
@@ -84,8 +125,7 @@
                     delta: config.iteration.delta
                     , stage: document.querySelector('#stage')
                 };
-                polygonSVG(0,0,0,args);
-                //rectSVG(0, 0, args);
+                polygonSVG(0,0,0,0,1,args);
                 main(count, args);
             }, false);
     }
@@ -93,36 +133,27 @@
         let userConfigStr = document.currentScript.textContent.trim();
         try {
             if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
-                let userConfig = JSON.parse(userConfigStr);
-                // TODO: merge
-                if ('id' in userConfig) {
-                    config.id = userConfig.id;
-                }
-                if ('stage' in userConfig) {
-                    if ('width' in userConfig.stage) {
-                        config.stage.width = userConfig.stage.width;
+                let userConfig = JSON.parse(userConfigStr); 
+                for (let ck in config) {
+                    if ( ck in userConfig) {
+                        config[ck] = JSON.parse(JSON.stringify(userConfig[ck]));
                     }
-                    if ('height' in userConfig.stage) {
-                        config.stage.height = userConfig.stage.height;
-                    }
-                } 
-                if ('iteration' in userConfig) {
-                    if ('delta' in userConfig.iteration) {
-                        config.iteration.delta = userConfig.iteration.delta;
-                    }
-                }                               
+                }                     
             }
         } catch (ex) {
             // NOP
         }
-        console.dir(config);
     }
     function main(count, args) {
-        console.log(count);
+        if (count=== config.iteration.stepLimit) {
+            console.warn('exceed: config.iteration.stepLimit: '+config.iteration.stepLimit);
+            return;
+        }
         rules(args);
         let nextMain = (function (c, a) {
             return function () { main(c + 1, a);};
         })(count, args);
+ 
         window.setTimeout(nextMain, args.delta);
     }
     function getPolygons(match,opt) {
@@ -134,13 +165,23 @@
             let transform = square.parentNode.getAttribute('transform').trim();
             let x = 0;
             let y = 0;
-            if (/translate\(\s*(-*[0-9]*\.*[0-9]+)\s*,(\s*(-*[0-9]*\.*[0-9]+)\s*)\)/.test(transform)){
+            if (/translate\(([^,\)]+),([^,\)]+)\)/.test(transform)){
                 x = RegExp.$1;
                 y = RegExp.$2;
-                x = parseInt(x,10);
-                y = parseInt(y,10);
+                x = parseFloat(x);
+                y = parseFloat(y);
             }
-            let uniq = `${x}:${y}`;
+            let r = 0;
+            if (/rotate\(([^,\)]+)\)/.test(transform)){
+                r = RegExp.$1;
+                r = parseFloat(r);
+            }
+            let s = 1;
+            if (/scale\(([^,\)]+),([^,\)]+)\)/.test(transform)){
+                s = RegExp.$1;
+                s = parseFloat(s);
+            }                
+            let uniq = `${x}:${y}:${r}:${s}`;
             if (('noDup' in opt) && uniq in dup) {
                 continue;
             }
@@ -148,6 +189,8 @@
             ret.push({
                 x: x
                 , y: y
+                , r: r
+                , s: s
             });
         }
         return ret;

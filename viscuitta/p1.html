@@ -1,36 +1,44 @@
 
 <script type="text/javascript" src="./viscuitta.js">{
-    "id": "xxx",
-    "stage": {
-        "width": 1000,
-        "height":1000
-    },
-    "iteration": {
-        "delta": 1000
-    },
-    "polygons": [
-        "<polygon class='square' points='0 0, 10 0, 10 10, 0 10'>"
-    ]
-    "rules": [
-        { 
-            "pattern":[
-                ".square"
-            ],
-            "next":[
-                {
-                    "polygon": 0                 
-                },
-                {
-                    "polygon": 0,
-                    "dx": 10,
-                    "dy": 0                   
-                },
-                {
-                    "polygon": 0,
-                    "dx": 0,
-                    "dy": 10                       
-                }
-            ]  
-        }
-    ]
-}</script>
+        "id": "xxx",
+        "stage": {
+            "width": 300,
+            "height":300
+        },
+        "iteration": {
+            "delta": 1000,
+            "scaleLimit": 0.5,
+            "stepLimit": 10000,
+            "shapeCount": true
+        },
+        "polygons": [
+            "<polygon class='square' points='-15 -15, 15 -15, 15 15, -15 15' fill='#aaaaaa' stroke='#0000ff'/>"
+        ],
+        "rules": [
+            { 
+                "pattern":[
+                    ".square"
+                ],
+                "next":[
+                    {
+                        "polygon": 0,
+                        "ds": 1              
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": 30,
+                        "dy": 0,
+                        "dr": 0,
+                        "ds": 1         
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": 0,
+                        "dy": 30,
+                        "dr": 0,
+                        "ds": 1               
+                    }
+                ]  
+            }
+        ]
+    }</script>

@@ -1,0 +1,37 @@
+
+<script type="text/javascript" src="./viscuitta.js">{
+    "id": "xxx",
+    "stage": {
+        "width": 1000,
+        "height":1000
+    },
+    "iteration": {
+        "delta": 1000
+    },
+    "polygons": [
+        "<polygon class='square' points='0 0, 10 0, 10 10, 0 10'>"
+    ]
+    "rules": [
+        { 
+            "pattern":[
+                ".square"
+            ],
+            "next":[
+                {
+                    "polygon": 0                 
+                },
+                {
+                    "polygon": 0,
+                    "dx": 10,
+                    "dy": 0,
+                    "dr": 10                  
+                },
+                {
+                    "polygon": 0,
+                    "dx": 0,
+                    "dy": 10                       
+                }
+            ]  
+        }
+    ]
+}</script>
