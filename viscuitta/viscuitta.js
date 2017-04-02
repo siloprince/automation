@@ -43,8 +43,8 @@
     let terminateHash = {};
     let stageHash = {};
     init();
-    function polygonSVG(polygon,x, y, r, s, t, args) {
-        let key = `${polygon}:${x}:${y}:${r}:${s}`;
+    function polygonSVG(polygon,x, y, r, sx, sy, t, args) {
+        let key = `${polygon}:${x}:${y}:${r}:${sx}:${sy}`;
         if (key in terminateHash) {
             return;
         }
@@ -60,7 +60,7 @@
             stageHash[key]=true;
         }
         let polygonStr = config.polygons[polygon];
-        g.insertAdjacentHTML('beforeend',`<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${s},${s})">${polygonStr}</g>`);
+        g.insertAdjacentHTML('beforeend',`<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
     }   
     function clear(args) {
         let stage = args.stage;
@@ -100,11 +100,15 @@
                         if (!('dr' in next)) {
                             next.dr = 0;
                         }
-                        if (!('ds' in next)) {
-                            next.ds = 1;
+                        if (!('dsx' in next)) {
+                            next.dsx = 1;
+                        }
+                        if (!('dsy' in next)) {
+                            next.dsy = 1;
                         }
                         
-                        let s = shape.s * next.ds;
+                        let sx = shape.sx * next.dsx;
+                        let sy = shape.sy * next.dsy;
                         let t = 0;
                         if (!('terminate' in next)) {
                             t = 0;
@@ -112,14 +116,23 @@
                             t = next.terminate;
                         }
                         {
-                            if (s > 1) {
+                            if (sx > 1) {
                                 t = 1;
                             }
-                            if (s < -1) {
+                            if (sx < -1) {
+                                t = 1;
+                            }
+                            if (sy > 1) {
+                                t = 1;
+                            }
+                            if (sy < -1) {
                                 t = 1;
                             }
                             if ('scaleLimit' in config.iteration) {
-                                if (Math.abs(s) < Math.abs(config.iteration.scaleLimit) ) {
+                                if (Math.abs(sx) < Math.abs(config.iteration.scaleLimit) ) {
+                                    t = 1;
+                                }
+                                if (Math.abs(sy) < Math.abs(config.iteration.scaleLimit) ) {
                                     t = 1;
                                 }
                             }
@@ -130,11 +143,12 @@
                         let st = Math.sin(theta);
                         let nx = next.dx*ct - next.dy*st;
                         let ny = next.dx*st + next.dy*ct;
-                        let x = shape.s*(nx) + shape.x;
+                        // TODO: sx,sy
+                        let x = shape.sx*(nx) + shape.x;
                         x = (x+config.stage.width)%config.stage.width;
-                        let y = shape.s*(ny) + shape.y;
+                        let y = shape.sy*(ny) + shape.y;
                         y = (y+config.stage.height)%config.stage.height; 
-                        polygonSVG(next.polygon, x, y, r, s, t, args);
+                        polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
                         count++;
                         if ('objectLimit' in config.iteration) {
                             if (count >= config.iteration.objectLimit ) {
@@ -165,7 +179,8 @@
                     , stage: document.querySelector('#stage')
                     , terminate: document.querySelector('#terminate')
                 };
-                polygonSVG(0,config.stage.width/3,config.stage.height/3,0,1,0,args);
+                // TODO
+                polygonSVG(0,config.stage.width/3,config.stage.height/3,0,1,1,0,args);
                 main(count, args);
             }, false);
     }
@@ -216,17 +231,21 @@
                 r = RegExp.$1;
                 r = parseFloat(r);
             }
-            let s = 1;
+            let sx = 1;
+            let sy = 1;
             if (/scale\(([^,\)]+),([^,\)]+)\)/.test(transform)){
-                s = RegExp.$1;
-                s = parseFloat(s);
+                sx = RegExp.$1; 
+                sy = RegExp.$2;
+                sx = parseFloat(sx);
+                sy = parseFloat(sy);
             }
             let p = parseFloat(polygon);
             ret.push({
                 x: x
                 , y: y
                 , r: r
-                , s: s
+                , sx: sx
+                , sy: sy
                 , p: p
             });
         }
