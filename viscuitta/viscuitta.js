@@ -92,16 +92,21 @@
                         let r = (shape.r + next.dr)%360;
                         let s = shape.s * next.ds;
                         {
+                            let limit = false;
                             if (s > 1) {
-                                continue;
+                                limit = true;
                             }
                             if (s < -1) {
-                                continue;
+                                limit = true;
                             }
                             if ('scaleLimit' in config.iteration) {
                                 if (Math.abs(s) < Math.abs(config.iteration.scaleLimit) ) {
-                                    continue;
+                                    limit = true;
                                 }
+                            }
+                            if (limit){
+                                s = shape.s;
+                                // continue;
                             }
                         }         
                         polygonSVG(next.polygon, x, y, r, s, args);
