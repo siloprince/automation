@@ -8,7 +8,7 @@
             "height":300
         },
         "iteration": {
-            "delta": 1000,
+            "dt": 1000,
             "scaleLimit": 0.1,
             "stepLimit": 10000,
             "shapeCount": true
@@ -73,21 +73,25 @@
                     let nexts = rule.next;
                     for (let ni=0;ni<nexts.length;ni++) {
                         let next = nexts[ni];
-                        let x = shape.x;
-                        if ('dx' in next) {
-                            x = (shape.x + next.dx)%config.stage.width;
+                        if (!('dx' in next)) {
+                            next.dx = 0;
                         }
-                        let y = shape.y;
-                        if ('dy' in next) {
-                            y = (shape.y + next.dy)%config.stage.height;
+                        if (!('dy' in next)) {
+                            next.dy = 0;
                         }
-                        let r = shape.r;
-                        if ('dr' in next) {
-                            r = (shape.r + next.dr)%360;
+                        if (!('dr' in next)) {
+                            next.dr = 0;
                         }
-                        let s = shape.s;
-                        if ('ds' in next) {
-                            s = (shape.s * next.ds);
+                        if (!('ds' in next)) {
+                            next.ds = 1;
+                        }
+                        let x = shape.s*(next.dx) + shape.x;
+                        x = x%config.stage.width;
+                        let y = shape.s*(next.dy) + shape.y;
+                        y = y%config.stage.height; 
+                        let r = (shape.r + next.dr)%360;
+                        let s = shape.s * next.ds;
+                        {
                             if (s > 1) {
                                 continue;
                             }
@@ -99,10 +103,15 @@
                                     continue;
                                 }
                             }
-                        }     
-                        console.log(x+' '+y+' '+r+' '+s);            
+                        }         
                         polygonSVG(next.polygon, x, y, r, s, args);
                         count++;
+                        if ('objectLimit' in config.iteration) {
+                            if (count >= config.iteration.objectLimit ) {
+                                console.warn('exceed: config.iteration.objectLimit:'+config.iteration.objectLimit);
+                                return;
+                            }
+                        }                       
                     }
                 }
             }
@@ -122,7 +131,7 @@
                 svg.innerHTML = '<g id="stage"></g>';
                 let count = 0;
                 let args = {
-                    delta: config.iteration.delta
+                    dt: config.iteration.dt
                     , stage: document.querySelector('#stage')
                 };
                 polygonSVG(0,0,0,0,1,args);
@@ -154,7 +163,7 @@
             return function () { main(c + 1, a);};
         })(count, args);
  
-        window.setTimeout(nextMain, args.delta);
+        window.setTimeout(nextMain, args.dt);
     }
     function getPolygons(match,opt) {
         let ret = [];
@@ -170,7 +179,7 @@
                 y = RegExp.$2;
                 x = parseFloat(x);
                 y = parseFloat(y);
-            }
+            }       
             let r = 0;
             if (/rotate\(([^,\)]+)\)/.test(transform)){
                 r = RegExp.$1;

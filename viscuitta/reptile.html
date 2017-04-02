@@ -2,18 +2,18 @@
 <script type="text/javascript" src="./viscuitta.js">{
         "id": "xxx",
         "stage": {
-            "width": 300,
-            "height":300
+            "width": 1000,
+            "height":1000
         },
         "iteration": {
             "dt": 1000,
-            "scaleLimit": 0.5,
-            "stepLimit": 10000,
+            "scaleLimit": 0.05,
+            "stepLimit": 4,
             "objectLimit": 400,            
             "shapeCount": true
         },
         "polygons": [
-            "<polygon class='square' points='-15 -15, 15 -15, 15 15, -15 15' fill='#aaaaaa' stroke='#0000ff'/>"
+            "<polygon class='square' points='0 0, 400 0, 500 500,0 500' fill='#aaaaaa' stroke='#0000ff'/>"
         ],
         "rules": [
             { 
@@ -23,21 +23,31 @@
                 "next":[
                     {
                         "polygon": 0,
-                        "dx": 30,
+                        "dx": 250,
                         "dy": 0,
                         "dr": 0,
-                        "ds": 1         
+                        "ds": 0.5         
                     },
                     {
                         "polygon": 0,
                         "dx": 0,
-                        "dy": 30,
+                        "dy": 250,                        
                         "dr": 0,
-                        "ds": 1               
+                        "ds": 0.5             
+                    },
+                    {
+                        "polygon": 0,                     
+                        "dx": 250,
+                        "dy": 250,
+                        "dr": 0,
+                        "ds": 0.5             
                     },
                     {
                         "polygon": 0,
-                        "ds": 1              
+                        "dx": 0,
+                        "dy": 0,
+                        "dr": 0,
+                        "ds": 0.5             
                     }
                 ]  
             }
