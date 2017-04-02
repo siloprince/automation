@@ -111,7 +111,7 @@
             let rule = config.rules[ri];
             let pattern = rule.pattern;
             for (let pi=0;pi<pattern.length;pi++) {
-                let shapes = getPolygons(pattern[pi],{ noDup: true });
+                let shapes = getPolygons(pattern[pi],{ });
                 if (!(pattern[pi] in patternShapes)) {
                     patternShapes[pattern[pi]] = shapes;
                 }
