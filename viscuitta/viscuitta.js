@@ -2,39 +2,39 @@
 'use strict';
 (function(document,window,console){
     let config = {
-        'id': 'xxx',
-        'stage': {
-            'width': 300,
-            'height':300
+        "id": "xxx",
+        "stage": {
+            "width": 300,
+            "height":300
         },
-        'iteration': {
-            'dt': 1000,
-            'scaleLimit': 0.1,
-            'stepLimit': 10000,
-            'shapeCount': true
+        "iteration": {
+            "dt": 1000,
+            "scaleLimit": 0.1,
+            "stepLimit": 10000,
+            "shapeCount": true
         },
-        'polygons': [
-            '<polygon class=\'square\' points=\'0 0, 30 0, 30 30, 0 30\' fill=\'#aaaaaa\' stroke=\'#0000ff\'/>'
+        "polygons": [
+            "<polygon class='square' points='0 0, 30 0, 30 30, 0 30' fill='#aaaaaa' stroke='#0000ff'/>"
         ],
-        'rules': [
+        "rules": [
             { 
-                'pattern':[
-                    '.square'
+                "pattern":[
+                    ".square"
                 ],
-                'next':[
+                "next":[
                     {
-                        'polygon': 0,
-                        'terminate': 1                 
+                        "polygon": 0,
+                        "terminate": 1                 
                     },
                     {
-                        'polygon': 0,
-                        'dx': 30,
-                        'dy': 0                   
+                        "polygon": 0,
+                        "dx": 30,
+                        "dy": 0                   
                     },
                     {
-                        'polygon': 0,
-                        'dx': 0,
-                        'dy': 30                       
+                        "polygon": 0,
+                        "dx": 0,
+                        "dy": 30                       
                     }
                 ]  
             }

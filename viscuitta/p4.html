@@ -1,37 +1,36 @@
 
 <script type="text/javascript" src="./viscuitta.js">{
-    "id": "xxx",
-    "stage": {
-        "width": 1000,
-        "height":1000
-    },
-    "iteration": {
-        "dt": 1000
-    },
-    "polygons": [
-        "<polygon class='square' points='0 0, 10 0, 10 10, 0 10'>"
-    ]
-    "rules": [
-        { 
-            "pattern":[
-                ".square"
-            ],
-            "next":[
-                {
-                    "polygon": 0                 
-                },
-                {
-                    "polygon": 0,
-                    "dx": 10,
-                    "dy": 0,
-                    "dr": 10                  
-                },
-                {
-                    "polygon": 0,
-                    "dx": 0,
-                    "dy": 10                       
-                }
-            ]  
-        }
-    ]
-}</script>
+        "id": "xxx",
+        "stage": {
+            "width": 300,
+            "height":300
+        },
+        "iteration": {
+            "dt": 1000,
+            "scaleLimit": 0.1,
+            "stepLimit": 3,
+            "shapeCount": true
+        },
+        "polygons": [
+            "<polygon class='square' points='0 0, 20 0, 30 30, 0 30' fill='#aaaaaa' stroke='#0000ff'/>"
+        ],
+        "rules": [
+            { 
+                "pattern":[
+                    ".square"
+                ],
+                "next":[
+                    {
+                        "polygon": 0,
+                        "terminate": 1                 
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": 30,
+                        "dy": 30,
+                        "dr":90                   
+                    }
+                ]  
+            }
+        ]
+    }</script>
