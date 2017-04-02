@@ -103,11 +103,7 @@
                         if (!('ds' in next)) {
                             next.ds = 1;
                         }
-                        let x = shape.s*(next.dx) + shape.x;
-                        x = x%config.stage.width;
-                        let y = shape.s*(next.dy) + shape.y;
-                        y = y%config.stage.height; 
-                        let r = (shape.r + next.dr)%360;
+                        
                         let s = shape.s * next.ds;
                         let t = 0;
                         if (!('terminate' in next)) {
@@ -127,7 +123,17 @@
                                     t = 1;
                                 }
                             }
-                        }         
+                        }
+                        let r = (shape.r - next.dr)%360;
+                        let theta = r*Math.PI/180;
+                        let ct = Math.cos(theta);
+                        let st = Math.sin(theta);
+                        let nx = next.dx*ct - next.dy*st;
+                        let ny = next.dx*st + next.dy*ct;
+                        let x = shape.s*(nx) + shape.x;
+                        x = (x+config.stage.width)%config.stage.width;
+                        let y = shape.s*(ny) + shape.y;
+                        y = (y+config.stage.height)%config.stage.height; 
                         polygonSVG(next.polygon, x, y, r, s, t, args);
                         count++;
                         if ('objectLimit' in config.iteration) {
@@ -148,7 +154,7 @@
         updateConfig();
         document.addEventListener('DOMContentLoaded',
             function () {
-                document.body.insertAdjacentHTML('beforeend', '<table><tr><td><svg></svg></td></tr></table>');
+                document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg></svg></td></tr></table>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
                 svg.setAttribute('height', config.stage.height);
@@ -159,7 +165,7 @@
                     , stage: document.querySelector('#stage')
                     , terminate: document.querySelector('#terminate')
                 };
-                polygonSVG(0,0,0,0,1,0,args);
+                polygonSVG(0,config.stage.width/3,config.stage.height/3,0,1,0,args);
                 main(count, args);
             }, false);
     }
@@ -192,7 +198,6 @@
     }
     function getPolygons(match,opt) {
         let ret = [];
-        let dup = {};
         let squares = document.querySelectorAll(`g#stage polygon${match}`);
         for (let si = 0; si < squares.length; si++) {
             let square = squares[si];
