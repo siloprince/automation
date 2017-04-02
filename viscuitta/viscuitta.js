@@ -149,7 +149,9 @@
                         let y = shape.sy*(ny) + shape.y;
                         y = (y+config.stage.height)%config.stage.height; 
                         polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
-                        count++;
+                        if (t===0) {
+                            count++;
+                        }
                         if ('objectLimit' in config.iteration) {
                             if (count >= config.iteration.objectLimit ) {
                                 console.warn('exceed: config.iteration.objectLimit:'+config.iteration.objectLimit);
@@ -179,7 +181,7 @@
                     , stage: document.querySelector('#stage')
                     , terminate: document.querySelector('#terminate')
                 };
-                // TODO
+                // TODO: move to config
                 polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
                 main(count, args);
             }, false);
@@ -197,6 +199,7 @@
             }
         } catch (ex) {
             // NOP
+            console.log(ex);
         }
     }
     function main(count, args) {
