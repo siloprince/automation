@@ -180,7 +180,7 @@
                     , terminate: document.querySelector('#terminate')
                 };
                 // TODO
-                polygonSVG(0,config.stage.width/3,config.stage.height/3,0,1,1,0,args);
+                polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
                 main(count, args);
             }, false);
     }
