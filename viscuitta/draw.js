@@ -38,7 +38,7 @@
             org = xy.concat([]);
             xy = XY.concat([]);
         }
-        polygonList.push(`<g class="touchSensor"><polygon points="${pointList.join(',')}" /></g>`);
+        polygonList.push(`<polygon class="touchSensor" points="${pointList.join(',')}" />`);
     }
     contentList.push(polygonList.join(''));
 
@@ -46,12 +46,14 @@
     document.currentScript.insertAdjacentHTML('afterend',html);
 
     let svg = document.currentScript.nextSibling;
-    let polygons = svg.querySelectorAll('g.touchSensor');
+    let polygons = svg.querySelectorAll('polygon.touchSensor');
     for (let pi=0;pi<polygons.length;pi++) {
         let center = calcCenter(polygons[pi]);
         setCenter(polygons[pi],center);
         polygons[pi].addEventListener('click',function(ev) {
-            let target = ev.target.parentNode;
+            let target = ev.target;
+            console.log(target.transform);
+            target.transform.baseVal.getItem(0).setScale(1,1);
             let degree = getRotate(target);
             degree += 10;
             setRotate(target,degree);
@@ -125,8 +127,7 @@
     function negate(xy){
         return [-xy[0],-xy[1]];
     }
-    function calcCenter(xpolygon) {
-        let polygon = xpolygon.querySelector('polygon');
+    function calcCenter(polygon) {
         let pointsStr = polygon.getAttribute('points');
         let pointList = pointsStr.split(',');
         let sumx = 0;
