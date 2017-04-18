@@ -33,22 +33,54 @@
         for (var ai=0;ai<config.shapes[si].angles.length;ai++) {
             var angle = config.shapes[si].angles[ai];
             var length = config.shapes[si].lengthes[ai];
-            let XY = rotatescale(xy,org,angle,length);
+            let XY = nextPoint(xy,org,angle,length);
             pointList.push(XY.join(' '));
             org = xy.concat([]);
             xy = XY.concat([])
         }
-        polygonList.push(`<polygon points="${pointList.join(',')}" />`);
+        polygonList.push(`<g class="touchSensor"><polygon points="${pointList.join(',')}" /></g>`);
     }
     contentList.push(polygonList.join(''));
 
     let html = `<svg width="${config.width}" height="${config.height}">${contentList.join('')}</svg>`;
     document.currentScript.insertAdjacentHTML('afterend',html);
 
-    function rotatescale(src,dest,degree,scale) {
+    let svg = document.currentScript.nextSibling;
+    let polygons = svg.querySelectorAll('g.touchSensor');
+    for (let pi=0;pi<polygons.length;pi++) {
+        let center = getCenter(polygons[pi]);
+        polygons[pi].addEventListener('click',function(ev) {
+            let target = ev.target;
+            let transform = target.getAttribute('transform');
+            let degree = 0;
+            if (/rotate\s*\(([^\)]+)\)/.test(transform)) {
+                degree = RegExp.$1;
+                degree = parseFloat(degree);
+            }
+            degree+=10;
+            target.setAttribute('transform',`translate(${center.join(',')})rotate(${degree})translate(${negate(center).join(',')})`);
+        });
+    }
+    
+    function negate(xy){
+        return [-xy[0],-xy[1]];
+    }
+    function getCenter(xpolygon) {
+        let polygon = xpolygon.querySelector('polygon');
+        let pointsStr = polygon.getAttribute('points');
+        let pointList = pointsStr.split(',');
+        let sumx = 0;
+        let sumy = 0;
+        for (let pi=0;pi<pointList.length;pi++) {
+            let xy = pointList[pi].split(/\s+/);
+            sumx += parseFloat(xy[0]);
+            sumy += parseFloat(xy[1]);
+        }
+        return [sumx/pointList.length, sumy/pointList.length];
+    }
+    function nextPoint(src,dest,degree,scale) {
         let radian = (degree/180)*Math.PI;
         let dir = [dest[0]-src[0], dest[1]-src[1]];
-        console.log(dir);
         let cr = Math.cos(radian);
         let sr = Math.sin(radian);
         let x = dir[0]*cr - dir[1]*sr;
