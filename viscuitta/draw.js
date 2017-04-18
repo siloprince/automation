@@ -56,7 +56,9 @@
             degree += 10;
             setRotate(target,degree);
         },false);
+        // TODO : support drag
     }
+    // TODO : more conv functions
     function setCenter (polygon,xy) {
         let transform = polygon.getAttribute('transform');
         if (/translate\s*\(([^\)]+)\)rotate\s*\(([^\)]+)\)/.test(transform)) {
