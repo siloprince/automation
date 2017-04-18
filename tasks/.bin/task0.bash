@@ -1,3 +1,7 @@
 #!/bin/bash
 
-git diff --name-only
+GITDIFF=$(git diff --name-only)
+if [ "$GITDIFF" =~ test ]
+then
+    echo $1
+fi
