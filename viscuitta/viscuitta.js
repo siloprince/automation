@@ -220,38 +220,50 @@
         for (let si = 0; si < squares.length; si++) {
             let square = squares[si];
             let polygon = square.parentNode.getAttribute('x-polygon').trim();
-            let transform = square.parentNode.getAttribute('transform').trim();
-            let x = 0;
-            let y = 0;
-            if (/translate\(([^,\)]+),([^,\)]+)\)/.test(transform)){
-                x = RegExp.$1;
-                y = RegExp.$2;
-                x = parseFloat(x);
-                y = parseFloat(y);
-            }       
-            let r = 0;
-            if (/rotate\(([^,\)]+)\)/.test(transform)){
-                r = RegExp.$1;
-                r = parseFloat(r);
-            }
-            let sx = 1;
-            let sy = 1;
-            if (/scale\(([^,\)]+),([^,\)]+)\)/.test(transform)){
-                sx = RegExp.$1; 
-                sy = RegExp.$2;
-                sx = parseFloat(sx);
-                sy = parseFloat(sy);
-            }
             let p = parseFloat(polygon);
+            let mat = decomposeMatrix(square.parentNode.getCTM());
             ret.push({
-                x: x
-                , y: y
-                , r: r
-                , sx: sx
-                , sy: sy
+                x: mat.translate[0]
+                , y: mat.translate[1]
+                , r: mat.rotate
+                , sx: mat.scale[0]
+                , sy: mat.scale[1]
                 , p: p
             });
         }
         return ret;
+    }
+
+    function decomposeMatrix(matrix) {
+        // @see https://gist.github.com/2052247
+
+        // calculate delta transform point
+        let px = deltaTransformPoint(matrix, { x: 0, y: 1 });
+        let py = deltaTransformPoint(matrix, { x: 1, y: 0 });
+
+        // calculate skew
+        let skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
+        let skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+
+        return {
+            translate: [
+                matrix.e,
+                matrix.f
+            ],
+            scale: [
+                Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b),
+                Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d)
+            ],
+            skew: [skewX, skewY],
+            rotate: skewX,
+            center: [px, py]
+            // rotation is the same as skew x
+        };
+        function deltaTransformPoint(matrix, point) {
+
+            let dx = point.x * matrix.a + point.y * matrix.c + 0;
+            let dy = point.x * matrix.b + point.y * matrix.d + 0;
+            return { x: dx, y: dy };
+        }
     }
 })(document,window,console);
