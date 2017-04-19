@@ -233,7 +233,6 @@
         }
         return ret;
     }
-
     function decomposeMatrix(matrix) {
         // @see https://gist.github.com/2052247
 
@@ -245,6 +244,16 @@
         let skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
         let skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
 
+        let cx = 0;
+        let cy = 0;
+        let base = (-matrix.a * matrix.d + matrix.a + matrix.b * matrix.c + matrix.d - 1);
+
+        cx = ((matrix.d - 1) * matrix.e - matrix.c * matrix.f) / base;
+        cy = ((matrix.a - 1) * matrix.f - matrix.b * matrix.e) / base;
+        if (isNaN(cx)){
+            cx =0;
+            cy =0;
+        }
         return {
             translate: [
                 matrix.e,
@@ -256,7 +265,7 @@
             ],
             skew: [skewX, skewY],
             rotate: skewX,
-            center: [px, py]
+            center: [cx, cy]
             // rotation is the same as skew x
         };
         function deltaTransformPoint(matrix, point) {

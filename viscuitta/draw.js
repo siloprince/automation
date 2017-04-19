@@ -48,7 +48,7 @@
     let svg = document.currentScript.nextSibling;
     let polygons = svg.querySelectorAll('polygon.touchSensor');
     for (let pi = 0; pi < polygons.length; pi++) {
-        let center = calcCenter(polygons[pi]);
+        let center = getCenter(polygons[pi]);
         setCenter(polygons[pi], center);
         polygons[pi].addEventListener('click', function (ev) {
             let target = ev.target;
@@ -60,18 +60,14 @@
     }
     // TODO : more conv functions
     function setCenter(polygon, xy) {
-        polygon.transform.baseVal.getItem(1).setTranslate(xy[0],xy[1]);
-        polygon.transform.baseVal.getItem(4).setTranslate(-xy[0],-xy[1]);
+        polygon.transform.baseVal.getItem(1).setTranslate(xy[0], xy[1]);
+        polygon.transform.baseVal.getItem(4).setTranslate(-xy[0], -xy[1]);
     }
     function setScale(polygon, xy) {
-        polygon.transform.baseVal.getItem(3).setScale(xy[0],xy[1]);
+        polygon.transform.baseVal.getItem(3).setScale(xy[0], xy[1]);
     }
     function setRotate(polygon, degree) {
-        polygon.transform.baseVal.getItem(2).setRotate(degree,0,0);
-    }
-    function getCenter(polygon) {
-        let mat = decomposeMatrix(polygon.getCTM());
-        return mat.center;
+        polygon.transform.baseVal.getItem(2).setRotate(degree, 0, 0);
     }
     function getScale(polygon) {
         let mat = decomposeMatrix(polygon.getCTM());
@@ -80,6 +76,26 @@
     function getRotate(polygon) {
         let mat = decomposeMatrix(polygon.getCTM());
         return mat.rotate;
+    }
+    function getCenter(polygon) {
+        let mat = decomposeMatrix(polygon.getCTM());
+        if (mat.center[0]===0 && mat.center[1]===0) {
+            return calcCenter(polygon);
+        }
+        return mat.center;
+
+        function calcCenter(polygon) {
+            let pointsStr = polygon.getAttribute('points');
+            let pointList = pointsStr.split(',');
+            let sumx = 0;
+            let sumy = 0;
+            for (let pi = 0; pi < pointList.length; pi++) {
+                let xy = pointList[pi].split(/\s+/);
+                sumx += parseFloat(xy[0]);
+                sumy += parseFloat(xy[1]);
+            }
+            return [sumx / pointList.length, sumy / pointList.length];
+        }
     }
 
     function decomposeMatrix(matrix) {
@@ -93,6 +109,16 @@
         let skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
         let skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
 
+        let cx = 0;
+        let cy = 0;
+        let base = (-matrix.a * matrix.d + matrix.a + matrix.b * matrix.c + matrix.d - 1);
+
+        cx = ((matrix.d - 1) * matrix.e - matrix.c * matrix.f) / base;
+        cy = ((matrix.a - 1) * matrix.f - matrix.b * matrix.e) / base;
+        if (isNaN(cx)) {
+            cx = 0;
+            cy = 0;
+        }
         return {
             translate: [
                 matrix.e,
@@ -104,7 +130,7 @@
             ],
             skew: [skewX, skewY],
             rotate: skewX,
-            center: [px, py]
+            center: [cx, cy]
             // rotation is the same as skew x
         };
         function deltaTransformPoint(matrix, point) {
@@ -116,18 +142,6 @@
     }
     function negate(xy) {
         return [-xy[0], -xy[1]];
-    }
-    function calcCenter(polygon) {
-        let pointsStr = polygon.getAttribute('points');
-        let pointList = pointsStr.split(',');
-        let sumx = 0;
-        let sumy = 0;
-        for (let pi = 0; pi < pointList.length; pi++) {
-            let xy = pointList[pi].split(/\s+/);
-            sumx += parseFloat(xy[0]);
-            sumy += parseFloat(xy[1]);
-        }
-        return [sumx / pointList.length, sumy / pointList.length];
     }
     function nextPoint(src, dest, degree, scale) {
         let radian = (degree / 180) * Math.PI;
