@@ -38,7 +38,7 @@
             org = xy.concat([]);
             xy = XY.concat([]);
         }
-        polygonList.push(`<polygon class="touchSensor" points="${pointList.join(',')}" />`);
+        polygonList.push(`<polygon class="touchSensor" points="${pointList.join(',')}" transform="translate(0,0)translate(0,0)rotate(0)scale(1,1)translate(0,0)"/>`);
     }
     contentList.push(polygonList.join(''));
 
