@@ -68,6 +68,10 @@
     }
     function setRotate(polygon, degree) {
         polygon.transform.baseVal.getItem(2).setRotate(degree, 0, 0);
+    }    
+    function getTranslate(polygon) {
+        let mat = decomposeMatrix(polygon.getCTM());
+        return mat.translate;
     }
     function getScale(polygon) {
         let mat = decomposeMatrix(polygon.getCTM());
