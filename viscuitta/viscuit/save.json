@@ -1,0 +1,67 @@
+{
+  "type": "viscuit",
+  "version": "5.0",
+  "base": "1/1.json",
+  "machine": "20160228092503370837631",
+  "view": {
+    "type": "view",
+    "height": 384,
+    "width": 512,
+    "haspencil": true,
+    "hasrotatebtn": true,
+    "dontsave": false,
+    "smooth": true,
+    "grid": 0,
+    "dynamic": true,
+    "speed": 400,
+    "maxobj": 100,
+    "hloop": true,
+    "ihloop": 0,
+    "vloop": true,
+    "ivloop": 0,
+    "glassColor": 16777215,
+    "c1": 16251103,
+    "c2": 16251103,
+  },
+  "picts": [
+    {
+      "type": "picture"
+      "name": "P0",
+      "base64": "eNodUDtuQ0EIZGHf7vvZsV27S+EybbpcJgfJYXK0NJESy9bzW+8XgiM0A0IgmDnC6eX89gEADGCeNYviU7nlmusSl7SkS77l1NaylisHDpLlJktbIepSUq7QtCrKYh5RTcVmCooBAwjebd2TnckN4zCRBYJH3zRKVG1CQUY9p8wIiETGdp31du4szTTjRKMZwEKvGGErHQw8SN+Ife6jy12zBQuyyxR9oNavQ+iSZWDDFMfr5ufwvbm4Mt51WreMCqXeTejtDnf2gHvwZos7s4c9OJhg0HDgFSiksPqXEaiS+V5+byFKVbmssrMwq0+NWfjRlNRCDbHWcG9VjZQjnF9P//bK+xfAHzlfmGQ=",
+    },
+  ]
+  "stage": [
+    {
+      "type": "vispict",
+      "name": "P0",
+      "x": 447.14,
+      "y": 245.17,
+      "rotation": 0,
+    }
+  ],
+  "rules": [
+    {
+      "type": "rule",
+      "x": 247.21,
+      "y": 183.24,
+      "head": [
+        {
+          "type": "vispict",
+          "name": "P0",
+          "x": 50.8,
+          "y": 52.32,
+          "rotation": 0,
+        }
+      ],
+      "body": [
+        {
+          "type": "vispict",
+          "name": "P0",
+          "x": 63.56,
+          "y": 62.03,
+          "rotation": 0,
+        }
+      ]
+    }
+  ],
+}

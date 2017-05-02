@@ -5,8 +5,8 @@
         "height": 1200,
         "shapes": [
             {
-                angles: [30, 150, 30, 150],
-                lengthes: [100, 100, 100, 100]
+                angles: [45, 45, 45, 45,45, 45, 45, 45],
+                lengthes: [100, 100, 100, 100,100, 100, 100, 100]
             }/*,
              { 
                 angles: [30,150,30,150],
@@ -30,6 +30,7 @@
         let pointList = [];
         let org = [1, 0];
         let xy = [0, 0];
+        
         for (var ai = 0; ai < config.shapes[si].angles.length; ai++) {
             var angle = config.shapes[si].angles[ai];
             var length = config.shapes[si].lengthes[ai];
@@ -40,11 +41,12 @@
         }
         polygonList.push(`<g class="touchSensor" transform="translate(0,0)translate(0,0)rotate(0)scale(1,1)translate(0,0)">`);
         polygonList.push(`<polygon points="${pointList.join(',')}" />`);
+        
         polygonList.push(`</g>`);
     }
     contentList.push(polygonList.join(''));
 
-    let html = `<svg width="${config.width}" height="${config.height}">${contentList.join('')}</svg>`;
+    let html = `<svg width="${config.width}" height="${config.height}"><g transform="translate(200,200)">${contentList.join('')}</g></svg>`;
     document.currentScript.insertAdjacentHTML('afterend', html);
 
     let svg = document.currentScript.nextSibling;
