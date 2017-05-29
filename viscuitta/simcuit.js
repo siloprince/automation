@@ -88,7 +88,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
     let ctrlable = ctrlableList[ci];
     ctrlable.addEventListener('mousedown', function (ev) {
-        let target = ev.target.parentNode;
+        let target = ev.target.parentNode.parentNode;
         let id = target.id;
         if (!(id in config.draggable.state)) {
             config.draggable.state[id] = false;
@@ -103,11 +103,14 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         enlarge(ev);
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
+
+        console.log(cx+' '+cy);
         let dist = getCtrlDist(ev, id, cx, cy);
         let scale_dist = dist/config.ctrlable.scale[id];
         let dxy = scale_dist-dist;
         config.ctrlable.initScaleBase[id] = scale_dist;
         let ctrlType = ev.target.getAttribute('ctrl');
+        /*
         if (ctrlType === 'bbox00') {
         } else if (ctrlType === 'bbox01') {
             config.draggable.currentY[id]+=dxy;
@@ -117,7 +120,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             config.draggable.currentX[id]+=dxy;
             config.draggable.currentY[id]+=dxy;
         }
-
+        */
         config.ctrlable.scale[id] = 1.0;
         config.ctrlable.state[id] = true;
         // TODO: multiselect
@@ -126,7 +129,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         }
     }, false);
     ctrlable.addEventListener('mousemove', function (ev) {
-        let target = ev.target.parentNode;
+        let target = ev.target.parentNode.parentNode;
         let id = target.id;
         if (!config.ctrlable.state[id]) {
             return;
@@ -134,6 +137,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
 
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
+        console.log(cx+' '+cy);
         let dist = getCtrlDist(ev, id, cx, cy);
 
         let scale = dist / config.ctrlable.initScaleBase[id];
@@ -152,9 +156,12 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         }
     }, false);
     ctrlable.addEventListener('mouseup', function (ev) {
-        let target = ev.target.parentNode;
+        let target = ev.target.parentNode.parentNode;
         let id = target.id;
         config.ctrlable.state[id] = false;
+        let xy=getTranslate(target);
+        config.draggable.currentX[id] = xy[0];
+        config.draggable.currentY[id] = xy[1];
         ensmall(ev);
     }, false);
 }
@@ -233,14 +240,14 @@ function createObject(svg, objectStr) {
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
-        <rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl" style="display:none;" x="${x}" y="${height - size}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl" style="display:none;" x="${width - size}" y="${y}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl" style="display:none;" x="${width - size}" y="${height - size}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox00" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${height - size}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${width - size}" y="${y}" width="${size}" height="${size}"/>
-        <rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${width - size}" y="${height - size}" width="${size}" height="${size}"/>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${width - size}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${width - size}" y="${height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox00" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${width - size}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${width - size}" y="${height - size}" width="${size}" height="${size}"/></g>
     `);
 }
 // rotate by drag
@@ -269,7 +276,7 @@ function setScale(polygon, xy) {
 function setRotate(polygon, degree) {
     polygon.transform.baseVal.getItem(2).setRotate(degree, 0, 0);
 }
-function getTranslate(polygon, xy) {
+function getTranslate(polygon) {
     let mat = decomposeMatrix(polygon.getCTM());
     return mat.translate;
 }
