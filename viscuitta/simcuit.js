@@ -90,8 +90,10 @@ function log(){
     let cy = config.draggable.currentY[id];
     let ix = config.draggable.initX[id];
     let iy = config.draggable.initY[id];
+    let isb = config.ctrlable.initScaleBase[id];
+    let s = config.ctrlable.scale[id];
 
-    console.log('c=('+cx+' '+cy+') i=('+ix+' '+iy+')');
+    return('c=('+cx+' '+cy+') i=('+ix+' '+iy+') scale='+s+' isb='+isb);
 }
 let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
@@ -116,6 +118,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let scale_dist = dist/config.ctrlable.scale[id];
         let dxy = scale_dist-dist;
         config.ctrlable.initScaleBase[id] = scale_dist;
+        /*
         let ctrlType = ev.target.getAttribute('ctrl');
         let xy=getTranslate(target);
         if (ctrlType === 'bbox00') {
@@ -127,7 +130,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             config.draggable.currentX[id] = xy[0];
             config.draggable.currentY[id] = xy[1];
         }
-        
+        */
         config.ctrlable.scale[id] = 1.0;
         config.ctrlable.state[id] = true;
         // TODO: multiselect
@@ -165,7 +168,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let target = ev.target.parentNode.parentNode;
         let id = target.id;
         config.ctrlable.state[id] = false;
-        /*
+        
         let xy=getTranslate(target);
         let ctrlType = ev.target.getAttribute('ctrl');
         if (ctrlType === 'bbox00') {
@@ -177,7 +180,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             config.draggable.currentY[id] = xy[1];
         } else if (ctrlType === 'bbox11') {
         }
-        */
+        
         ensmall(ev);
     }, false);
 }
