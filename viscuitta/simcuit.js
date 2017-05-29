@@ -209,11 +209,13 @@ for (let di = 0; di < draggableList.length; di++) {
         config.draggable.currentY[id] = dy;
         setTranslate(target, [dx, dy]);
     }, false);
-    draggable.addEventListener('mouseup', function (ev) {
+    let mouseupout = function (ev) {
         let target = ev.target.parentNode;
         let id = target.id;
         config.draggable.state[id] = false;
-    }, false);
+    }
+    draggable.addEventListener('mouseup',mouseupout, false);
+    draggable.addEventListener('mouseout',mouseupout, false);
 }
 function createObject(svg, objectStr) {
     let id = config.id++;
