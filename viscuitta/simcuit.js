@@ -84,6 +84,15 @@ function ensmall(ev) {
     ctrlObj.setAttribute('height', height);
     ctrlObj.setAttribute('style', 'fill:#aaaaaa;stroke:#aaaaaa;');
 }
+function log(){
+    let id = 'obj0';
+    let cx = config.draggable.currentX[id];
+    let cy = config.draggable.currentY[id];
+    let ix = config.draggable.initX[id];
+    let iy = config.draggable.initY[id];
+
+    console.log('c=('+cx+' '+cy+') i=('+ix+' '+iy+')');
+}
 let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
     let ctrlable = ctrlableList[ci];
@@ -108,7 +117,6 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let dxy = scale_dist-dist;
         config.ctrlable.initScaleBase[id] = scale_dist;
         let ctrlType = ev.target.getAttribute('ctrl');
-        console.log(ctrlType);
         let xy=getTranslate(target);
         if (ctrlType === 'bbox00') {
         } else if (ctrlType === 'bbox01') {
@@ -223,7 +231,6 @@ for (let di = 0; di < draggableList.length; di++) {
         config.draggable.currentX[id] = dx;
         config.draggable.currentY[id] = dy;
         setTranslate(target, [dx, dy]);
-        console.log(dx+' '+dy);
     }, false);
     let mouseupout = function (ev) {
         let target = ev.target.parentNode;
