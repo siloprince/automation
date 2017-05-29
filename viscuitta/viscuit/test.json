@@ -1,0 +1,67 @@
+{
+    "base": "1/1.json",
+    "view": {
+        "smooth": true,
+        "hasrotatebtn": true,
+        "glassColor": 16777215,
+        "haspencil": true,
+        "vloop": true,
+        "width": 512,
+        "hloop": true,
+        "maxobj": 100,
+        "ihloop": 0,
+        "dontsave": false,
+        "height": 384,
+        "speed": 400,
+        "c2": 16251103,
+        "grid": 0,
+        "type": "view",
+        "c1": 16251103,
+        "dynamic": true,
+        "ivloop": 0
+    },
+    "type": "viscuit",
+    "version": "5.0",
+    "rules": [
+        {
+            "head": [
+                {
+                    "x": 50.8,
+                    "name": "P0",
+                    "type": "vispict",
+                    "y": 52.32,
+                    "rotation": 0
+                }
+            ],
+            "x": 247.21,
+            "type": "rule",
+            "y": 183.24,
+            "body": [
+                {
+                    "x": 63.56,
+                    "name": "P0",
+                    "type": "vispict",
+                    "y": 62.03,
+                    "rotation": 0
+                }
+            ]
+        }
+    ],
+    "stage": [
+        {
+            "x": 447.14,
+            "name": "P0",
+            "type": "vispict",
+            "y": 245.17,
+            "rotation": 0
+        }
+    ],
+    "machine": "20160228092503370837631",
+    "picts": [
+        {
+            "base64": "eNodUDtuQ0EIZGHf7vvZsV27S+EybbpcJgfJYXK0NJESy9bzW+8XgiM0A0IgmDnC6eX89gEADGCeNYviU7nlmusSl7SkS77l1NaylisHDpLlJktbIepSUq7QtCrKYh5RTcVmCooBAwjebd2TnckN4zCRBYJH3zRKVG1CQUY9p8wIiETGdp31du4szTTjRKMZwEKvGGErHQw8SN+Ife6jy12zBQuyyxR9oNavQ+iSZWDDFMfr5ufwvbm4Mt51WreMCqXeTejtDnf2gHvwZos7s4c9OJhg0HDgFSiksPqXEaiS+V5+byFKVbmssrMwq0+NWfjRlNRCDbHWcG9VjZQjnF9P//bK+xfAHzlfmGQ=",
+            "name": "P0",
+            "type": "picture"
+        }
+    ]
+}

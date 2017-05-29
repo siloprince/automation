@@ -1,0 +1,43 @@
+{
+    "base": "1/1.json",
+    "view": {
+        "smooth": true,
+        "hasrotatebtn": true,
+        "glassColor": 16777215,
+        "haspencil": true,
+        "vloop": true,
+        "width": 512,
+        "hloop": true,
+        "maxobj": 100,
+        "ihloop": 0,
+        "dontsave": false,
+        "height": 384,
+        "speed": 400,
+        "c2": 16251103,
+        "grid": 0,
+        "type": "view",
+        "c1": 16251103,
+        "dynamic": true,
+        "ivloop": 0
+    },
+    "type": "viscuit",
+    "version": "5.0",
+    "rules": [],
+    "stage": [
+        {
+            "x": 330.31,
+            "name": "P0",
+            "type": "vispict",
+            "y": 278.03,
+            "rotation": 0
+        }
+    ],
+    "machine": "20160228092503370837631",
+    "picts": [
+        {
+            "base64": "eNoVjc0Jw1AMgyXbD7pBT9mkkNU6YYfpLfFf/A6SQKBPbxz/Or8ACuAx+Rt9QMIWSYVBsfBq61WWVlrSbC0Wk0HnRYfjHnlHeUV45FjeuHYprr5SZyy15zoQyzVA642fA4rIPBJ4AKzXN+8=",
+            "name": "P0",
+            "type": "picture"
+        }
+    ]
+}
