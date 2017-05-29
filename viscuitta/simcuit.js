@@ -16,7 +16,7 @@ var config = {
     },
     ctrlable: {
         initScaleBase: {},
-        scale: {},
+        scaleBase: {},
         state: {}
     }
 };
@@ -40,23 +40,25 @@ createObject(svg, `<circle class="draggable" r="100" cx="100" cy="100"/>`);
 function getCtrlDist(ev, id, cx, cy) {
     let ctrlTarget = ev.target;
     let ctrlType = ctrlTarget.getAttribute('ctrl');
+    let scaleBase =config.ctrlable.scaleBase[id];
     let dx, dy;
     if (ctrlType === 'bbox00') {
-        dx = (cx + config.bbox.width[id] - ev.clientX);
-        dy = (cy + config.bbox.height[id] - ev.clientY);
+        dx = (cx + config.bbox.width[id]*scaleBase - ev.clientX);
+        dy = (cy + config.bbox.height[id]*scaleBase - ev.clientY);
     } else if (ctrlType === 'bbox01') {
-        dx = (cx + config.bbox.width[id] - ev.clientX);
+        dx = (cx + config.bbox.width[id]*scaleBase - ev.clientX);
         dy = (ev.clientY - cy);
     } else if (ctrlType === 'bbox10') {
         dx = (ev.clientX - cx);
-        dy = (cy + config.bbox.height[id] - ev.clientY);
+        dy = (cy + config.bbox.height[id]*scaleBase - ev.clientY);
     } else if (ctrlType === 'bbox11') {
         dx = (ev.clientX - cx);
         dy = (ev.clientY - cy);
     }
+    //console.log(scaleBase+' '+dx+' '+dy);
     let dist = dx;
-    if (dx < dy) {
-        dy = dx;
+    if (dx <dy) {
+        dist = dy;
     }
     return dist;
 }
@@ -91,9 +93,9 @@ function log(){
     let ix = config.draggable.initX[id];
     let iy = config.draggable.initY[id];
     let isb = config.ctrlable.initScaleBase[id];
-    let s = config.ctrlable.scale[id];
+    let sb = config.ctrlable.scaleBase[id];
 
-    return('c=('+cx+' '+cy+') i=('+ix+' '+iy+') scale='+s+' isb='+isb);
+    return('c=('+cx+' '+cy+') i=('+ix+' '+iy+') sb='+sb+' isb='+isb);
 }
 let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
@@ -108,30 +110,31 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             config.draggable.currentX[id] = 0;
             config.draggable.currentY[id] = 0;
         }
-        if (!(id in config.ctrlable.scale)) {
-            config.ctrlable.scale[id] = 1.0;
+        if (!(id in config.ctrlable.scaleBase)) {
+            config.ctrlable.scaleBase[id] = 1.0;
         }
         enlarge(ev);
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
         let dist = getCtrlDist(ev, id, cx, cy);
-        let scale_dist = dist/config.ctrlable.scale[id];
-        let dxy = scale_dist-dist;
-        config.ctrlable.initScaleBase[id] = scale_dist;
-        /*
+        config.ctrlable.initScaleBase[id] = dist;
+        
         let ctrlType = ev.target.getAttribute('ctrl');
+        /*
+        let scale_dist = dist/config.ctrlable.scaleBase[id];
+        let dxy = scale_dist-dist;
         let xy=getTranslate(target);
         if (ctrlType === 'bbox00') {
+            config.draggable.currentX[id] = xy[0];
+            config.draggable.currentY[id] = xy[1];
         } else if (ctrlType === 'bbox01') {
-            config.draggable.currentY[id] = xy[1];
+            config.draggable.currentX[id] = xy[0];
         } else if (ctrlType === 'bbox10') {
-            config.draggable.currentX[id] = xy[0];
-        } else if (ctrlType === 'bbox11') {
-            config.draggable.currentX[id] = xy[0];
             config.draggable.currentY[id] = xy[1];
-        }
-        */
-        config.ctrlable.scale[id] = 1.0;
+        } else if (ctrlType === 'bbox11') {
+        }*/
+        
+        //config.ctrlable.scale[id] = 1.0;
         config.ctrlable.state[id] = true;
         // TODO: multiselect
         for (let sk in config.ctrlable.state) {
@@ -149,8 +152,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let cy = config.draggable.currentY[id];
         let dist = getCtrlDist(ev, id, cx, cy);
 
-        let scale = dist / config.ctrlable.initScaleBase[id];
-        config.ctrlable.scale[id] = scale;
+        let scale = dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
         setScale(target, [scale, scale]);
         let dxy = config.ctrlable.initScaleBase[id] - dist;
         let ctrlType = ev.target.getAttribute('ctrl');
@@ -179,8 +181,10 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         } else if (ctrlType === 'bbox10') {
             config.draggable.currentY[id] = xy[1];
         } else if (ctrlType === 'bbox11') {
+            // nop
         }
-        
+        let scale=getScale(target);
+        config.ctrlable.scaleBase[id]=scale[0];
         ensmall(ev);
     }, false);
 }
