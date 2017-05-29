@@ -118,23 +118,6 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let cy = config.draggable.currentY[id];
         let dist = getCtrlDist(ev, id, cx, cy);
         config.ctrlable.initScaleBase[id] = dist;
-        
-        let ctrlType = ev.target.getAttribute('ctrl');
-        /*
-        let scale_dist = dist/config.ctrlable.scaleBase[id];
-        let dxy = scale_dist-dist;
-        let xy=getTranslate(target);
-        if (ctrlType === 'bbox00') {
-            config.draggable.currentX[id] = xy[0];
-            config.draggable.currentY[id] = xy[1];
-        } else if (ctrlType === 'bbox01') {
-            config.draggable.currentX[id] = xy[0];
-        } else if (ctrlType === 'bbox10') {
-            config.draggable.currentY[id] = xy[1];
-        } else if (ctrlType === 'bbox11') {
-        }*/
-        
-        //config.ctrlable.scale[id] = 1.0;
         config.ctrlable.state[id] = true;
         // TODO: multiselect
         for (let sk in config.ctrlable.state) {
@@ -147,11 +130,9 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         if (!config.ctrlable.state[id]) {
             return;
         }
-
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
         let dist = getCtrlDist(ev, id, cx, cy);
-
         let scale = dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
         setScale(target, [scale, scale]);
         let dxy = config.ctrlable.initScaleBase[id] - dist;
