@@ -108,7 +108,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let dxy = scale_dist-dist;
         config.ctrlable.initScaleBase[id] = scale_dist;
         let ctrlType = ev.target.getAttribute('ctrl');
-
+        console.log(ctrlType);
         let xy=getTranslate(target);
         if (ctrlType === 'bbox00') {
         } else if (ctrlType === 'bbox01') {
@@ -119,6 +119,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             config.draggable.currentX[id] = xy[0];
             config.draggable.currentY[id] = xy[1];
         }
+        
         config.ctrlable.scale[id] = 1.0;
         config.ctrlable.state[id] = true;
         // TODO: multiselect
@@ -156,6 +157,19 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let target = ev.target.parentNode.parentNode;
         let id = target.id;
         config.ctrlable.state[id] = false;
+        /*
+        let xy=getTranslate(target);
+        let ctrlType = ev.target.getAttribute('ctrl');
+        if (ctrlType === 'bbox00') {
+            config.draggable.currentX[id] = xy[0];
+            config.draggable.currentY[id] = xy[1];
+        } else if (ctrlType === 'bbox01') {
+            config.draggable.currentX[id] = xy[0];
+        } else if (ctrlType === 'bbox10') {
+            config.draggable.currentY[id] = xy[1];
+        } else if (ctrlType === 'bbox11') {
+        }
+        */
         ensmall(ev);
     }, false);
 }
@@ -209,6 +223,7 @@ for (let di = 0; di < draggableList.length; di++) {
         config.draggable.currentX[id] = dx;
         config.draggable.currentY[id] = dy;
         setTranslate(target, [dx, dy]);
+        console.log(dx+' '+dy);
     }, false);
     let mouseupout = function (ev) {
         let target = ev.target.parentNode;
