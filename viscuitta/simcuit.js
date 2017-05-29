@@ -22,6 +22,8 @@ var config = {
 };
 document.currentScript.insertAdjacentHTML('afterend', `<svg width="600" height="600"></svg>`);
 let svg = document.querySelector('svg');
+// TODO: in case of cx!=100, cy!=100 
+
 createObject(svg, `<circle class="draggable" r="100" cx="100" cy="100"/>`);
 
 // objectives 
@@ -181,9 +183,9 @@ for (let di = 0; di < draggableList.length; di++) {
     draggable.addEventListener('dblclick', function (ev) {
         let target = ev.target.parentNode;
         let id = target.id;
-        let bbox = target.querySelector('rect.bbox');
+        let bbox = target.querySelector('.bbox');
         bbox.setAttribute('style', 'display:inline;fill:none;stroke:#aaaaaa;stroke-width:2pt;');
-        let ctrlList = target.querySelectorAll('rect.bbox_ctrl');
+        let ctrlList = target.querySelectorAll('.bbox_ctrl');
         for (let ci = 0; ci < ctrlList.length; ci++) {
             let ctrl = ctrlList[ci];
             ctrl.setAttribute('style', 'display:inline;fill:#aaaaaa;stroke:#aaaaaa;stroke-width:2pt;');
@@ -239,19 +241,23 @@ function createObject(svg, objectStr) {
     let y = bbox.y;
     let width = bbox.width;
     let height = bbox.height;
+    let top = -25;
     config.bbox.width[objid] = width;
     config.bbox.height[objid] = height;
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
         <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${height - size}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${width - size}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${width - size}" y="${height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y+height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x+width - size}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x+width - size}" y="${y+height - size}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox00" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${height - size}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${width - size}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${width - size}" y="${height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${y+height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${x+width - size}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${x+width - size}" y="${y+height - size}" width="${size}" height="${size}"/></g>
+        <g><line class="bbox_ctrl" ctrl="bbox22" style="display:none;" x1="${x+width/2}" y1="${y+top}" x2="${x+width/2}" y2="${y}" /></g>
+        <g><circle class="bbox_ctrl" ctrl="bbox22" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
+        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
     `);
 }
 // rotate by drag
