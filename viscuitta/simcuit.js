@@ -112,7 +112,7 @@ function ensmall(ev) {
         let r = parseInt(ctrlObj.getAttribute('r'), 10) % config.bbox.large; 
         ctrlObj.setAttribute('r', r);       
     }
-    ctrlObj.setAttribute('style', 'fill:#aaaaaa;stroke:#aaaaaa;');
+    ctrlObj.setAttribute('style', 'fill:#11aaff;stroke:#ffffff;');
 }
 function log() {
     let id = 'obj0';
@@ -230,11 +230,11 @@ for (let di = 0; di < draggableList.length; di++) {
         let target = ev.target.parentNode;
         let id = target.id;
         let bbox = target.querySelector('.bbox');
-        bbox.setAttribute('style', 'display:inline;fill:none;stroke:#aaaaaa;stroke-width:2pt;');
+        bbox.setAttribute('style', 'display:inline;fill:none;stroke:#11aaff;stroke-width:1pt;');
         let ctrlList = target.querySelectorAll('.bbox_ctrl');
         for (let ci = 0; ci < ctrlList.length; ci++) {
             let ctrl = ctrlList[ci];
-            ctrl.setAttribute('style', 'display:inline;fill:#aaaaaa;stroke:#aaaaaa;stroke-width:2pt;');
+            ctrl.setAttribute('style', 'display:inline;fill:#11aaff;stroke:#ffffff;stroke-width:1pt;');
         }
     }, false);
     draggable.addEventListener('mousedown', function (ev) {
@@ -304,9 +304,11 @@ function createObject(svg, objectStr) {
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${y + height - size}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${x + width - size}" y="${y}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${x + width - size}" y="${y + height - size}" width="${size}" height="${size}"/></g>
-        <g><line class="bbox_ctrl" style="display:none;" x1="${x + width / 2}" y1="${y + top}" x2="${x + width / 2}" y2="${y}" /></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x + width / 2 - 2}" y="${y + top}" width="${3}" height="${-top-1}" /></g>
         <g><circle class="bbox_ctrl" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
         <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
+        <g><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + width / 2}" cy="${y + height/2}" r="${size / 2}"/></g>
+        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + width / 2}" cy="${y + height/2}" r="${size / 2}"/></g>
     `);
 }
 // rotate by drag
