@@ -5,6 +5,8 @@ var config = {
         large: 2000,
         width: {},
         height: {},
+        centerX: {},
+        centerY: {},
     },
     id: 0,
     draggable: {
@@ -17,6 +19,8 @@ var config = {
     ctrlable: {
         initScaleBase: {},
         scaleBase: {},
+        initRotateBase: {},
+        rotateBase: {},
         state: {}
     }
 };
@@ -39,11 +43,14 @@ createObject(svg, `<circle class="draggable" r="100" cx="100" cy="100"/>`);
 // change mouse cursor
 // https://tympanus.net/Development/ElasticSVGElements/drag.html
 
-function getCtrlDist(ev, id, cx, cy) {
+function getCtrlInfo(ev, id) {
     let ctrlTarget = ev.target;
     let ctrlType = ctrlTarget.getAttribute('ctrl');
     let scaleBase =config.ctrlable.scaleBase[id];
+    let cx = config.draggable.currentX[id];
+    let cy = config.draggable.currentY[id];
     let dx, dy;
+    let rot=0;
     if (ctrlType === 'bbox00') {
         dx = (cx + config.bbox.width[id]*scaleBase - ev.clientX);
         dy = (cy + config.bbox.height[id]*scaleBase - ev.clientY);
@@ -56,13 +63,15 @@ function getCtrlDist(ev, id, cx, cy) {
     } else if (ctrlType === 'bbox11') {
         dx = (ev.clientX - cx);
         dy = (ev.clientY - cy);
+    } else if (ctrlType === 'bbox22') {
+        rot = 0;
     }
     //console.log(scaleBase+' '+dx+' '+dy);
     let dist = dx;
     if (dx <dy) {
         dist = dy;
     }
-    return dist;
+    return { dist: dist, rot: rot};
 }
 function enlarge(ev) {
     let ctrlObj = ev.target;
@@ -94,10 +103,12 @@ function log(){
     let cy = config.draggable.currentY[id];
     let ix = config.draggable.initX[id];
     let iy = config.draggable.initY[id];
+    let irb = config.ctrlable.initRotateBase[id];
+    let rb = config.ctrlable.rotateBase[id];
     let isb = config.ctrlable.initScaleBase[id];
     let sb = config.ctrlable.scaleBase[id];
 
-    return('c=('+cx+' '+cy+') i=('+ix+' '+iy+') sb='+sb+' isb='+isb);
+    return('c=('+cx+' '+cy+') i=('+ix+' '+iy+') rb='+rb+' irb='+irb+' sb='+sb+' isb='+isb);
 }
 let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
@@ -115,11 +126,14 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         if (!(id in config.ctrlable.scaleBase)) {
             config.ctrlable.scaleBase[id] = 1.0;
         }
+        if (!(id in config.ctrlable.rotateBase)) {
+            config.ctrlable.rotateBase[id] = 0.0;
+        }
         enlarge(ev);
-        let cx = config.draggable.currentX[id];
-        let cy = config.draggable.currentY[id];
-        let dist = getCtrlDist(ev, id, cx, cy);
-        config.ctrlable.initScaleBase[id] = dist;
+        let info = getCtrlInfo(ev, id);
+        config.ctrlable.initScaleBase[id] = info.dist;
+        // TODO:
+        config.ctrlable.initRotateBase[id] = 0.0;
         config.ctrlable.state[id] = true;
         // TODO: multiselect
         for (let sk in config.ctrlable.state) {
@@ -132,13 +146,18 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         if (!config.ctrlable.state[id]) {
             return;
         }
+        let info = getCtrlInfo(ev, id);
+        let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
+        setScale(target, [scale, scale]);
+
+        // TODO:
+        let rotate = 0.0;
+        setRotate(target,rotate);
+
+        let dxy = config.ctrlable.initScaleBase[id] - info.dist;
+        let ctrlType = ev.target.getAttribute('ctrl');
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
-        let dist = getCtrlDist(ev, id, cx, cy);
-        let scale = dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
-        setScale(target, [scale, scale]);
-        let dxy = config.ctrlable.initScaleBase[id] - dist;
-        let ctrlType = ev.target.getAttribute('ctrl');
         if (ctrlType === 'bbox00') {
             setTranslate(target, [cx+dxy, cy+dxy]);
         } else if (ctrlType === 'bbox01') {
@@ -146,6 +165,8 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         } else if (ctrlType === 'bbox10') {
             setTranslate(target, [cx+0, cy+dxy]);
         } else if (ctrlType === 'bbox11') {
+            setTranslate(target, [cx+0, cy+0]);
+        } else if (ctrlType === 'bbox22') {
             setTranslate(target, [cx+0, cy+0]);
         }
     }, false);
@@ -165,9 +186,14 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             config.draggable.currentY[id] = xy[1];
         } else if (ctrlType === 'bbox11') {
             // nop
+        } else if (ctrlType === 'bbox22') {
+            // nop
         }
         let scale=getScale(target);
         config.ctrlable.scaleBase[id]=scale[0];
+        // TODO:
+        let rotate=getRotate(target);
+        config.ctrlable.rotateBase[id]=rotate;
         ensmall(ev);
     }, false);
 }
@@ -244,6 +270,8 @@ function createObject(svg, objectStr) {
     let top = -25;
     config.bbox.width[objid] = width;
     config.bbox.height[objid] = height;
+    config.bbox.centerX[objid] = width/2;
+    config.bbox.centerY[objid] = height/2;
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
@@ -255,8 +283,8 @@ function createObject(svg, objectStr) {
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${y+height - size}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${x+width - size}" y="${y}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${x+width - size}" y="${y+height - size}" width="${size}" height="${size}"/></g>
-        <g><line class="bbox_ctrl" ctrl="bbox22" style="display:none;" x1="${x+width/2}" y1="${y+top}" x2="${x+width/2}" y2="${y}" /></g>
-        <g><circle class="bbox_ctrl" ctrl="bbox22" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
+        <g><line class="bbox_ctrl" style="display:none;" x1="${x+width/2}" y1="${y+top}" x2="${x+width/2}" y2="${y}" /></g>
+        <g><circle class="bbox_ctrl" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
         <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
     `);
 }
