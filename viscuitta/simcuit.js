@@ -60,12 +60,8 @@ function getCtrlInfo(ev, id) {
     let dx = (ev.clientX - (cx+ctx*scaleBase));
     let dy = (ev.clientY - (cy+cty*scaleBase));
     if (ctrlType === 'bbox00') {
-        dx = ctx - ev.clientX;
-        dy = cty - ev.clientY;
     } else if (ctrlType === 'bbox01') {
-        dx = ctx - ev.clientX;
     } else if (ctrlType === 'bbox10') {
-        dy = cty - ev.clientY;
     } else if (ctrlType === 'bbox11') {
         // nop
     } else if (ctrlType === 'bbox22') {
