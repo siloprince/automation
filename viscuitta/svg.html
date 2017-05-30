@@ -1,0 +1,18 @@
+<body>
+    <svg id="xx" width="1000" height="1000"><g transform="translate(100,100)translate(0,10)rotate(0)scale(1,1)translate(-0,-0)">
+        <rect x="0" y="0" width="100" height="100"/>
+            <g  id="yy" transform="translate(100,100)translate(10,10)rotate(10)scale(2,2)translate(-10,-10)">
+                <rect  x="0" y="0" width="100" height="100"/>
+                </g>
+        </g>
+    </svg>
+    <script type="text/javascript">
+    'use strict';
+    let xx = document.querySelector('#xx');
+    let yy = document.querySelector('#yy');
+    console.log(xx.getCTM());
+    console.log(yy.getCTM());
+    //console.log(xx.getScreenCTM());
+    //console.log(yy.getScreenCTM());
+    </script>
+</body>
