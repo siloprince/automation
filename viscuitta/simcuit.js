@@ -79,7 +79,6 @@ function getCtrlInfo(ev, id) {
         rot = Math.atan2(-xx, yy) * 180 / Math.PI;
         type = 'center';
     }
-    console.log(rot + ' ' + dx + ' ' + dy);
     let dist = dx;
     if (dx < dy) {
         dist = dy;
@@ -174,6 +173,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
                 config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
                 config.ctrlable.centerState[id] = true;
             }
+            config.ctrlable.centerState[id]=true;
         }
         config.ctrlable.state[id] = true;
         // TODO: multiselect
@@ -191,13 +191,15 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let cy = config.draggable.currentY[id];
         let info = getCtrlInfo(ev, id);
         if (info.type === 'center') {
+            if (!config.ctrlable.centerState[id]){
+                return;
+            }
             let ctx = ev.clientX - config.ctrlable.initCenterX[id];
             let cty = ev.clientY - config.ctrlable.initCenterY[id];
             config.ctrlable.currentCenterX[id] = ctx;
             config.ctrlable.currentCenterY[id] = cty;
             setCenter(target, [ctx, cty]);
             let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
-            console.log(centerList.length);
             for (let ci = 0; ci < centerList.length; ci++) {
                 setTranslate(centerList[ci].parentNode,[ctx,cty]);
             }
@@ -225,7 +227,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let target = ev.target.parentNode.parentNode;
         let id = target.id;
         config.ctrlable.state[id] = false;
-
+        config.ctrlable.centerState[id] = false;
         let xy = getTranslate(target);
         let ctrlType = ev.target.getAttribute('ctrl');
         if (ctrlType === 'bbox00') {
