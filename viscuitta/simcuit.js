@@ -341,18 +341,6 @@ function createObject(svg, objectStr) {
         <g transform="${transform}"><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + ctx}" cy="${y + cty}" r="${size / 2}"/></g>
     `);
 }
-// rotate by drag
-// http://jsfiddle.net/PbKYn/5/
-// Returns radians
-function angleBetweenPoints(p1, p2) {
-    if (p1[0] == p2[0] && p1[1] == p2[1])
-        return Math.PI / 2;
-    else
-        return Math.atan2(p2[1] - p1[1], p2[0] - p1[0]);
-}
-function distanceBetweenPoints(p1, p2) {
-    return Math.sqrt(Math.pow(p2[1] - p1[1], 2) + Math.pow(p2[0] - p1[0], 2));
-}
 // TODO : more conv functions
 function setTranslate(polygon, xy) {
     polygon.transform.baseVal.getItem(0).setTranslate(xy[0], xy[1]);
