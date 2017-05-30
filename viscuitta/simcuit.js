@@ -19,8 +19,12 @@ var config = {
     ctrlable: {
         initScaleBase: {},
         scaleBase: {},
-        initRotateBase: {},
         rotateBase: {},
+        initCenterX: {},
+        initCenterY: {},
+        currentCenterX: {},
+        currentCenterY: {},
+        centerState: {},
         state: {}
     }
 };
@@ -65,10 +69,15 @@ function getCtrlInfo(ev, id) {
         dx = (ev.clientX - cx);
         dy = (ev.clientY - cy);
     } else if (ctrlType === 'bbox22') {
-        let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX-10));
+        let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
         let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
         rot = Math.atan2(-xx, yy) * 180 / Math.PI;
         type = 'rotate';
+    } else if (ctrlType === 'bbox33') {
+        let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
+        let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
+        rot = Math.atan2(-xx, yy) * 180 / Math.PI;
+        type = 'center';
     }
     console.log(rot + ' ' + dx + ' ' + dy);
     let dist = dx;
@@ -97,20 +106,20 @@ function enlarge(ev) {
 function ensmall(ev) {
     let ctrlObj = ev.target;
     if (ctrlObj.tagName === 'rect') {
-    let x = parseInt(ctrlObj.getAttribute('x'), 10) + config.bbox.large;
-    let y = parseInt(ctrlObj.getAttribute('y'), 10) + config.bbox.large;
-    let width = parseInt(ctrlObj.getAttribute('width'), 10) - config.bbox.large * 2;
-    let height = parseInt(ctrlObj.getAttribute('height'), 10) - config.bbox.large * 2;
-    if (width < 0 || height < 0) {
-        return;
-    }
-    ctrlObj.setAttribute('x', x);
-    ctrlObj.setAttribute('y', y);
-    ctrlObj.setAttribute('width', width);
-    ctrlObj.setAttribute('height', height);
+        let x = parseInt(ctrlObj.getAttribute('x'), 10) + config.bbox.large;
+        let y = parseInt(ctrlObj.getAttribute('y'), 10) + config.bbox.large;
+        let width = parseInt(ctrlObj.getAttribute('width'), 10) - config.bbox.large * 2;
+        let height = parseInt(ctrlObj.getAttribute('height'), 10) - config.bbox.large * 2;
+        if (width < 0 || height < 0) {
+            return;
+        }
+        ctrlObj.setAttribute('x', x);
+        ctrlObj.setAttribute('y', y);
+        ctrlObj.setAttribute('width', width);
+        ctrlObj.setAttribute('height', height);
     } else {
-        let r = parseInt(ctrlObj.getAttribute('r'), 10) % config.bbox.large; 
-        ctrlObj.setAttribute('r', r);       
+        let r = parseInt(ctrlObj.getAttribute('r'), 10) % config.bbox.large;
+        ctrlObj.setAttribute('r', r);
     }
     ctrlObj.setAttribute('style', 'fill:#11aaff;stroke:#ffffff;');
 }
@@ -120,12 +129,15 @@ function log() {
     let cy = config.draggable.currentY[id];
     let ix = config.draggable.initX[id];
     let iy = config.draggable.initY[id];
-    let irb = config.ctrlable.initRotateBase[id];
     let rb = config.ctrlable.rotateBase[id];
     let isb = config.ctrlable.initScaleBase[id];
     let sb = config.ctrlable.scaleBase[id];
+    let ctx = config.ctrlable.currentCenterX[id];
+    let cty = config.ctrlable.currentCenterY[id];
+    let ictx = config.ctrlable.initCenterX[id];
+    let icty = config.ctrlable.initCenterY[id];
 
-    return ('c=(' + cx + ' ' + cy + ') i=(' + ix + ' ' + iy + ') rb=' + rb + ' irb=' + irb + ' sb=' + sb + ' isb=' + isb);
+    return ('c=(' + cx + ' ' + cy + ') i=(' + ix + ' ' + iy + ') ct=(' + ctx + ',' + cty + ') ict=(' + ictx + ' ' + icty + ') rb=' + rb + ' sb=' + sb + ' isb=' + isb);
 }
 let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
@@ -150,6 +162,18 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let info = getCtrlInfo(ev, id);
         if (info.type === 'scale') {
             config.ctrlable.initScaleBase[id] = info.dist;
+        } else if (info.type === 'center') {
+            if (!(id in config.ctrlable.centerState)) {
+                config.ctrlable.initCenterX[id] = ev.clientX;
+                config.ctrlable.initCenterY[id] = ev.clientY;
+                config.ctrlable.currentCenterX[id] = 0;
+                config.ctrlable.currentCenterY[id] = 0;
+                config.ctrlable.centerState[id] = true;
+            } else if (!config.ctrlable.centerState[id]) {
+                config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
+                config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
+                config.ctrlable.centerState[id] = true;
+            }
         }
         config.ctrlable.state[id] = true;
         // TODO: multiselect
@@ -166,11 +190,21 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
         let info = getCtrlInfo(ev, id);
-        if (info.type === 'rotate') {
-            // TODO:
+        if (info.type === 'center') {
+            let ctx = ev.clientX - config.ctrlable.initCenterX[id];
+            let cty = ev.clientY - config.ctrlable.initCenterY[id];
+            config.ctrlable.currentCenterX[id] = ctx;
+            config.ctrlable.currentCenterY[id] = cty;
+            setCenter(target, [ctx, cty]);
+            let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
+            console.log(centerList.length);
+            for (let ci = 0; ci < centerList.length; ci++) {
+                centerList[ci].parentNode.setAttribute('transform', `translate(${ctx},${cty})`);
+                //setTranslate(centerList[ci].parentNode,[ctx,cty]);
+            }
+        } else if (info.type === 'rotate') {
             let rotate = info.rotate;
             setRotate(target, rotate);
-            //setTranslate(target, [cx+0, cy+0]);
         } else if (info.type === 'scale') {
             let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
             setScale(target, [scale, scale]);
@@ -205,6 +239,8 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         } else if (ctrlType === 'bbox11') {
             // nop
         } else if (ctrlType === 'bbox22') {
+            // nop
+        } else if (ctrlType === 'bbox33') {
             // nop
         }
         let scale = getScale(target);
@@ -292,7 +328,9 @@ function createObject(svg, objectStr) {
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
-    setCenter(obj, [config.bbox.centerX[objid], config.bbox.centerY[objid]]);
+    let ctx = config.bbox.centerX[objid];
+    let cty = config.bbox.centerY[objid];
+    setCenter(obj, [ctx, cty]);
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
@@ -304,11 +342,11 @@ function createObject(svg, objectStr) {
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${y + height - size}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${x + width - size}" y="${y}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${x + width - size}" y="${y + height - size}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${x + width / 2 - 2}" y="${y + top}" width="${3}" height="${-top-1}" /></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x + width / 2 - 2}" y="${y + top}" width="${3}" height="${-top - 1}" /></g>
         <g><circle class="bbox_ctrl" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
         <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
-        <g><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + width / 2}" cy="${y + height/2}" r="${size / 2}"/></g>
-        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + width / 2}" cy="${y + height/2}" r="${size / 2}"/></g>
+        <g><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + cty}" cy="${y + cty}" r="${size / 2}"/></g>
+        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + ctx}" cy="${y + cty}" r="${size / 2}"/></g>
     `);
 }
 // rotate by drag
