@@ -54,17 +54,12 @@ function getCtrlInfo(ev, id) {
     let cx = config.draggable.currentX[id];
     let cy = config.draggable.currentY[id];
     let rot = 0;
-    let type = 'scale';
     let ctx = config.ctrlable.currentCenterX[id];
     let cty = config.ctrlable.currentCenterY[id];
     let dx = (ev.clientX - (cx+ctx*scaleBase));
     let dy = (ev.clientY - (cy+cty*scaleBase));
-    if (ctrlType === 'bbox00') {
-    } else if (ctrlType === 'bbox01') {
-    } else if (ctrlType === 'bbox10') {
-    } else if (ctrlType === 'bbox11') {
-        // nop
-    } else if (ctrlType === 'bbox22') {
+    let type = 'scale';
+    if (ctrlType === 'bbox22') {
         let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
         let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
         rot = Math.atan2(-xx, yy) * 180 / Math.PI;
@@ -208,18 +203,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             console.log('dist:'+info.dist+' '+config.ctrlable.initScaleBase[id]+' '+config.ctrlable.scaleBase[id]);
             
             setScale(target, [scale, scale]);
-
-            let dxy = config.ctrlable.initScaleBase[id] - info.dist;
-            let ctrlType = ev.target.getAttribute('ctrl');
-            if (ctrlType === 'bbox00') {
-                setTranslate(target, [cx + dxy, cy + dxy]);
-            } else if (ctrlType === 'bbox01') {
-                setTranslate(target, [cx + dxy, cy + 0]);
-            } else if (ctrlType === 'bbox10') {
-                setTranslate(target, [cx + 0, cy + dxy]);
-            } else if (ctrlType === 'bbox11') {
-                setTranslate(target, [cx + 0, cy + 0]);
-            }
+            setTranslate(target, [cx, cy]);
         }
     }, false);
     let mouseupout = function (ev) {
@@ -228,6 +212,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         config.ctrlable.state[id] = false;
         config.ctrlable.centerState[id] = false;
         let xy = getTranslate(target);
+        console.log('xy='+xy);
         let ctrlType = ev.target.getAttribute('ctrl');
         if (ctrlType === 'bbox00') {
             config.draggable.currentX[id] = xy[0];
@@ -244,9 +229,11 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             // nop
         }
         let scale = getScale(target);
+        console.log('scale='+scale);
         config.ctrlable.scaleBase[id] = scale[0];
         // TODO:
         let rotate = getRotate(target);
+        console.log('rotate='+rotate);
         config.ctrlable.rotateBase[id] = rotate;
         ensmall(ev);
     }
@@ -295,11 +282,14 @@ for (let di = 0; di < draggableList.length; di++) {
     draggable.addEventListener('mousemove', function (ev) {
         let target = ev.target.parentNode;
         let id = target.id;
-        if (!config.draggable.state[id]) {
+        if (!(id in config.draggable.state) || !config.draggable.state[id]) {
             return;
         }
         let dx = ev.clientX - config.draggable.initX[id];
         let dy = ev.clientY - config.draggable.initY[id];
+        if (isNaN(dx)) {
+            return;
+        }
         config.draggable.currentX[id] = dx;
         config.draggable.currentY[id] = dy;
         setTranslate(target, [dx, dy]);
