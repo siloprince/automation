@@ -158,7 +158,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let info = getCtrlInfo(ev, id);
         if (info.type === 'rotate') {
             // TODO:
-            let rotate = info.rotate;
+            let rotate = 45;//info.rotate;
             setRotate(target, rotate);
             //setTranslate(target, [cx+0, cy+0]);
         } else if (info.type === 'scale') {
@@ -282,6 +282,7 @@ function createObject(svg, objectStr) {
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
+    setCenter(obj,[config.bbox.centerX[objid] ,config.bbox.centerY[objid] ]);
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
