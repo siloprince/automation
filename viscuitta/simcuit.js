@@ -53,21 +53,21 @@ function getCtrlInfo(ev, id) {
     let scaleBase = config.ctrlable.scaleBase[id];
     let cx = config.draggable.currentX[id];
     let cy = config.draggable.currentY[id];
-    let dx, dy;
     let rot = 0;
     let type = 'scale';
+    let ctx = config.ctrlable.currentCenterX[id];
+    let cty = config.ctrlable.currentCenterY[id];
+    let dx = (ev.clientX - (cx+ctx*scaleBase));
+    let dy = (ev.clientY - (cy+cty*scaleBase));
     if (ctrlType === 'bbox00') {
-        dx = (cx + config.bbox.width[id] * scaleBase - ev.clientX);
-        dy = (cy + config.bbox.height[id] * scaleBase - ev.clientY);
+        dx = ctx - ev.clientX;
+        dy = cty - ev.clientY;
     } else if (ctrlType === 'bbox01') {
-        dx = (cx + config.bbox.width[id] * scaleBase - ev.clientX);
-        dy = (ev.clientY - cy);
+        dx = ctx - ev.clientX;
     } else if (ctrlType === 'bbox10') {
-        dx = (ev.clientX - cx);
-        dy = (cy + config.bbox.height[id] * scaleBase - ev.clientY);
+        dy = cty - ev.clientY;
     } else if (ctrlType === 'bbox11') {
-        dx = (ev.clientX - cx);
-        dy = (ev.clientY - cy);
+        // nop
     } else if (ctrlType === 'bbox22') {
         let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
         let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
@@ -198,7 +198,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             let cty = ev.clientY - config.ctrlable.initCenterY[id];
             config.ctrlable.currentCenterX[id] = ctx;
             config.ctrlable.currentCenterY[id] = cty;
-            setCenter(target, [ctx, cty]);
+            setCenter(target, [ctx+config.bbox.centerX[id], cty+config.bbox.centerY[id]]);
             let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
             for (let ci = 0; ci < centerList.length; ci++) {
                 setTranslate(centerList[ci].parentNode,[ctx,cty]);
@@ -208,6 +208,9 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             setRotate(target, rotate);
         } else if (info.type === 'scale') {
             let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
+            
+            console.log('dist:'+info.dist+' '+config.ctrlable.initScaleBase[id]+' '+config.ctrlable.scaleBase[id]);
+            
             setScale(target, [scale, scale]);
 
             let dxy = config.ctrlable.initScaleBase[id] - info.dist;
@@ -329,6 +332,8 @@ function createObject(svg, objectStr) {
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
+    config.ctrlable.currentCenterX[objid] =  config.bbox.centerX[objid];
+    config.ctrlable.currentCenterY[objid] =  config.bbox.centerY[objid];
     let ctx = config.bbox.centerX[objid];
     let cty = config.bbox.centerY[objid];
     setCenter(obj, [ctx, cty]);
@@ -390,9 +395,10 @@ function getRotate(polygon) {
 }
 function getCenter(polygon) {
     let mat = decomposeMatrix(polygon.getCTM());
+    /*
     if (mat.center[0] === 0 && mat.center[1] === 0) {
         return calcCenter(polygon);
-    }
+    }*/
     return mat.center;
 
     function calcCenter(polygon) {
