@@ -199,8 +199,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
             console.log(centerList.length);
             for (let ci = 0; ci < centerList.length; ci++) {
-                centerList[ci].parentNode.setAttribute('transform', `translate(${ctx},${cty})`);
-                //setTranslate(centerList[ci].parentNode,[ctx,cty]);
+                setTranslate(centerList[ci].parentNode,[ctx,cty]);
             }
         } else if (info.type === 'rotate') {
             let rotate = info.rotate;
@@ -345,8 +344,8 @@ function createObject(svg, objectStr) {
         <g><rect class="bbox_ctrl" style="display:none;" x="${x + width / 2 - 2}" y="${y + top}" width="${3}" height="${-top - 1}" /></g>
         <g><circle class="bbox_ctrl" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
         <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
-        <g><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + cty}" cy="${y + cty}" r="${size / 2}"/></g>
-        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + ctx}" cy="${y + cty}" r="${size / 2}"/></g>
+        <g transform="${transform}"><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + cty}" cy="${y + cty}" r="${size / 2}"/></g>
+        <g transform="${transform}"><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + ctx}" cy="${y + cty}" r="${size / 2}"/></g>
     `);
 }
 // rotate by drag
