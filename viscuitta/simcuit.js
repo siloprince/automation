@@ -65,9 +65,9 @@ function getCtrlInfo(ev, id) {
         dx = (ev.clientX - cx);
         dy = (ev.clientY - cy);
     } else if (ctrlType === 'bbox22') {
-        let xx = (cx + config.bbox.centerX[id] * scaleBase - ev.clientX);
+        let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX-10));
         let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
-        rot = Math.atan2(-xx, yy);
+        rot = Math.atan2(-xx, yy) * 180 / Math.PI;
         type = 'rotate';
     }
     console.log(rot + ' ' + dx + ' ' + dy);
@@ -79,29 +79,39 @@ function getCtrlInfo(ev, id) {
 }
 function enlarge(ev) {
     let ctrlObj = ev.target;
-    let x = parseInt(ctrlObj.getAttribute('x'), 10) - config.bbox.large;
-    let y = parseInt(ctrlObj.getAttribute('y'), 10) - config.bbox.large;
-    let width = parseInt(ctrlObj.getAttribute('width'), 10) + config.bbox.large * 2;
-    let height = parseInt(ctrlObj.getAttribute('height'), 10) + config.bbox.large * 2;
-    ctrlObj.setAttribute('x', x);
-    ctrlObj.setAttribute('y', y);
-    ctrlObj.setAttribute('width', width);
-    ctrlObj.setAttribute('height', height);
+    if (ctrlObj.tagName === 'rect') {
+        let x = parseInt(ctrlObj.getAttribute('x'), 10) - config.bbox.large;
+        let y = parseInt(ctrlObj.getAttribute('y'), 10) - config.bbox.large;
+        let width = parseInt(ctrlObj.getAttribute('width'), 10) + config.bbox.large * 2;
+        let height = parseInt(ctrlObj.getAttribute('height'), 10) + config.bbox.large * 2;
+        ctrlObj.setAttribute('x', x);
+        ctrlObj.setAttribute('y', y);
+        ctrlObj.setAttribute('width', width);
+        ctrlObj.setAttribute('height', height);
+    } else {
+        let r = parseInt(ctrlObj.getAttribute('r'), 10) + config.bbox.large;
+        ctrlObj.setAttribute('r', r);
+    }
     ctrlObj.setAttribute('style', 'fill:rgba(0,0,0,0);stroke:rgba(0,0,0,0);');
 }
 function ensmall(ev) {
     let ctrlObj = ev.target;
+    if (ctrlObj.tagName === 'rect') {
     let x = parseInt(ctrlObj.getAttribute('x'), 10) + config.bbox.large;
     let y = parseInt(ctrlObj.getAttribute('y'), 10) + config.bbox.large;
     let width = parseInt(ctrlObj.getAttribute('width'), 10) - config.bbox.large * 2;
     let height = parseInt(ctrlObj.getAttribute('height'), 10) - config.bbox.large * 2;
-    if (width<0 || height<0) {
+    if (width < 0 || height < 0) {
         return;
     }
     ctrlObj.setAttribute('x', x);
     ctrlObj.setAttribute('y', y);
     ctrlObj.setAttribute('width', width);
     ctrlObj.setAttribute('height', height);
+    } else {
+        let r = parseInt(ctrlObj.getAttribute('r'), 10) % config.bbox.large; 
+        ctrlObj.setAttribute('r', r);       
+    }
     ctrlObj.setAttribute('style', 'fill:#aaaaaa;stroke:#aaaaaa;');
 }
 function log() {
@@ -158,7 +168,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let info = getCtrlInfo(ev, id);
         if (info.type === 'rotate') {
             // TODO:
-            let rotate = 45;//info.rotate;
+            let rotate = info.rotate;
             setRotate(target, rotate);
             //setTranslate(target, [cx+0, cy+0]);
         } else if (info.type === 'scale') {
@@ -282,7 +292,7 @@ function createObject(svg, objectStr) {
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
-    setCenter(obj,[config.bbox.centerX[objid] ,config.bbox.centerY[objid] ]);
+    setCenter(obj, [config.bbox.centerX[objid], config.bbox.centerY[objid]]);
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
