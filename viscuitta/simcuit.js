@@ -46,32 +46,36 @@ createObject(svg, `<circle class="draggable" r="100" cx="100" cy="100"/>`);
 function getCtrlInfo(ev, id) {
     let ctrlTarget = ev.target;
     let ctrlType = ctrlTarget.getAttribute('ctrl');
-    let scaleBase =config.ctrlable.scaleBase[id];
+    let scaleBase = config.ctrlable.scaleBase[id];
     let cx = config.draggable.currentX[id];
     let cy = config.draggable.currentY[id];
     let dx, dy;
-    let rot=0;
+    let rot = 0;
+    let type = 'scale';
     if (ctrlType === 'bbox00') {
-        dx = (cx + config.bbox.width[id]*scaleBase - ev.clientX);
-        dy = (cy + config.bbox.height[id]*scaleBase - ev.clientY);
+        dx = (cx + config.bbox.width[id] * scaleBase - ev.clientX);
+        dy = (cy + config.bbox.height[id] * scaleBase - ev.clientY);
     } else if (ctrlType === 'bbox01') {
-        dx = (cx + config.bbox.width[id]*scaleBase - ev.clientX);
+        dx = (cx + config.bbox.width[id] * scaleBase - ev.clientX);
         dy = (ev.clientY - cy);
     } else if (ctrlType === 'bbox10') {
         dx = (ev.clientX - cx);
-        dy = (cy + config.bbox.height[id]*scaleBase - ev.clientY);
+        dy = (cy + config.bbox.height[id] * scaleBase - ev.clientY);
     } else if (ctrlType === 'bbox11') {
         dx = (ev.clientX - cx);
         dy = (ev.clientY - cy);
     } else if (ctrlType === 'bbox22') {
-        rot = 0;
+        let xx = (cx + config.bbox.centerX[id] * scaleBase - ev.clientX);
+        let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
+        rot = Math.atan2(-xx, yy);
+        type = 'rotate';
     }
-    //console.log(scaleBase+' '+dx+' '+dy);
+    console.log(rot + ' ' + dx + ' ' + dy);
     let dist = dx;
-    if (dx <dy) {
+    if (dx < dy) {
         dist = dy;
     }
-    return { dist: dist, rot: rot};
+    return { dist: dist, rotate: rot, type: type };
 }
 function enlarge(ev) {
     let ctrlObj = ev.target;
@@ -91,13 +95,16 @@ function ensmall(ev) {
     let y = parseInt(ctrlObj.getAttribute('y'), 10) + config.bbox.large;
     let width = parseInt(ctrlObj.getAttribute('width'), 10) - config.bbox.large * 2;
     let height = parseInt(ctrlObj.getAttribute('height'), 10) - config.bbox.large * 2;
+    if (width<0 || height<0) {
+        return;
+    }
     ctrlObj.setAttribute('x', x);
     ctrlObj.setAttribute('y', y);
     ctrlObj.setAttribute('width', width);
     ctrlObj.setAttribute('height', height);
     ctrlObj.setAttribute('style', 'fill:#aaaaaa;stroke:#aaaaaa;');
 }
-function log(){
+function log() {
     let id = 'obj0';
     let cx = config.draggable.currentX[id];
     let cy = config.draggable.currentY[id];
@@ -108,7 +115,7 @@ function log(){
     let isb = config.ctrlable.initScaleBase[id];
     let sb = config.ctrlable.scaleBase[id];
 
-    return('c=('+cx+' '+cy+') i=('+ix+' '+iy+') rb='+rb+' irb='+irb+' sb='+sb+' isb='+isb);
+    return ('c=(' + cx + ' ' + cy + ') i=(' + ix + ' ' + iy + ') rb=' + rb + ' irb=' + irb + ' sb=' + sb + ' isb=' + isb);
 }
 let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
 for (let ci = 0; ci < ctrlableList.length; ci++) {
@@ -131,9 +138,9 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         }
         enlarge(ev);
         let info = getCtrlInfo(ev, id);
-        config.ctrlable.initScaleBase[id] = info.dist;
-        // TODO:
-        config.ctrlable.initRotateBase[id] = 0.0;
+        if (info.type === 'scale') {
+            config.ctrlable.initScaleBase[id] = info.dist;
+        }
         config.ctrlable.state[id] = true;
         // TODO: multiselect
         for (let sk in config.ctrlable.state) {
@@ -146,36 +153,37 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         if (!config.ctrlable.state[id]) {
             return;
         }
-        let info = getCtrlInfo(ev, id);
-        let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
-        setScale(target, [scale, scale]);
-
-        // TODO:
-        let rotate = 0.0;
-        setRotate(target,rotate);
-
-        let dxy = config.ctrlable.initScaleBase[id] - info.dist;
-        let ctrlType = ev.target.getAttribute('ctrl');
         let cx = config.draggable.currentX[id];
         let cy = config.draggable.currentY[id];
-        if (ctrlType === 'bbox00') {
-            setTranslate(target, [cx+dxy, cy+dxy]);
-        } else if (ctrlType === 'bbox01') {
-            setTranslate(target, [cx+dxy, cy+0]);
-        } else if (ctrlType === 'bbox10') {
-            setTranslate(target, [cx+0, cy+dxy]);
-        } else if (ctrlType === 'bbox11') {
-            setTranslate(target, [cx+0, cy+0]);
-        } else if (ctrlType === 'bbox22') {
-            setTranslate(target, [cx+0, cy+0]);
+        let info = getCtrlInfo(ev, id);
+        if (info.type === 'rotate') {
+            // TODO:
+            let rotate = info.rotate;
+            setRotate(target, rotate);
+            //setTranslate(target, [cx+0, cy+0]);
+        } else if (info.type === 'scale') {
+            let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
+            setScale(target, [scale, scale]);
+
+            let dxy = config.ctrlable.initScaleBase[id] - info.dist;
+            let ctrlType = ev.target.getAttribute('ctrl');
+            if (ctrlType === 'bbox00') {
+                setTranslate(target, [cx + dxy, cy + dxy]);
+            } else if (ctrlType === 'bbox01') {
+                setTranslate(target, [cx + dxy, cy + 0]);
+            } else if (ctrlType === 'bbox10') {
+                setTranslate(target, [cx + 0, cy + dxy]);
+            } else if (ctrlType === 'bbox11') {
+                setTranslate(target, [cx + 0, cy + 0]);
+            }
         }
     }, false);
-    ctrlable.addEventListener('mouseup', function (ev) {
+    let mouseupout = function (ev) {
         let target = ev.target.parentNode.parentNode;
         let id = target.id;
         config.ctrlable.state[id] = false;
-        
-        let xy=getTranslate(target);
+
+        let xy = getTranslate(target);
         let ctrlType = ev.target.getAttribute('ctrl');
         if (ctrlType === 'bbox00') {
             config.draggable.currentX[id] = xy[0];
@@ -189,13 +197,15 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         } else if (ctrlType === 'bbox22') {
             // nop
         }
-        let scale=getScale(target);
-        config.ctrlable.scaleBase[id]=scale[0];
+        let scale = getScale(target);
+        config.ctrlable.scaleBase[id] = scale[0];
         // TODO:
-        let rotate=getRotate(target);
-        config.ctrlable.rotateBase[id]=rotate;
+        let rotate = getRotate(target);
+        config.ctrlable.rotateBase[id] = rotate;
         ensmall(ev);
-    }, false);
+    }
+    ctrlable.addEventListener('mouseup', mouseupout, false);
+    ctrlable.addEventListener('mouseout', mouseupout, false);
 }
 
 let draggableList = svg.querySelectorAll('.draggable');
@@ -227,8 +237,8 @@ for (let di = 0; di < draggableList.length; di++) {
             config.draggable.currentY[id] = 0;
             config.draggable.state[id] = true;
         } else if (!config.draggable.state[id]) {
-            config.draggable.initX[id] = ev.clientX-config.draggable.currentX[id];
-            config.draggable.initY[id] = ev.clientY-config.draggable.currentY[id];
+            config.draggable.initX[id] = ev.clientX - config.draggable.currentX[id];
+            config.draggable.initY[id] = ev.clientY - config.draggable.currentY[id];
             config.draggable.state[id] = true;
         }
         // TODO: multiselect
@@ -253,8 +263,8 @@ for (let di = 0; di < draggableList.length; di++) {
         let id = target.id;
         config.draggable.state[id] = false;
     }
-    draggable.addEventListener('mouseup',mouseupout, false);
-    draggable.addEventListener('mouseout',mouseupout, false);
+    draggable.addEventListener('mouseup', mouseupout, false);
+    draggable.addEventListener('mouseout', mouseupout, false);
 }
 function createObject(svg, objectStr) {
     let id = config.id++;
@@ -270,22 +280,22 @@ function createObject(svg, objectStr) {
     let top = -25;
     config.bbox.width[objid] = width;
     config.bbox.height[objid] = height;
-    config.bbox.centerX[objid] = width/2;
-    config.bbox.centerY[objid] = height/2;
+    config.bbox.centerX[objid] = width / 2;
+    config.bbox.centerY[objid] = height / 2;
     obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     obj.insertAdjacentHTML('beforeend', `
         <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y+height - size}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${x+width - size}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl" style="display:none;" x="${x+width - size}" y="${y+height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y + height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x + width - size}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl" style="display:none;" x="${x + width - size}" y="${y + height - size}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox00" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${y+height - size}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${x+width - size}" y="${y}" width="${size}" height="${size}"/></g>
-        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${x+width - size}" y="${y+height - size}" width="${size}" height="${size}"/></g>
-        <g><line class="bbox_ctrl" style="display:none;" x1="${x+width/2}" y1="${y+top}" x2="${x+width/2}" y2="${y}" /></g>
-        <g><circle class="bbox_ctrl" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
-        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x+width/2}" cy="${y+top}" r="${size/2}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox01" style="display:none;" x="${x}" y="${y + height - size}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox10" style="display:none;" x="${x + width - size}" y="${y}" width="${size}" height="${size}"/></g>
+        <g><rect class="bbox_ctrl bbox_ctrl_large" ctrl="bbox11" style="display:none;" x="${x + width - size}" y="${y + height - size}" width="${size}" height="${size}"/></g>
+        <g><line class="bbox_ctrl" style="display:none;" x1="${x + width / 2}" y1="${y + top}" x2="${x + width / 2}" y2="${y}" /></g>
+        <g><circle class="bbox_ctrl" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
+        <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
     `);
 }
 // rotate by drag
