@@ -28,7 +28,7 @@ var config = {
         state: {}
     }
 };
-document.currentScript.insertAdjacentHTML('afterend', `<svg width="600" height="600"></svg>`);
+document.currentScript.insertAdjacentHTML('afterend', `<svg width="1000" height="1000"></svg>`);
 let svg = document.querySelector('svg');
 // TODO: in case of cx!=100, cy!=100 
 
@@ -48,33 +48,28 @@ createObject(svg, `<circle class="draggable" r="100" cx="100" cy="100"/>`);
 // https://tympanus.net/Development/ElasticSVGElements/drag.html
 
 function getCtrlInfo(ev, id) {
+    let ret = {};
     let ctrlTarget = ev.target;
-    let ctrlType = ctrlTarget.getAttribute('ctrl');
     let scaleBase = config.ctrlable.scaleBase[id];
     let cx = config.draggable.currentX[id];
     let cy = config.draggable.currentY[id];
-    let rot = 0;
-    let ctx = config.ctrlable.currentCenterX[id];
-    let cty = config.ctrlable.currentCenterY[id];
-    let dx = (ev.clientX - (cx+ctx*scaleBase));
-    let dy = (ev.clientY - (cy+cty*scaleBase));
-    let type = 'scale';
+    let ctrlType = ctrlTarget.getAttribute('ctrl');
     if (ctrlType === 'bbox22') {
         let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
         let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
-        rot = Math.atan2(-xx, yy) * 180 / Math.PI;
-        type = 'rotate';
+        ret.rotate = Math.atan2(-xx, yy) * 180 / Math.PI;
+        ret.type = 'rotate';
     } else if (ctrlType === 'bbox33') {
-        let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
-        let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
-        rot = Math.atan2(-xx, yy) * 180 / Math.PI;
-        type = 'center';
+        ret.type = 'center';
+    } else {
+        ret.type = 'scale';
+        let ctx = config.ctrlable.currentCenterX[id];
+        let cty = config.ctrlable.currentCenterY[id];
+        let dx = (ev.clientX - (cx+ctx*scaleBase));
+        let dy = (ev.clientY - (cy+cty*scaleBase));
+        ret.dist = Math.min(Math.abs(dx),Math.abs(dy));
     }
-    let dist = dx;
-    if (dx < dy) {
-        dist = dy;
-    }
-    return { dist: dist, rotate: rot, type: type };
+    return ret;
 }
 function enlarge(ev) {
     let ctrlObj = ev.target;
