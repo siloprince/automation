@@ -65,9 +65,9 @@ function getCtrlInfo(ev, id) {
         ret.type = 'scale';
         let ctx = config.ctrlable.currentCenterX[id];
         let cty = config.ctrlable.currentCenterY[id];
-        let dx = (ev.clientX - (cx+ctx*scaleBase));
-        let dy = (ev.clientY - (cy+cty*scaleBase));
-        ret.dist = Math.min(Math.abs(dx),Math.abs(dy));
+        let dx = (ev.clientX - (cx + ctx * scaleBase));
+        let dy = (ev.clientY - (cy + cty * scaleBase));
+        ret.dist = Math.min(Math.abs(dx), Math.abs(dy));
     }
     return ret;
 }
@@ -159,7 +159,7 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
                 config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
                 config.ctrlable.centerState[id] = true;
             }
-            config.ctrlable.centerState[id]=true;
+            config.ctrlable.centerState[id] = true;
         }
         config.ctrlable.state[id] = true;
         // TODO: multiselect
@@ -177,26 +177,26 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
         let cy = config.draggable.currentY[id];
         let info = getCtrlInfo(ev, id);
         if (info.type === 'center') {
-            if (!config.ctrlable.centerState[id]){
+            if (!config.ctrlable.centerState[id]) {
                 return;
             }
             let ctx = ev.clientX - config.ctrlable.initCenterX[id];
             let cty = ev.clientY - config.ctrlable.initCenterY[id];
             config.ctrlable.currentCenterX[id] = ctx;
             config.ctrlable.currentCenterY[id] = cty;
-            setCenter(target, [ctx+config.bbox.centerX[id], cty+config.bbox.centerY[id]]);
+            setCenter(target, [ctx + config.bbox.centerX[id], cty + config.bbox.centerY[id]]);
             let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
             for (let ci = 0; ci < centerList.length; ci++) {
-                setTranslate(centerList[ci].parentNode,[ctx,cty]);
+                setTranslate(centerList[ci].parentNode, [ctx, cty]);
             }
         } else if (info.type === 'rotate') {
             let rotate = info.rotate;
             setRotate(target, rotate);
         } else if (info.type === 'scale') {
             let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
-            
-            console.log('dist:'+info.dist+' '+config.ctrlable.initScaleBase[id]+' '+config.ctrlable.scaleBase[id]);
-            
+
+            console.log('dist:' + info.dist + ' ' + config.ctrlable.initScaleBase[id] + ' ' + config.ctrlable.scaleBase[id]);
+
             setScale(target, [scale, scale]);
             setTranslate(target, [cx, cy]);
         }
@@ -226,11 +226,11 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
             // nop
         }
         let scale = getScale(target);
-        console.log('scale='+scale);
+        console.log('scale=' + scale);
         config.ctrlable.scaleBase[id] = scale[0];
         // TODO:
         let rotate = getRotate(target);
-        console.log('rotate='+rotate);
+        console.log('rotate=' + rotate);
         config.ctrlable.rotateBase[id] = rotate;
         ensmall(ev);
     }
@@ -238,66 +238,67 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
     ctrlable.addEventListener('mouseout', mouseupout, false);
 }
 
-let draggableList = svg.querySelectorAll('.draggable');
-// STATUS: draggable OK
-// TODO: make transparent large cover in case of mouseout
-// draggable
-// http://www.petercollingridge.co.uk/interactive-svg-components/draggable-svg-element
+let draggableList = svg.querySelectorAll('.draggable'); {
+    // STATUS: draggable OK
+    // TODO: make transparent large cover in case of mouseout
+    // draggable
+    // http://www.petercollingridge.co.uk/interactive-svg-components/draggable-svg-element
 
-for (let di = 0; di < draggableList.length; di++) {
-    let draggable = draggableList[di];
-    draggable.addEventListener('dblclick', function (ev) {
-        let target = ev.target.parentNode;
-        let id = target.id;
-        let bbox = target.querySelector('.bbox');
-        bbox.setAttribute('style', 'display:inline;fill:none;stroke:#11aaff;stroke-width:1pt;');
-        let ctrlList = target.querySelectorAll('.bbox_ctrl');
-        for (let ci = 0; ci < ctrlList.length; ci++) {
-            let ctrl = ctrlList[ci];
-            ctrl.setAttribute('style', 'display:inline;fill:#11aaff;stroke:#ffffff;stroke-width:1pt;');
-        }
-    }, false);
-    draggable.addEventListener('mousedown', function (ev) {
-        let target = ev.target.parentNode;
-        let id = target.id;
-        if (!(id in config.draggable.state)) {
-            config.draggable.initX[id] = ev.clientX;
-            config.draggable.initY[id] = ev.clientY;
-            config.draggable.currentX[id] = 0;
-            config.draggable.currentY[id] = 0;
-            config.draggable.state[id] = true;
-        } else if (!config.draggable.state[id]) {
-            config.draggable.initX[id] = ev.clientX - config.draggable.currentX[id];
-            config.draggable.initY[id] = ev.clientY - config.draggable.currentY[id];
-            config.draggable.state[id] = true;
-        }
-        // TODO: multiselect
-        for (let sk in config.draggable.state) {
-            config.draggable.state[sk] = (sk === id);
-        }
-    }, false);
-    draggable.addEventListener('mousemove', function (ev) {
-        let target = ev.target.parentNode;
-        let id = target.id;
-        if (!(id in config.draggable.state) || !config.draggable.state[id]) {
-            return;
-        }
-        let dx = ev.clientX - config.draggable.initX[id];
-        let dy = ev.clientY - config.draggable.initY[id];
-        config.draggable.currentX[id] = dx;
-        config.draggable.currentY[id] = dy;
-        setTranslate(target, [dx, dy]);
-    }, false);
-    let mouseupout = function (ev) {
-        let target = ev.target.parentNode;
-        let id = target.id;
-        if (!(id in config.draggable.state)) {
-            return;
-        }
-        config.draggable.state[id] = false;
+    for (let di = 0; di < draggableList.length; di++) {
+        let draggable = draggableList[di];
+        draggable.addEventListener('dblclick', function (ev) {
+            let target = ev.target.parentNode;
+            let id = target.id;
+            let bbox = target.querySelector('.bbox');
+            bbox.setAttribute('style', 'display:inline;fill:none;stroke:#11aaff;stroke-width:1pt;');
+            let ctrlList = target.querySelectorAll('.bbox_ctrl');
+            for (let ci = 0; ci < ctrlList.length; ci++) {
+                let ctrl = ctrlList[ci];
+                ctrl.setAttribute('style', 'display:inline;fill:#11aaff;stroke:#ffffff;stroke-width:1pt;');
+            }
+        }, false);
+        draggable.addEventListener('mousedown', function (ev) {
+            let target = ev.target.parentNode;
+            let id = target.id;
+            if (!(id in config.draggable.state)) {
+                config.draggable.initX[id] = ev.clientX;
+                config.draggable.initY[id] = ev.clientY;
+                config.draggable.currentX[id] = 0;
+                config.draggable.currentY[id] = 0;
+                config.draggable.state[id] = true;
+            } else if (!config.draggable.state[id]) {
+                config.draggable.initX[id] = ev.clientX - config.draggable.currentX[id];
+                config.draggable.initY[id] = ev.clientY - config.draggable.currentY[id];
+                config.draggable.state[id] = true;
+            }
+            // TODO: multiselect
+            for (let sk in config.draggable.state) {
+                config.draggable.state[sk] = (sk === id);
+            }
+        }, false);
+        draggable.addEventListener('mousemove', function (ev) {
+            let target = ev.target.parentNode;
+            let id = target.id;
+            if (!(id in config.draggable.state) || !config.draggable.state[id]) {
+                return;
+            }
+            let dx = ev.clientX - config.draggable.initX[id];
+            let dy = ev.clientY - config.draggable.initY[id];
+            config.draggable.currentX[id] = dx;
+            config.draggable.currentY[id] = dy;
+            setTranslate(target, [dx, dy]);
+        }, false);
+        let mouseupout = function (ev) {
+            let target = ev.target.parentNode;
+            let id = target.id;
+            if (!(id in config.draggable.state)) {
+                return;
+            }
+            config.draggable.state[id] = false;
+        };
+        draggable.addEventListener('mouseup', mouseupout, false);
+        draggable.addEventListener('mouseout', mouseupout, false);
     }
-    draggable.addEventListener('mouseup', mouseupout, false);
-    draggable.addEventListener('mouseout', mouseupout, false);
 }
 function createObject(svg, objectStr) {
     let id = config.id++;
@@ -315,8 +316,8 @@ function createObject(svg, objectStr) {
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
-    config.ctrlable.currentCenterX[objid] =  config.bbox.centerX[objid];
-    config.ctrlable.currentCenterY[objid] =  config.bbox.centerY[objid];
+    config.ctrlable.currentCenterX[objid] = config.bbox.centerX[objid];
+    config.ctrlable.currentCenterY[objid] = config.bbox.centerY[objid];
     let ctx = config.bbox.centerX[objid];
     let cty = config.bbox.centerY[objid];
     setCenter(obj, [ctx, cty]);
