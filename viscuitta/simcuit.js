@@ -204,10 +204,12 @@ for (let ci = 0; ci < ctrlableList.length; ci++) {
     let mouseupout = function (ev) {
         let target = ev.target.parentNode.parentNode;
         let id = target.id;
+        if (!(id in config.ctrlable.state)) {
+            return;
+        }
         config.ctrlable.state[id] = false;
         config.ctrlable.centerState[id] = false;
         let xy = getTranslate(target);
-        console.log('xy='+xy);
         let ctrlType = ev.target.getAttribute('ctrl');
         if (ctrlType === 'bbox00') {
             config.draggable.currentX[id] = xy[0];
@@ -282,9 +284,6 @@ for (let di = 0; di < draggableList.length; di++) {
         }
         let dx = ev.clientX - config.draggable.initX[id];
         let dy = ev.clientY - config.draggable.initY[id];
-        if (isNaN(dx)) {
-            return;
-        }
         config.draggable.currentX[id] = dx;
         config.draggable.currentY[id] = dy;
         setTranslate(target, [dx, dy]);
@@ -292,6 +291,9 @@ for (let di = 0; di < draggableList.length; di++) {
     let mouseupout = function (ev) {
         let target = ev.target.parentNode;
         let id = target.id;
+        if (!(id in config.draggable.state)) {
+            return;
+        }
         config.draggable.state[id] = false;
     }
     draggable.addEventListener('mouseup', mouseupout, false);
