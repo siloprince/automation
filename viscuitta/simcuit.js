@@ -124,120 +124,105 @@ function log() {
 
     return ('c=(' + cx + ' ' + cy + ') i=(' + ix + ' ' + iy + ') ct=(' + ctx + ',' + cty + ') ict=(' + ictx + ' ' + icty + ') rb=' + rb + ' sb=' + sb + ' isb=' + isb);
 }
-let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large');
-for (let ci = 0; ci < ctrlableList.length; ci++) {
-    let ctrlable = ctrlableList[ci];
-    ctrlable.addEventListener('mousedown', function (ev) {
-        let target = ev.target.parentNode.parentNode;
-        let id = target.id;
-        if (!(id in config.draggable.state)) {
-            config.draggable.state[id] = false;
-            config.draggable.initX[id] = 0;
-            config.draggable.initY[id] = 0;
-            config.draggable.currentX[id] = 0;
-            config.draggable.currentY[id] = 0;
-        }
-        if (!(id in config.ctrlable.scaleBase)) {
-            config.ctrlable.scaleBase[id] = 1.0;
-        }
-        if (!(id in config.ctrlable.rotateBase)) {
-            config.ctrlable.rotateBase[id] = 0.0;
-        }
-        enlarge(ev);
-        let info = getCtrlInfo(ev, id);
-        if (info.type === 'scale') {
-            config.ctrlable.initScaleBase[id] = info.dist;
-        } else if (info.type === 'center') {
-            if (!(id in config.ctrlable.centerState)) {
-                config.ctrlable.initCenterX[id] = ev.clientX;
-                config.ctrlable.initCenterY[id] = ev.clientY;
-                config.ctrlable.currentCenterX[id] = 0;
-                config.ctrlable.currentCenterY[id] = 0;
-                config.ctrlable.centerState[id] = true;
-            } else if (!config.ctrlable.centerState[id]) {
-                config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
-                config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
+let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
+    for (let ci = 0; ci < ctrlableList.length; ci++) {
+        let ctrlable = ctrlableList[ci];
+        ctrlable.addEventListener('mousedown', function (ev) {
+            let target = ev.target.parentNode.parentNode;
+            let id = target.id;
+            if (!(id in config.draggable.state)) {
+                config.draggable.state[id] = false;
+                config.draggable.initX[id] = 0;
+                config.draggable.initY[id] = 0;
+                config.draggable.currentX[id] = 0;
+                config.draggable.currentY[id] = 0;
+            }
+            if (!(id in config.ctrlable.scaleBase)) {
+                config.ctrlable.scaleBase[id] = 1.0;
+            }
+            if (!(id in config.ctrlable.rotateBase)) {
+                config.ctrlable.rotateBase[id] = 0.0;
+            }
+            enlarge(ev);
+            let info = getCtrlInfo(ev, id);
+            if (info.type === 'scale') {
+                config.ctrlable.initScaleBase[id] = info.dist;
+            } else if (info.type === 'center') {
+                if (!(id in config.ctrlable.centerState)) {
+                    config.ctrlable.initCenterX[id] = ev.clientX;
+                    config.ctrlable.initCenterY[id] = ev.clientY;
+                    config.ctrlable.currentCenterX[id] = 0;
+                    config.ctrlable.currentCenterY[id] = 0;
+                    config.ctrlable.centerState[id] = true;
+                } else if (!config.ctrlable.centerState[id]) {
+                    config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
+                    config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
+                    config.ctrlable.centerState[id] = true;
+                }
                 config.ctrlable.centerState[id] = true;
             }
-            config.ctrlable.centerState[id] = true;
-        }
-        config.ctrlable.state[id] = true;
-        // TODO: multiselect
-        for (let sk in config.ctrlable.state) {
-            config.ctrlable.state[sk] = (sk === id);
-        }
-    }, false);
-    ctrlable.addEventListener('mousemove', function (ev) {
-        let target = ev.target.parentNode.parentNode;
-        let id = target.id;
-        if (!config.ctrlable.state[id]) {
-            return;
-        }
-        let cx = config.draggable.currentX[id];
-        let cy = config.draggable.currentY[id];
-        let info = getCtrlInfo(ev, id);
-        if (info.type === 'center') {
-            if (!config.ctrlable.centerState[id]) {
+            config.ctrlable.state[id] = true;
+            // TODO: multiselect
+            for (let sk in config.ctrlable.state) {
+                config.ctrlable.state[sk] = (sk === id);
+            }
+        }, false);
+        ctrlable.addEventListener('mousemove', function (ev) {
+            let target = ev.target.parentNode.parentNode;
+            let id = target.id;
+            if (!config.ctrlable.state[id]) {
                 return;
             }
-            let ctx = ev.clientX - config.ctrlable.initCenterX[id];
-            let cty = ev.clientY - config.ctrlable.initCenterY[id];
-            config.ctrlable.currentCenterX[id] = ctx;
-            config.ctrlable.currentCenterY[id] = cty;
-            setCenter(target, [ctx + config.bbox.centerX[id], cty + config.bbox.centerY[id]]);
-            let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
-            for (let ci = 0; ci < centerList.length; ci++) {
-                setTranslate(centerList[ci].parentNode, [ctx, cty]);
+            let cx = config.draggable.currentX[id];
+            let cy = config.draggable.currentY[id];
+            let info = getCtrlInfo(ev, id);
+            if (info.type === 'center') {
+                if (!config.ctrlable.centerState[id]) {
+                    return;
+                }
+                let ctx = ev.clientX - config.ctrlable.initCenterX[id];
+                let cty = ev.clientY - config.ctrlable.initCenterY[id];
+                config.ctrlable.currentCenterX[id] = ctx;
+                config.ctrlable.currentCenterY[id] = cty;
+                setCenter(target, [ctx + config.bbox.centerX[id], cty + config.bbox.centerY[id]]);
+                let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
+                for (let ci = 0; ci < centerList.length; ci++) {
+                    setTranslate(centerList[ci].parentNode, [ctx, cty]);
+                }
+            } else if (info.type === 'rotate') {
+                let rotate = info.rotate;
+                setRotate(target, rotate);
+            } else if (info.type === 'scale') {
+                let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
+
+                console.log('dist:' + info.dist + ' ' + config.ctrlable.initScaleBase[id] + ' ' + config.ctrlable.scaleBase[id]);
+
+                setScale(target, [scale, scale]);
+                setTranslate(target, [cx, cy]);
             }
-        } else if (info.type === 'rotate') {
-            let rotate = info.rotate;
-            setRotate(target, rotate);
-        } else if (info.type === 'scale') {
-            let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
+        }, false);
+        let mouseupout = function (ev) {
+            let target = ev.target.parentNode.parentNode;
+            let id = target.id;
+            if (!(id in config.ctrlable.state)) {
+                return;
+            }
+            config.ctrlable.state[id] = false;
+            config.ctrlable.centerState[id] = false;
 
-            console.log('dist:' + info.dist + ' ' + config.ctrlable.initScaleBase[id] + ' ' + config.ctrlable.scaleBase[id]);
-
-            setScale(target, [scale, scale]);
-            setTranslate(target, [cx, cy]);
+            let scale = getScale(target);
+            console.log('scale=' + scale);
+            config.ctrlable.scaleBase[id] = scale[0];
+            // TODO:
+            let rotate = getRotate(target);
+            console.log('rotate=' + rotate);
+            config.ctrlable.rotateBase[id] = rotate;
+            ensmall(ev);
         }
-    }, false);
-    let mouseupout = function (ev) {
-        let target = ev.target.parentNode.parentNode;
-        let id = target.id;
-        if (!(id in config.ctrlable.state)) {
-            return;
-        }
-        config.ctrlable.state[id] = false;
-        config.ctrlable.centerState[id] = false;
-        let xy = getTranslate(target);
-        let ctrlType = ev.target.getAttribute('ctrl');
-        if (ctrlType === 'bbox00') {
-            config.draggable.currentX[id] = xy[0];
-            config.draggable.currentY[id] = xy[1];
-        } else if (ctrlType === 'bbox01') {
-            config.draggable.currentX[id] = xy[0];
-        } else if (ctrlType === 'bbox10') {
-            config.draggable.currentY[id] = xy[1];
-        } else if (ctrlType === 'bbox11') {
-            // nop
-        } else if (ctrlType === 'bbox22') {
-            // nop
-        } else if (ctrlType === 'bbox33') {
-            // nop
-        }
-        let scale = getScale(target);
-        console.log('scale=' + scale);
-        config.ctrlable.scaleBase[id] = scale[0];
-        // TODO:
-        let rotate = getRotate(target);
-        console.log('rotate=' + rotate);
-        config.ctrlable.rotateBase[id] = rotate;
-        ensmall(ev);
+        ctrlable.addEventListener('mouseup', mouseupout, false);
+        ctrlable.addEventListener('mouseout', mouseupout, false);
     }
-    ctrlable.addEventListener('mouseup', mouseupout, false);
-    ctrlable.addEventListener('mouseout', mouseupout, false);
 }
-
 let draggableList = svg.querySelectorAll('.draggable'); {
     // STATUS: draggable OK
     // TODO: make transparent large cover in case of mouseout
@@ -340,93 +325,92 @@ function createObject(svg, objectStr) {
     `);
 }
 // TODO : more conv functions
-{
-    function setTranslate(polygon, xy) {
-        polygon.transform.baseVal.getItem(0).setTranslate(xy[0], xy[1]);
-    }
-    function setCenter(polygon, xy) {
-        polygon.transform.baseVal.getItem(1).setTranslate(xy[0], xy[1]);
-        polygon.transform.baseVal.getItem(4).setTranslate(-xy[0], -xy[1]);
-    }
-    function setScale(polygon, xy) {
-        polygon.transform.baseVal.getItem(3).setScale(xy[0], xy[1]);
-    }
-    function setRotate(polygon, degree) {
-        polygon.transform.baseVal.getItem(2).setRotate(degree, 0, 0);
-    }
-    function getTranslate(polygon) {
-        let mat = decomposeMatrix(polygon.getCTM());
-        return mat.translate;
-    }
-    function getScale(polygon) {
-        let mat = decomposeMatrix(polygon.getCTM());
-        return mat.scale;
-    }
-    function getRotate(polygon) {
-        let mat = decomposeMatrix(polygon.getCTM());
-        return mat.rotate;
-    }
-    function getCenter(polygon) {
-        let mat = decomposeMatrix(polygon.getCTM());
-        /*
-        if (mat.center[0] === 0 && mat.center[1] === 0) {
-            return calcCenter(polygon);
-        }*/
-        return mat.center;
 
-        function calcCenter(polygon) {
-            let pointsStr = polygon.getAttribute('points');
-            let pointList = pointsStr.split(',');
-            let sumx = 0;
-            let sumy = 0;
-            for (let pi = 0; pi < pointList.length; pi++) {
-                let xy = pointList[pi].split(/\s+/);
-                sumx += parseFloat(xy[0]);
-                sumy += parseFloat(xy[1]);
-            }
-            return [sumx / pointList.length, sumy / pointList.length];
+function setTranslate(polygon, xy) {
+    polygon.transform.baseVal.getItem(0).setTranslate(xy[0], xy[1]);
+}
+function setCenter(polygon, xy) {
+    polygon.transform.baseVal.getItem(1).setTranslate(xy[0], xy[1]);
+    polygon.transform.baseVal.getItem(4).setTranslate(-xy[0], -xy[1]);
+}
+function setScale(polygon, xy) {
+    polygon.transform.baseVal.getItem(3).setScale(xy[0], xy[1]);
+}
+function setRotate(polygon, degree) {
+    polygon.transform.baseVal.getItem(2).setRotate(degree, 0, 0);
+}
+function getTranslate(polygon) {
+    let mat = decomposeMatrix(polygon.getCTM());
+    return mat.translate;
+}
+function getScale(polygon) {
+    let mat = decomposeMatrix(polygon.getCTM());
+    return mat.scale;
+}
+function getRotate(polygon) {
+    let mat = decomposeMatrix(polygon.getCTM());
+    return mat.rotate;
+}
+function getCenter(polygon) {
+    let mat = decomposeMatrix(polygon.getCTM());
+    /*
+    if (mat.center[0] === 0 && mat.center[1] === 0) {
+        return calcCenter(polygon);
+    }*/
+    return mat.center;
+
+    function calcCenter(polygon) {
+        let pointsStr = polygon.getAttribute('points');
+        let pointList = pointsStr.split(',');
+        let sumx = 0;
+        let sumy = 0;
+        for (let pi = 0; pi < pointList.length; pi++) {
+            let xy = pointList[pi].split(/\s+/);
+            sumx += parseFloat(xy[0]);
+            sumy += parseFloat(xy[1]);
         }
+        return [sumx / pointList.length, sumy / pointList.length];
     }
-    function decomposeMatrix(matrix) {
-        // @see https://gist.github.com/2052247
+}
+function decomposeMatrix(matrix) {
+    // @see https://gist.github.com/2052247
 
-        // calculate delta transform point
-        let px = deltaTransformPoint(matrix, { x: 0, y: 1 });
-        let py = deltaTransformPoint(matrix, { x: 1, y: 0 });
+    // calculate delta transform point
+    let px = deltaTransformPoint(matrix, { x: 0, y: 1 });
+    let py = deltaTransformPoint(matrix, { x: 1, y: 0 });
 
-        // calculate skew
-        let skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
-        let skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
+    // calculate skew
+    let skewX = ((180 / Math.PI) * Math.atan2(px.y, px.x) - 90);
+    let skewY = ((180 / Math.PI) * Math.atan2(py.y, py.x));
 
-        let cx = 0;
-        let cy = 0;
-        let base = (-matrix.a * matrix.d + matrix.a + matrix.b * matrix.c + matrix.d - 1);
+    let cx = 0;
+    let cy = 0;
+    let base = (-matrix.a * matrix.d + matrix.a + matrix.b * matrix.c + matrix.d - 1);
 
-        cx = ((matrix.d - 1) * matrix.e - matrix.c * matrix.f) / base;
-        cy = ((matrix.a - 1) * matrix.f - matrix.b * matrix.e) / base;
-        if (isNaN(cx)) {
-            cx = 0;
-            cy = 0;
-        }
-        return {
-            translate: [
-                matrix.e,
-                matrix.f
-            ],
-            scale: [
-                Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b),
-                Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d)
-            ],
-            skew: [skewX, skewY],
-            rotate: skewX,
-            center: [cx, cy]
-            // rotation is the same as skew x
-        };
-        function deltaTransformPoint(matrix, point) {
+    cx = ((matrix.d - 1) * matrix.e - matrix.c * matrix.f) / base;
+    cy = ((matrix.a - 1) * matrix.f - matrix.b * matrix.e) / base;
+    if (isNaN(cx)) {
+        cx = 0;
+        cy = 0;
+    }
+    return {
+        translate: [
+            matrix.e,
+            matrix.f
+        ],
+        scale: [
+            Math.sqrt(matrix.a * matrix.a + matrix.b * matrix.b),
+            Math.sqrt(matrix.c * matrix.c + matrix.d * matrix.d)
+        ],
+        skew: [skewX, skewY],
+        rotate: skewX,
+        center: [cx, cy]
+        // rotation is the same as skew x
+    };
+    function deltaTransformPoint(matrix, point) {
 
-            let dx = point.x * matrix.a + point.y * matrix.c + 0;
-            let dy = point.x * matrix.b + point.y * matrix.d + 0;
-            return { x: dx, y: dy };
-        }
+        let dx = point.x * matrix.a + point.y * matrix.c + 0;
+        let dy = point.x * matrix.b + point.y * matrix.d + 0;
+        return { x: dx, y: dy };
     }
 }
