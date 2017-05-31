@@ -67,7 +67,7 @@ function getCtrlInfo(ev, id) {
         let cty = config.ctrlable.currentCenterY[id];
         let dx = (ev.clientX - (cx + ctx * scaleBase));
         let dy = (ev.clientY - (cy + cty * scaleBase));
-        ret.dist = Math.min(Math.abs(dx), Math.abs(dy));
+        ret.dist = Math.max(Math.abs(dx), Math.abs(dy));
     }
     return ret;
 }
