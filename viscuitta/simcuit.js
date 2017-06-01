@@ -325,7 +325,6 @@ function createObject(svg, objectStr) {
     let ctx = config.bbox.centerX[objid];
     let cty = config.bbox.centerY[objid];
     let top = -25;
-    setCenter(obj, [ctx, cty]);
     adj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
     adj.insertAdjacentHTML('beforeend', `
