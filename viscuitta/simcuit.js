@@ -128,14 +128,15 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
     for (let ci = 0; ci < ctrlableList.length; ci++) {
         let ctrlable = ctrlableList[ci];
         ctrlable.addEventListener('mousedown', function (ev) {
-            let target = ev.target.parentNode.parentNode;
+            let target = ev.target.parentNode.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.draggable.state)) {
                 config.draggable.state[id] = false;
                 config.draggable.initX[id] = 0;
                 config.draggable.initY[id] = 0;
-                config.draggable.currentX[id] = 0;
-                config.draggable.currentY[id] = 0;
+                let cxy = getTranslate(target);
+                config.draggable.currentX[id] = cxy[0];
+                config.draggable.currentY[id] = cxy[1];
             }
             if (!(id in config.ctrlable.scaleBase)) {
                 config.ctrlable.scaleBase[id] = 1.0;
@@ -168,7 +169,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             enlarge(ev);
         }, false);
         ctrlable.addEventListener('mousemove', function (ev) {
-            let target = ev.target.parentNode.parentNode;
+            let target = ev.target.parentNode.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.ctrlable.state) || !config.ctrlable.state[id]) {
                 return;
@@ -207,7 +208,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             }
         }, false);
         let mouseupout = function (ev) {
-            let target = ev.target.parentNode.parentNode;
+            let target = ev.target.parentNode.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.ctrlable.state)) {
                 return;
@@ -240,7 +241,7 @@ let draggableList = svg.querySelectorAll('.draggable'); {
     for (let di = 0; di < draggableList.length; di++) {
         let draggable = draggableList[di];
         draggable.addEventListener('dblclick', function (ev) {
-            let target = ev.target.parentNode;
+            let target = ev.target.parentNode.parentNode;
             let id = target.id;
             let bbox = target.querySelector('.bbox');
             bbox.setAttribute('style', 'display:inline;fill:none;stroke:#11aaff;stroke-width:1pt;');
@@ -251,13 +252,14 @@ let draggableList = svg.querySelectorAll('.draggable'); {
             }
         }, false);
         draggable.addEventListener('mousedown', function (ev) {
-            let target = ev.target.parentNode;
+            let target = ev.target.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.draggable.state)) {
                 config.draggable.initX[id] = ev.clientX;
                 config.draggable.initY[id] = ev.clientY;
-                config.draggable.currentX[id] = 0;
-                config.draggable.currentY[id] = 0;
+                let cxy = getTranslate(target);
+                config.draggable.currentX[id] = cxy[0];
+                config.draggable.currentY[id] = cxy[1];
                 config.draggable.state[id] = true;
             } else if (!config.draggable.state[id]) {
                 config.draggable.initX[id] = ev.clientX - config.draggable.currentX[id];
@@ -270,7 +272,7 @@ let draggableList = svg.querySelectorAll('.draggable'); {
             }
         }, false);
         draggable.addEventListener('mousemove', function (ev) {
-            let target = ev.target.parentNode;
+            let target = ev.target.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.draggable.state) || !config.draggable.state[id]) {
                 return;
@@ -282,7 +284,7 @@ let draggableList = svg.querySelectorAll('.draggable'); {
             setTranslate(target, [dx, dy]);
         }, false);
         let mouseupout = function (ev) {
-            let target = ev.target.parentNode;
+            let target = ev.target.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.draggable.state)) {
                 return;
@@ -298,28 +300,35 @@ function createObject(svg, objectStr) {
     let id = config.id++;
     let objid = 'obj' + id;
     let transform = 'translate(0,0)translate(0,0)rotate(0)scale(1,1)translate(0,0)';
-    svg.insertAdjacentHTML('beforeend', `<g id="${objid}" transform="${transform}">${objectStr}</g>`);
+    svg.insertAdjacentHTML('beforeend', `<g id="${objid}" transform="${transform}"><g id="adj${id}" transform="${transform}">${objectStr}</g></g>`);
     let obj = svg.querySelector(`g#obj${id}`);
     let bbox = obj.getBBox();
     let x = bbox.x;
     let y = bbox.y;
     let width = bbox.width;
     let height = bbox.height;
-    let top = -25;
     config.bbox.width[objid] = width;
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
+
+    let adj = obj.querySelector(`g#adj${id}`);
+    let mv = [-x-config.bbox.centerX[objid],-y-config.bbox.centerY[objid]];
+    setTranslate(adj,mv);
+    setTranslate(obj,[-mv[0],-mv[1]]);
+    console.log(mv);
+    updateTranslate(obj,id);
     config.ctrlable.initCenterX[objid] = config.bbox.centerX[objid];
     config.ctrlable.initCenterY[objid] = config.bbox.centerY[objid];
     config.ctrlable.currentCenterX[objid] = 0;
     config.ctrlable.currentCenterY[objid] = 0;
     let ctx = config.bbox.centerX[objid];
     let cty = config.bbox.centerY[objid];
+    let top = -25;
     setCenter(obj, [ctx, cty]);
-    obj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
+    adj.insertAdjacentHTML('afterbegin', `<rect class="bbox" style="display:none;" x="${x}" y="${y}" width="${width}" height="${height}"/>`);
     let size = config.bbox.size;
-    obj.insertAdjacentHTML('beforeend', `
+    adj.insertAdjacentHTML('beforeend', `
         <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl" style="display:none;" x="${x}" y="${y + height - size}" width="${size}" height="${size}"/></g>
         <g><rect class="bbox_ctrl" style="display:none;" x="${x + width - size}" y="${y}" width="${size}" height="${size}"/></g>
