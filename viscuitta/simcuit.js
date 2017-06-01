@@ -184,6 +184,11 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
                 config.ctrlable.currentCenterY[id] = cty;
                 let cxy = [ctx, cty];
                 setCenter(target, cxy);
+                if(false) {
+                    // TODO
+                    setRotate(target,0);
+                    setTranslate(target,[0,0]);
+                }
                 let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                 for (let ci = 0; ci < centerList.length; ci++) {
                     // TODO:
