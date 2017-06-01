@@ -255,9 +255,9 @@ let draggableList = svg.querySelectorAll('.draggable'); {
             let target = ev.target.parentNode.parentNode;
             let id = target.id;
             if (!(id in config.draggable.state)) {
-                config.draggable.initX[id] = ev.clientX;
-                config.draggable.initY[id] = ev.clientY;
                 let cxy = getTranslate(target);
+                config.draggable.initX[id] = -cxy[0]+ev.clientX;
+                config.draggable.initY[id] = -cxy[1]+ev.clientY;
                 config.draggable.currentX[id] = cxy[0];
                 config.draggable.currentY[id] = cxy[1];
                 config.draggable.state[id] = true;
