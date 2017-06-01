@@ -225,8 +225,8 @@ function updateTranslate(target,id) {
     console.log('ctr='+ctr);
     console.log('dxy='+dxy);
     // similar but different
-    config.draggable.currentX[id] = dxy[0]- scale*ctr[0];
-    config.draggable.currentY[id] = dxy[1]- scale*ctr[1];
+    config.draggable.currentX[id] = dxy[0]+ scale*ctr[0];
+    config.draggable.currentY[id] = dxy[1]+ scale*ctr[1];
 }
 let draggableList = svg.querySelectorAll('.draggable'); {
     // STATUS: draggable OK
