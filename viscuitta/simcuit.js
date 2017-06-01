@@ -197,14 +197,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
                 setRotate(target, rotate);
             } else if (info.type === 'scale') {
                 let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
-
-                //console.log('dist:' + info.dist + ' ' + config.ctrlable.initScaleBase[id] + ' ' + config.ctrlable.scaleBase[id]);
-
                 setScale(target, [scale, scale]);
-
-                let cx = config.draggable.currentX[id];
-                let cy = config.draggable.currentY[id];
-                setTranslate(target, [cx, cy]);
             }
         }, false);
         let mouseupout = function (ev) {
