@@ -219,8 +219,14 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
 }
 function updateTranslate(target,id) {
     let dxy = getTranslate(target);
-    config.draggable.currentX[id] = dxy[0];
-    config.draggable.currentY[id] = dxy[1];
+    let scale = getScale(target)[0];
+    let ctr = [config.ctrlable.currentCenterX[id],config.ctrlable.currentCenterY[id]]; 
+    console.log('scale='+scale);
+    console.log('ctr='+ctr);
+    console.log('dxy='+dxy);
+    // similar but different
+    config.draggable.currentX[id] = dxy[0]- scale*ctr[0];
+    config.draggable.currentY[id] = dxy[1]- scale*ctr[1];
 }
 let draggableList = svg.querySelectorAll('.draggable'); {
     // STATUS: draggable OK
