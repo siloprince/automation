@@ -221,6 +221,8 @@
                     let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                     for (let ci = 0; ci < centerList.length; ci++) {
                         // TODO:
+                        //setCenter(centerList[ci].parentNode, [ctx, cty]);
+                        //setRotate(centerList[ci].parentNode, mat.rotate);
                         setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
                     }
                 } else if (info.type === 'rotate') {
