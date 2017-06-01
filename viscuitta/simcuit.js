@@ -55,8 +55,8 @@ function getCtrlInfo(ev, id) {
     let cy = config.draggable.currentY[id];
     let ctrlType = ctrlTarget.getAttribute('ctrl');
     if (ctrlType === 'bbox22') {
-        let xx = (cx + config.bbox.centerX[id] * scaleBase - (ev.clientX - 10));
-        let yy = (cy + config.bbox.centerY[id] * scaleBase - ev.clientY);
+        let xx = (cx  - (ev.clientX - 10));
+        let yy = (cy  - ev.clientY);
         ret.rotate = Math.atan2(-xx, yy) * 180 / Math.PI;
         ret.type = 'rotate';
     } else if (ctrlType === 'bbox33') {
