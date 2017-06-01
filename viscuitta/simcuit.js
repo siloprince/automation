@@ -143,7 +143,6 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             if (!(id in config.ctrlable.rotateBase)) {
                 config.ctrlable.rotateBase[id] = 0.0;
             }
-            enlarge(ev);
             let info = getCtrlInfo(ev, id);
             if (info.type === 'scale') {
                 config.ctrlable.initScaleBase[id] = info.dist;
@@ -166,15 +165,14 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             for (let sk in config.ctrlable.state) {
                 config.ctrlable.state[sk] = (sk === id);
             }
+            enlarge(ev);
         }, false);
         ctrlable.addEventListener('mousemove', function (ev) {
             let target = ev.target.parentNode.parentNode;
             let id = target.id;
-            if (!config.ctrlable.state[id]) {
+            if (!(id in config.ctrlable.state) || !config.ctrlable.state[id]) {
                 return;
             }
-            let cx = config.draggable.currentX[id];
-            let cy = config.draggable.currentY[id];
             let info = getCtrlInfo(ev, id);
             if (info.type === 'center') {
                 if (!config.ctrlable.centerState[id]) {
@@ -184,9 +182,13 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
                 let cty = ev.clientY - config.ctrlable.initCenterY[id];
                 config.ctrlable.currentCenterX[id] = ctx;
                 config.ctrlable.currentCenterY[id] = cty;
-                setCenter(target, [ctx + config.bbox.centerX[id], cty + config.bbox.centerY[id]]);
+                // TODO
+                let cxy = [ctx + config.bbox.centerX[id], cty + config.bbox.centerY[id]];
+
+                setCenter(target, cxy);
                 let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                 for (let ci = 0; ci < centerList.length; ci++) {
+                    // TODO:
                     setTranslate(centerList[ci].parentNode, [ctx, cty]);
                 }
             } else if (info.type === 'rotate') {
@@ -195,9 +197,12 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             } else if (info.type === 'scale') {
                 let scale = info.dist / config.ctrlable.initScaleBase[id] * config.ctrlable.scaleBase[id];
 
-                console.log('dist:' + info.dist + ' ' + config.ctrlable.initScaleBase[id] + ' ' + config.ctrlable.scaleBase[id]);
+                //console.log('dist:' + info.dist + ' ' + config.ctrlable.initScaleBase[id] + ' ' + config.ctrlable.scaleBase[id]);
 
                 setScale(target, [scale, scale]);
+
+                let cx = config.draggable.currentX[id];
+                let cy = config.draggable.currentY[id];
                 setTranslate(target, [cx, cy]);
             }
         }, false);
@@ -209,19 +214,22 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             }
             config.ctrlable.state[id] = false;
             config.ctrlable.centerState[id] = false;
-
             let scale = getScale(target);
-            console.log('scale=' + scale);
             config.ctrlable.scaleBase[id] = scale[0];
-            // TODO:
             let rotate = getRotate(target);
-            console.log('rotate=' + rotate);
             config.ctrlable.rotateBase[id] = rotate;
             ensmall(ev);
+            updateTranslate(target,id);
+            console.log(log());
         }
         ctrlable.addEventListener('mouseup', mouseupout, false);
         ctrlable.addEventListener('mouseout', mouseupout, false);
     }
+}
+function updateTranslate(target,id) {
+    let dxy = getTranslate(target);
+    config.draggable.currentX[id] = dxy[0];
+    config.draggable.currentY[id] = dxy[1];
 }
 let draggableList = svg.querySelectorAll('.draggable'); {
     // STATUS: draggable OK
@@ -280,6 +288,7 @@ let draggableList = svg.querySelectorAll('.draggable'); {
                 return;
             }
             config.draggable.state[id] = false;
+            console.log(log());
         };
         draggable.addEventListener('mouseup', mouseupout, false);
         draggable.addEventListener('mouseout', mouseupout, false);
@@ -301,8 +310,10 @@ function createObject(svg, objectStr) {
     config.bbox.height[objid] = height;
     config.bbox.centerX[objid] = width / 2;
     config.bbox.centerY[objid] = height / 2;
-    config.ctrlable.currentCenterX[objid] = config.bbox.centerX[objid];
-    config.ctrlable.currentCenterY[objid] = config.bbox.centerY[objid];
+    config.ctrlable.initCenterX[objid] = config.bbox.centerX[objid];
+    config.ctrlable.initCenterY[objid] = config.bbox.centerY[objid];
+    config.ctrlable.currentCenterX[objid] = 0;
+    config.ctrlable.currentCenterY[objid] = 0;
     let ctx = config.bbox.centerX[objid];
     let cty = config.bbox.centerY[objid];
     setCenter(obj, [ctx, cty]);
