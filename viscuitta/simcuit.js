@@ -210,23 +210,11 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             let rotate = getRotate(target);
             config.ctrlable.rotateBase[id] = rotate;
             ensmall(ev);
-            updateTranslate(target,id);
             console.log(log());
         };
         ctrlable.addEventListener('mouseup', mouseupout, false);
         ctrlable.addEventListener('mouseout', mouseupout, false);
     }
-}
-function updateTranslate(target,id) {
-    let dxy = getTranslate(target);
-    let scale = getScale(target)[0];
-    let ctr = [config.ctrlable.currentCenterX[id],config.ctrlable.currentCenterY[id]]; 
-    console.log('scale='+scale);
-    console.log('ctr='+ctr);
-    console.log('dxy='+dxy);
-    // similar but different
-    config.draggable.currentX[id] = dxy[0]+ scale*ctr[0];
-    config.draggable.currentY[id] = dxy[1]+ scale*ctr[1];
 }
 let draggableList = svg.querySelectorAll('.draggable'); {
     // STATUS: draggable OK
@@ -309,15 +297,17 @@ function createObject(svg, objectStr) {
     config.bbox.centerY[objid] = height / 2;
 
     let adj = obj.querySelector(`g#adj${id}`);
-    let mv = [-x-config.bbox.centerX[objid],-y-config.bbox.centerY[objid]];
+
+    config.draggable.currentX[id] = -x-config.bbox.centerX[objid];
+    config.draggable.currentY[id] = -y-config.bbox.centerY[objid];
+    let mv = [config.draggable.currentX[id],config.draggable.currentY[id]];
     setTranslate(adj,mv);
     setTranslate(obj,[-mv[0],-mv[1]]);
-    console.log(mv);
-    updateTranslate(obj,id);
     config.ctrlable.initCenterX[objid] = config.bbox.centerX[objid];
     config.ctrlable.initCenterY[objid] = config.bbox.centerY[objid];
     config.ctrlable.currentCenterX[objid] = 0;
     config.ctrlable.currentCenterY[objid] = 0;
+    
     let ctx = config.bbox.centerX[objid];
     let cty = config.bbox.centerY[objid];
     let top = -25;
