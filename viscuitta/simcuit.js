@@ -153,11 +153,9 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
                     config.ctrlable.initCenterY[id] = ev.clientY;
                     config.ctrlable.currentCenterX[id] = 0;
                     config.ctrlable.currentCenterY[id] = 0;
-                    config.ctrlable.centerState[id] = true;
                 } else if (!config.ctrlable.centerState[id]) {
                     config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
                     config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
-                    config.ctrlable.centerState[id] = true;
                 }
                 config.ctrlable.centerState[id] = true;
             }
@@ -165,6 +163,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             // TODO: multiselect
             for (let sk in config.ctrlable.state) {
                 config.ctrlable.state[sk] = (sk === id);
+                config.ctrlable.centerState[sk] = (sk === id);
             }
             enlarge(ev);
         }, false);
@@ -176,7 +175,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             }
             let info = getCtrlInfo(ev, id);
             if (info.type === 'center') {
-                if (!config.ctrlable.centerState[id]) {
+                if (!(id in config.ctrlable.centerState) || !config.ctrlable.centerState[id]) {
                     return;
                 }
                 let ctx = ev.clientX - config.ctrlable.initCenterX[id];
@@ -215,7 +214,7 @@ let ctrlableList = svg.querySelectorAll('.bbox_ctrl_large'); {
             ensmall(ev);
             updateTranslate(target,id);
             console.log(log());
-        }
+        };
         ctrlable.addEventListener('mouseup', mouseupout, false);
         ctrlable.addEventListener('mouseout', mouseupout, false);
     }
