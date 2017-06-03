@@ -196,16 +196,19 @@
                     let mat = decomposeMatrix(config.mtx.getCTM());
                     let dx = config.draggable.currentX[id] - mat.translate[0];
                     let dy = config.draggable.currentY[id] - mat.translate[1];
-                    console.log('>'+dx + ' ' + dy);
+
+                    console.log('cxy'+config.draggable.currentX[id]+' '+config.draggable.currentY[id]+' '+config.bbox.centerX[id]+' '+config.bbox.centerY[id]);
 
                     let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                     for (let ci = 0; ci < centerList.length; ci++) {
                         // TODO:
-                        //setCenter(centerList[ci].parentNode, [ctx, cty]);
+                        //setCenter(centerList[ci].parentNode, [dx,dy]);
+                        //setScale(centerList[ci].parentNode, [1/scale,1/scale]);
                         //setRotate(centerList[ci].parentNode, mat.rotate);
-                        //setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
+                        //setTranslate(centerList[ci].parentNode, [ctx, cty]);
                         setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
                     }
+                    console.log('ev:'+ev.clientX+' '+ev.clientX+' '+(ctx-dx)+' '+(cty-dy));
                     setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
                     setCenter(target,[ctx/scale,cty/scale]);
                 } else if (info.type === 'rotate') {
