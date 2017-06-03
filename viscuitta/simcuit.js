@@ -157,11 +157,9 @@
                         config.ctrlable.initCenterY[id] = ev.clientY;
                         config.ctrlable.currentCenterX[id] = 0;
                         config.ctrlable.currentCenterY[id] = 0;
-                        console.log(config.ctrlable.initCenterX[id]+' '+config.ctrlable.initCenterY[id]+', 0 0');
                     } else if (!config.ctrlable.centerState[id]) {
                         config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
                         config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
-                        console.log('xxxxx');
                     }
                     config.ctrlable.centerState[id] = true;
                 }
@@ -225,11 +223,17 @@
                     return;
                 }
                 config.ctrlable.state[id] = false;
+                let scale = getScale(target)[0];
                 if (id in config.ctrlable.centerState) {
+                    var xy = getTranslate(target);
+                    config.draggable.currentX[id] = xy[0];
+                    config.draggable.currentY[id] = xy[1];
+                    //var ct = getCenter(target);
+                    
+                    console.log(config.ctrlable.currentCenterX[id]+' '+config.ctrlable.currentCenterY[id]);
                     config.ctrlable.centerState[id] = false;
                 }
-                let scale = getScale(target);
-                config.ctrlable.scaleBase[id] = scale[0];
+                config.ctrlable.scaleBase[id] = scale;
                 let rotate = getRotate(target);
                 config.ctrlable.rotateBase[id] = rotate;
                 ensmall(ev);
