@@ -191,7 +191,7 @@
                     config.ctrlable.currentCenterX[id] = ctx;
                     config.ctrlable.currentCenterY[id] = cty;
 
-                        console.log(ctx+' '+cty);
+                    //console.log(ctx+' '+cty);
                     let cxy = [ctx, cty];
                     /*
                     setTranslate(config.mtx, getTranslate(target));
@@ -215,21 +215,22 @@
 
                     let dx = config.draggable.currentX[id] - mat.translate[0];
                     let dy = config.draggable.currentY[id] - mat.translate[1];
-                    //console.log(dx + ' ' + dy);
+                    console.log(dx + ' ' + dy);
                     //console.log((mat.translate[0] + dx) + ' ' + (mat.translate[1] + dy));
-                    setTranslate(config.mtx, [mat.translate[0] + dx, mat.translate[1] + dy]);
+                    //setTranslate(config.mtx, [mat.translate[0] + dx, mat.translate[1] + dy]);
                     //config.ctrlable.initCenterX[id]+=dx;
                     //config.ctrlable.initCenterX[id]+=dy;
                     //config.draggable.currentX[id]+=dx;
                     //config.draggable.currentY[id]+=dy;
-                    setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
+                    //setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
 
                     let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                     for (let ci = 0; ci < centerList.length; ci++) {
                         // TODO:
                         //setCenter(centerList[ci].parentNode, [ctx, cty]);
                         //setRotate(centerList[ci].parentNode, mat.rotate);
-                        setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
+                        //setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
+                        setTranslate(centerList[ci].parentNode, [ctx, cty]);
                     }
                 } else if (info.type === 'rotate') {
                     let rotate = info.rotate;
