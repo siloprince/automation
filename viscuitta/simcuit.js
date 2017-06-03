@@ -157,9 +157,11 @@
                         config.ctrlable.initCenterY[id] = ev.clientY;
                         config.ctrlable.currentCenterX[id] = 0;
                         config.ctrlable.currentCenterY[id] = 0;
+                        console.log(config.ctrlable.initCenterX[id]+' '+config.ctrlable.initCenterY[id]+', 0 0');
                     } else if (!config.ctrlable.centerState[id]) {
                         config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
                         config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
+                        console.log('xxxxx');
                     }
                     config.ctrlable.centerState[id] = true;
                 }
@@ -167,6 +169,8 @@
                 // TODO: multiselect
                 for (let sk in config.ctrlable.state) {
                     config.ctrlable.state[sk] = (sk === id);
+                }
+                for (let sk in config.ctrlable.centerState) {
                     config.ctrlable.centerState[sk] = (sk === id);
                 }
                 enlarge(ev);
@@ -186,6 +190,8 @@
                     let cty = ev.clientY - config.ctrlable.initCenterY[id];
                     config.ctrlable.currentCenterX[id] = ctx;
                     config.ctrlable.currentCenterY[id] = cty;
+
+                        console.log(ctx+' '+cty);
                     let cxy = [ctx, cty];
                     /*
                     setTranslate(config.mtx, getTranslate(target));
@@ -197,7 +203,7 @@
 
                     setCenter(target, cxy);
                     let mat = decomposeMatrix(target.getCTM());
-                    console.log('<<' + mat.translate);
+                    //console.log('<<' + mat.translate);
                     /*
                     setTranslate(target, [
                         config.draggable.currentX[id] - mat.translate[0],
@@ -209,8 +215,8 @@
 
                     let dx = config.draggable.currentX[id] - mat.translate[0];
                     let dy = config.draggable.currentY[id] - mat.translate[1];
-                    console.log(dx + ' ' + dy);
-                    console.log((mat.translate[0] + dx) + ' ' + (mat.translate[1] + dy));
+                    //console.log(dx + ' ' + dy);
+                    //console.log((mat.translate[0] + dx) + ' ' + (mat.translate[1] + dy));
                     setTranslate(config.mtx, [mat.translate[0] + dx, mat.translate[1] + dy]);
                     //config.ctrlable.initCenterX[id]+=dx;
                     //config.ctrlable.initCenterX[id]+=dy;
@@ -240,7 +246,9 @@
                     return;
                 }
                 config.ctrlable.state[id] = false;
-                config.ctrlable.centerState[id] = false;
+                if (id in config.ctrlable.centerState) {
+                    config.ctrlable.centerState[id] = false;
+                }
                 let scale = getScale(target);
                 config.ctrlable.scaleBase[id] = scale[0];
                 let rotate = getRotate(target);
@@ -281,6 +289,7 @@
                     config.draggable.currentX[id] = cxy[0];
                     config.draggable.currentY[id] = cxy[1];
                     config.draggable.state[id] = true;
+
                 } else if (!config.draggable.state[id]) {
                     config.draggable.initX[id] = ev.clientX - config.draggable.currentX[id];
                     config.draggable.initY[id] = ev.clientY - config.draggable.currentY[id];
