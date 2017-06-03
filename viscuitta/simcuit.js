@@ -193,36 +193,15 @@
 
                     //console.log(ctx+' '+cty);
                     let cxy = [ctx, cty];
-                    /*
+                    
                     setTranslate(config.mtx, getTranslate(target));
                     setRotate(config.mtx, getRotate(target));
+                    setScale(config.mtx, getScale(target));
                     setCenter(config.mtx, cxy);
                     let mat = decomposeMatrix(config.mtx.getCTM());
-                    console.log('>>' + mat.translate);
-*/
-
-                    setCenter(target, cxy);
-                    let mat = decomposeMatrix(target.getCTM());
-                    //console.log('<<' + mat.translate);
-                    /*
-                    setTranslate(target, [
-                        config.draggable.currentX[id] - mat.translate[0],
-                        config.draggable.currentY[id] - mat.translate[1]
-                    ]);
-                    config.ctrlable.initCenterX[id] -= config.draggable.currentX[id] - mat.translate[0];
-                    config.ctrlable.initCenterX[id] -= config.draggable.currentY[id] - mat.translate[1];
-                    */
-
                     let dx = config.draggable.currentX[id] - mat.translate[0];
                     let dy = config.draggable.currentY[id] - mat.translate[1];
-                    console.log(dx + ' ' + dy);
-                    //console.log((mat.translate[0] + dx) + ' ' + (mat.translate[1] + dy));
-                    //setTranslate(config.mtx, [mat.translate[0] + dx, mat.translate[1] + dy]);
-                    //config.ctrlable.initCenterX[id]+=dx;
-                    //config.ctrlable.initCenterX[id]+=dy;
-                    //config.draggable.currentX[id]+=dx;
-                    //config.draggable.currentY[id]+=dy;
-                    //setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
+                    console.log('>'+dx + ' ' + dy);
 
                     let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                     for (let ci = 0; ci < centerList.length; ci++) {
@@ -230,8 +209,10 @@
                         //setCenter(centerList[ci].parentNode, [ctx, cty]);
                         //setRotate(centerList[ci].parentNode, mat.rotate);
                         //setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
-                        setTranslate(centerList[ci].parentNode, [ctx, cty]);
+                        setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
                     }
+                    setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
+                    setCenter(target,cxy);
                 } else if (info.type === 'rotate') {
                     let rotate = info.rotate;
                     setRotate(target, rotate);
