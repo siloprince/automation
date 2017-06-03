@@ -26,12 +26,13 @@
             currentCenterX: {},
             currentCenterY: {},
             centerState: {},
-            state: {}
+            state: {},
+            dxy: {}
         },
         transform: 'translate(0,0)translate(0,0)rotate(0)scale(1,1)translate(0,0)',
         mtx: null,
     };
-    document.currentScript.insertAdjacentHTML('afterend', `<svg width="1000" height="1000"><g id="mtx" transform="translate(100,100)translate(0,0)rotate(0)scale(1,1)translate(0,0)"><rect fill="#ff0000" x="-100" y="-100" width="200" height="200"></g></svg>`);
+    document.currentScript.insertAdjacentHTML('afterend', `<svg width="1000" height="1000"><g id="mtx" transform="translate(100,100)translate(0,0)rotate(0)scale(1,1)translate(0,0)"><!--<rect fill="#ff0000" x="-100" y="-100" width="200" height="200">--></g></svg>`);
     let svg = document.querySelector('svg');
     config.mtx = svg.querySelector('g#mtx');
     // TODO: in case of cx!=100, cy!=100 
@@ -158,6 +159,8 @@
                         config.ctrlable.currentCenterX[id] = 0;
                         config.ctrlable.currentCenterY[id] = 0;
                     } else if (!config.ctrlable.centerState[id]) {
+
+                        console.log('i='+config.ctrlable.initCenterX[id]+' '+config.ctrlable.initCenterY[id]);
                         config.ctrlable.initCenterX[id] = ev.clientX - config.ctrlable.currentCenterX[id];
                         config.ctrlable.initCenterY[id] = ev.clientY - config.ctrlable.currentCenterY[id];
                     }
@@ -189,15 +192,19 @@
                     config.ctrlable.currentCenterX[id] = ctx;
                     config.ctrlable.currentCenterY[id] = cty;
                     setTranslate(config.mtx, getTranslate(target));
-                    setRotate(config.mtx, getRotate(target));
-                    var scale = getScale(target)[0];
+                    let rotate = getRotate(target)*Math.PI/180;
+                    setRotate(config.mtx, rotate);
+                    let scale = getScale(target)[0];
                     setScale(config.mtx, [scale,scale]);
-                    setCenter(config.mtx, [ctx/scale,cty/scale]);
+                    let mx = ctx/scale*Math.cos(rotate) - cty/scale*Math.sin(rotate);
+                    let my = ctx/scale*Math.sin(rotate) + cty/scale*Math.cos(rotate);
+                    setCenter(config.mtx, [mx,my]);
                     let mat = decomposeMatrix(config.mtx.getCTM());
                     let dx = config.draggable.currentX[id] - mat.translate[0];
                     let dy = config.draggable.currentY[id] - mat.translate[1];
+                    config.ctrlable.dxy[id] = [dx,dy];
 
-                    console.log('cxy'+config.draggable.currentX[id]+' '+config.draggable.currentY[id]+' '+config.bbox.centerX[id]+' '+config.bbox.centerY[id]);
+                    //console.log('mxy:'+mx+' '+my+' rotate'+rotate);
 
                     let centerList = target.querySelectorAll('circle[ctrl="bbox33"]');
                     for (let ci = 0; ci < centerList.length; ci++) {
@@ -208,9 +215,9 @@
                         //setTranslate(centerList[ci].parentNode, [ctx, cty]);
                         setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
                     }
-                    console.log('ev:'+ev.clientX+' '+ev.clientX+' '+(ctx-dx)+' '+(cty-dy));
+                    //console.log('ev:'+ev.clientX+' '+ev.clientX+' '+(ctx-dx)+' '+(cty-dy));
                     setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
-                    setCenter(target,[ctx/scale,cty/scale]);
+                    setCenter(target,[mx,my]);
                 } else if (info.type === 'rotate') {
                     let rotate = info.rotate;
                     setRotate(target, rotate);
@@ -227,17 +234,39 @@
                 }
                 config.ctrlable.state[id] = false;
                 let scale = getScale(target)[0];
-                if (id in config.ctrlable.centerState) {
-                    var xy = getTranslate(target);
-                    config.draggable.currentX[id] = xy[0];
-                    config.draggable.currentY[id] = xy[1];
+                let rotate = getRotate(target);
+                if (id in config.ctrlable.centerState && config.ctrlable.centerState[id]) {
+
+                    let xy = getTranslate(target);
+                    config.draggable.currentX[id] = xy[0]+config.ctrlable.dxy[id][0];
+                    config.draggable.currentY[id] = xy[1]+config.ctrlable.dxy[id][1];
                     //var ct = getCenter(target);
                     
-                    console.log(config.ctrlable.currentCenterX[id]+' '+config.ctrlable.currentCenterY[id]);
+                    //console.log(xy);
                     config.ctrlable.centerState[id] = false;
+                } else {
+
+                    let xy = getTranslate(target);
+                    config.draggable.currentX[id] = xy[0];
+                    config.draggable.currentY[id] = xy[1];
+                    console.log(xy);
+                    /*
+                    let ctx = config.ctrlable.currentCenterX[id];
+                    let cty = config.ctrlable.currentCenterY[id];
+                    setTranslate(config.mtx, getTranslate(target));
+                    let rotate = getRotate(target)*Math.PI/180;
+                    setRotate(config.mtx, rotate);
+                    let scale = getScale(target)[0];
+                    setScale(config.mtx, [scale,scale]);
+                    let mx = ctx/scale*Math.cos(rotate) - cty/scale*Math.sin(rotate);
+                    let my = ctx/scale*Math.sin(rotate) + cty/scale*Math.cos(rotate);
+                    setCenter(config.mtx, [ctx*scale,cty*scale]);
+                    let mat = decomposeMatrix(config.mtx.getCTM());
+                    //config.draggable.currentX[id] = mat.translate[0];
+                    //config.draggable.currentY[id] = mat.translate[1];   
+                    */                 
                 }
                 config.ctrlable.scaleBase[id] = scale;
-                let rotate = getRotate(target);
                 config.ctrlable.rotateBase[id] = rotate;
                 ensmall(ev);
                 console.log(log());
@@ -277,6 +306,7 @@
                     config.draggable.state[id] = true;
 
                 } else if (!config.draggable.state[id]) {
+                    console.log(config.draggable.currentX[id]+' '+config.draggable.currentY[id]);
                     config.draggable.initX[id] = ev.clientX - config.draggable.currentX[id];
                     config.draggable.initY[id] = ev.clientY - config.draggable.currentY[id];
                     config.draggable.state[id] = true;
@@ -355,8 +385,9 @@
         <g><rect class="bbox_ctrl" style="display:none;" x="${x + width / 2 - 2}" y="${y + top}" width="${3}" height="${-top - 1}" /></g>
         <g><circle class="bbox_ctrl" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
         <g><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox22" style="display:none;" cx="${x + width / 2}" cy="${y + top}" r="${size / 2}"/></g>
-        <g transform="${config.transform}"><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + cty}" cy="${y + cty}" r="${size / 2}"/></g>
+        <!--<g transform="${config.transform}"><circle class="bbox_ctrl" ctrl="bbox33" style="display:none;" cx="${x + cty}" cy="${y + cty}" r="${size / 2}"/></g>
         <g transform="${config.transform}"><circle class="bbox_ctrl bbox_ctrl_large" ctrl="bbox33" style="display:none;" cx="${x + ctx}" cy="${y + cty}" r="${size / 2}"/></g>
+        -->
     `);
     }
     // TODO : more conv functions
