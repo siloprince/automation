@@ -190,14 +190,11 @@
                     let cty = ev.clientY - config.ctrlable.initCenterY[id];
                     config.ctrlable.currentCenterX[id] = ctx;
                     config.ctrlable.currentCenterY[id] = cty;
-
-                    //console.log(ctx+' '+cty);
-                    let cxy = [ctx, cty];
-                    
                     setTranslate(config.mtx, getTranslate(target));
                     setRotate(config.mtx, getRotate(target));
-                    setScale(config.mtx, getScale(target));
-                    setCenter(config.mtx, cxy);
+                    var scale = getScale(target)[0];
+                    setScale(config.mtx, [scale,scale]);
+                    setCenter(config.mtx, [ctx/scale,cty/scale]);
                     let mat = decomposeMatrix(config.mtx.getCTM());
                     let dx = config.draggable.currentX[id] - mat.translate[0];
                     let dy = config.draggable.currentY[id] - mat.translate[1];
@@ -212,7 +209,7 @@
                         setTranslate(centerList[ci].parentNode, [ctx-dx, cty-dy]);
                     }
                     setTranslate(target, [config.draggable.currentX[id]+dx,config.draggable.currentY[id]+dy]);
-                    setCenter(target,cxy);
+                    setCenter(target,[ctx/scale,cty/scale]);
                 } else if (info.type === 'rotate') {
                     let rotate = info.rotate;
                     setRotate(target, rotate);
