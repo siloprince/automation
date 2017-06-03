@@ -39,6 +39,8 @@
 
     createObject(svg, `<circle class="draggable" r="100" cx="100" cy="100"/>`);
 
+    createObject(svg, `<circle class="draggable" r="100" cx="200" cy="200"/>`);
+
     // objectives 
     // * make a megane
     // * make a drawing tool (out of scope)
