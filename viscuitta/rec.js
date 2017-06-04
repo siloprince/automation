@@ -7,7 +7,7 @@
     class Iteraita {
         constructor(name, argv) {
             config.iteraita[name] = this;
-            this.name = name;
+            this.name = convertItemName(name);
             this._func = null;
             this.argv = argv;
             this.calc = argv.concat([]);
@@ -16,6 +16,86 @@
                 this.value = argv[argv.legnth - 1];
             } else {
                 this.value = 0;
+            }
+            return;
+
+            function convertItemName(str) {
+                // TODO: support more bad characters
+                str = str.toUpperCase();
+                var head = str.charCodeAt(0);
+                if (str.length === 1) {
+                    // C and R is not available
+                    if ('A'.charCodeAt(0) <= head && head < 'Z'.charCodeAt(0)) {
+                        str = '英' + str;
+                        return str;
+                    }
+                }
+                if (str.indexOf('０') > -1) {
+                    str = str.replace(/０/g, '0');
+                }
+                if (str.indexOf('１') > -1) {
+                    str = str.replace(/１/g, '1');
+                }
+                if (str.indexOf('２') > -1) {
+                    str = str.replace(/２/g, '2');
+                }
+                if (str.indexOf('３') > -1) {
+                    str = str.replace(/３/g, '3');
+                }
+                if (str.indexOf('４') > -1) {
+                    str = str.replace(/４/g, '4');
+                }
+                if (str.indexOf('５') > -1) {
+                    str = str.replace(/５/g, '5');
+                }
+                if (str.indexOf('６') > -1) {
+                    str = str.replace(/６/g, '6');
+                }
+                if (str.indexOf('７') > -1) {
+                    str = str.replace(/７/g, '7');
+                }
+                if (str.indexOf('８') > -1) {
+                    str = str.replace(/８/g, '8');
+                }
+                if (str.indexOf('９') > -1) {
+                    str = str.replace(/９/g, '9');
+                }
+                if (/[_\s<>=~!#'"%&;:,\(\)\|\.\\\^\+\-\*\/\?\$　＜＞＝〜！＃’”％＆；：，（）｜．＼＾＋＊／？＄]/.test(str)) {
+                    str = str.replace(/[\s<>=~!#'"%&;:,\(\)\|\.\\\^\+\-\*\/\?\$　＜＞＝〜！＃’”％＆；：，（）｜．＼＾＋＊／？＄]/g, '＿');
+                }
+                head = str.charCodeAt(0);
+                var last = str.charCodeAt(str.length - 1);
+                if ('A'.charCodeAt(0) <= head && head < 'Z'.charCodeAt(0) && '0'.charCodeAt(0) <= last && last < '9'.charCodeAt(0) && str.indexOf('_') === -1) {
+                    var sarray = [];
+                    var numflag = 0;
+                    for (var si = 0; si < str.length; si++) {
+                        var sv = str.charCodeAt(si);
+                        if ('A'.charCodeAt(0) <= sv && sv < 'Z'.charCodeAt(0)) {
+                            if (numflag) {
+                                numflag = 0;
+                                break;
+                            }
+                            sarray.push(str[si]);
+                        } else if ('0'.charCodeAt(0) <= sv && sv < '9'.charCodeAt(0)) {
+                            if (numflag === 0) {
+                                sarray.push('_');
+                                numflag = 1;
+                            }
+                            sarray.push(str[si]);
+                        } else {
+                            numflag = 0;
+                            break;
+                        }
+                    }
+                    if (numflag) {
+                        str = sarray.join('');
+                    }
+                }
+                if ('0'.charCodeAt(0) <= head && head < '9'.charCodeAt(0)) {
+                    str = '数' + str;
+                    return str;
+                }
+                return str;
             }
         }
         $(index) {
@@ -27,15 +107,21 @@
             }
             return this.argv[this.argv.length - 1 - index];
         }
+        val() {
+            return this.value;
+        }
         last() {
+            while (this.values.length < config.max) {
+                this.values.push(this.next());
+            }
             return this.values[this.values.length - 1];
         }
         prev(index) {
             let idx = this.values.length - 1 - index;
-            if (idx>=0) {
+            if (idx >= 0) {
                 return this.values[idx];
             } else {
-                return this.$(-idx-1);
+                return this.$(-idx - 1);
             }
         }
         next() {
@@ -50,11 +136,77 @@
         }
         rule(str) {
             let conved = convertFormula(str);
-            let opt = { lang: 'es6' , itemName: this.name };
-            let transformed = transformFormula(conved, opt);
-            eval('this._func = function (argv) { return ('+transformed+'); }');
+            let varied = varyFormula(conved, this.name);
+            let opt = { lang: 'es6', itemName: this.name };
+            let transformed = transformFormula(varied, opt);
+            eval('this._func = function (argv) { return (' + transformed + '); }');
             return;
 
+            function varyFormula(str, name) {
+                var vary = -1;
+                var skipHash = {};
+                var variable = [];
+                var formula = [];
+                for (var si = 0; si < str.length; si++) {
+                    var code = str.charCodeAt(si);
+                    var char = str.substr(si, 1);
+                    // no lowercase
+                    if (!(
+                        ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
+                        || (128 <= code)
+                        || (vary > 0 && code === '_'.charCodeAt(0))
+                    )) {
+                        if (vary === -1) {
+                            formula.push(char);
+                            vary = -1;
+                        } else {
+                            var vari = variable[variable.length - 1].join('');
+                            if (!(vari in config.iteraita)) {
+                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                            }
+                            if (
+                                code === '\''.charCodeAt(0)
+                                || code === '`'.charCodeAt(0)
+                                || code === '!'.charCodeAt(0)
+                                || code === '#'.charCodeAt(0)
+                                || code === '$'.charCodeAt(0)
+                                || code === '.'.charCodeAt(0)
+                                || code === ')'.charCodeAt(0)
+                            ) {
+                                formula.push(vari);
+                            } else {
+                                formula.push(vari + '.val()');
+                            }
+                            formula.push(char);
+                            vary = -1;
+                        }
+                    } else {
+                        var match = false;
+                        for (var name in config.iteraita) {
+                            if (!(name in skipHash) && name.length > vary) {
+                                if (name.charCodeAt(vary + 1) !== code) {
+                                    skipHash[name] = true;
+                                    continue;
+                                } else {
+                                    match = true;
+                                }
+                            }
+                        }
+                        if (match) {
+                            if (vary === -1) {
+                                variable.push([]);
+                            }
+                            variable[variable.length - 1].push(char);
+                            vary++;
+                        } else {
+                            variable[variable.length - 1].push(char);
+                            var vari = variable[variable.length - 1].join('');
+                            throw ('unknown variable:' + vari + ' in ' + name + ' @ ' + str);
+                        }
+                    }
+                }
+                return formula.join('');
+            }
             function convertFormula(str) {
                 if (str.length === 0) {
                     return '';
@@ -204,8 +356,8 @@
                         let ifstmt = ['(function(){'];
                         // TODO
                         // randmize
-                        for (let ci=0;ci<condArray.length;ci++) {
-                            ifstmt.push('if('+condArray[ci]+') { return '+valueArray[ci]+'}');
+                        for (let ci = 0; ci < condArray.length; ci++) {
+                            ifstmt.push('if(' + condArray[ci] + ') { return ' + valueArray[ci] + '}');
                         }
                         ifstmt.push(' return null; })();');
                     } else {
@@ -257,7 +409,7 @@
                     } else {
                         var target = 'offset($1,' + opt.frozenRows + '+N("__pack__"),0,' + (opt.maxRows - opt.frozenRows) + ',1)';
                         var subtarget = target.replace('+N("__pack__")', '');
-                        rep = 'iferror(index(filter(' + target + ',' + subtarget + '<>""),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';  
+                        rep = 'iferror(index(filter(' + target + ',' + subtarget + '<>""),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';
                     }
                     f = f.replace(/pack\s*\(\s*([^\s\)]+)\s*\)/g, rep);
                 }
@@ -270,7 +422,7 @@
                         var subtarget = target.replace('+N("__subseq__")', '');
                         var start = 'match(index(filter(' + subtarget + ',' + subtarget + '<>""),1,1),' + subtarget + ',0)';
                         var end = 'match("_",arrayformula(if(offset(' + subtarget + ',' + start + '-1,0)="","_",offset(' + subtarget + ',' + start + '-1,0))),0)';
-                        rep = 'iferror(index(offset(' + target + ',' + start + '-1,0,' + end + ',1),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';  
+                        rep = 'iferror(index(offset(' + target + ',' + start + '-1,0,' + end + ',1),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';
                     }
                     f = f.replace(/subseq\s*\(\s*([^\s\)]+)\s*\)/g, rep);
                 }
@@ -330,26 +482,39 @@
     let あ = config.iteraita['あ'];
     new Iteraita('い', [0]);
     let い = config.iteraita['い'];
+    new Iteraita('う', [0]);
+    let う = config.iteraita['う'];
+    try {
+        for (let i = 0; i < config.max; i++) {
+            黄金比.func = function (argv) {
+                return 1 + 1 / argv[0];
+            };
+            フィボナッチ.func = function (argv) {
+                return argv[0] + argv[1];
+            };
+            //console.log(黄金比.next());
+            //console.log(フィボナッチ.next());
+            /*
+            あ.func = function (argv) {
+                return argv[0] + 1;
+            };
+            */
+            あ.rule(" あ' + 1 ");
+            う.rule(" あい + 2 ");
+            /*
+            い.func = function (argv) {
+                return あ.last() + 1;
+            };
+            */
+            console.log('あ:' + あ.next());
+            console.log('う:' + う.next());
+        }
 
-    for (let i = 0; i < config.max; i++) {
-        黄金比.func = function (argv) {
-            return 1 + 1 / argv[0];
-        };
-        フィボナッチ.func = function (argv) {
-            return argv[0] + argv[1];
-        };
-        //console.log(黄金比.next());
-        //console.log(フィボナッチ.next());
-        /*
-        あ.func = function (argv) {
-            return argv[0] + 1;
-        };
-        */
-        あ.rule(" あ' + 1 ");
-        い.func = function (argv) {
-            return あ.last() + 1;
-        };
-        console.log(あ.next());
-        console.log(い.next());
+        for (let i = 0; i < config.max; i++) {
+            い.rule("last(あ)+1");
+            console.log('い:' + い.next());
+        }
+    } catch (ex) {
+        console.log(ex);
     }
 })(console);
