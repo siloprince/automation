@@ -1,6 +1,7 @@
 'use strict';
 (function (console) {
     let config = {
+        constval: 4,
         max: 10,
         iteraita: {},
     };
@@ -473,13 +474,19 @@
         }
     }
     class Rentaku {
-        constructor(statements, max) {
+        constructor(statements, max, constval) {
             if (max) {
                 config.max = max;
+            }
+            if (constval) {
+                config.constval = constval;
             }
             config.iteraita = {};
             let stmtArray = statements.split('@');
             var decl;
+            this.decls = [];
+            this.rules = [];
+            this.argvs = [];
             for (let si = 0; si < stmtArray.length; si++) {
                 let stmt = stmtArray[si].trim();
                 let lines = stmt.split('\n');
@@ -488,17 +495,51 @@
                     if (lines.length !== 0) {
                         throw ('invalid name:' + decl);
                     }
-                } else if (si!==stmtArray.length-1) {
+                    this.decls.push(decl);
+                } else if (si !== stmtArray.length - 1) {
                     if (!checkDecl(decl)) {
                         throw ('invalid name:' + decl);
                     }
+                    this.decls.push(decl);
                 }
                 let rest = lines.join();
-                if (rest.indexOf(']')) {
-
-                }
+                let sideopt = { side: false };
+                let formulaArray = splitToFormulas(rest, sideopt);
+                let rule = formulaArray.shift();
+                // TODO: check dependencies by use of varyFormula
+                let argv = formulaArray;
+                this.rules.push(rule);
+                this.argvs.push(argv);
             }
             return;
+            function splitToFormulas(orgf, sideopt) {
+                var formulaArray = [];
+                if (orgf.indexOf('[') > -1) {
+                    sideopt.side = 1;
+                    var form = '';
+                    var splitArray = orgf.split(']');
+                    splitArray.pop();
+                    for (var si = 0; si < config.constval; si++) {
+                        var sj = splitArray.length - 1 - si;
+                        if (sj >= 0) {
+                            if (sj === 0) {
+                                form = splitArray[sj].slice(0, splitArray[sj].indexOf('[')).trim();
+                            }
+                            var val = splitArray[sj].slice(splitArray[sj].indexOf('[') + 1);
+                            formulaArray.unshift(val.trim());
+                        } else {
+                            formulaArray.unshift('');
+                        }
+                    }
+                    if (form === '') {
+                        form = splitArray[0].slice(0, splitArray[0].indexOf('[')).trim();
+                    }
+                    formulaArray.unshift(form);
+                } else {
+                    formulaArray.push(orgf);
+                }
+                return formulaArray;
+            }
             function checkDecl(str) {
                 for (var si = 0; si < str.length; si++) {
                     var vary = si;
@@ -581,13 +622,15 @@
             }
         }
         run() {
-
+            for (let di = 0; di < this.decls.length; di++) {
+                new Iteraita(this.decls[di], this.argvs[di]);
+            }
         }
     }
 
     let rentaku = `
     黄金比 @ 1 + 1/黄金比' [1]
-    フィボナッチ @ フィボナッチ' + フィボナッチ'' [0,1]
+    フィボナッチ @ フィボナッチ' + フィボナッチ'' [0][1]
     あ @ あ' + 1 [0]
     い @ last(あ) +1
     う @ あ + 2
