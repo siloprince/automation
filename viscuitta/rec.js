@@ -46,7 +46,8 @@
             function convToFunc(str) {
                 let conved = convertFormula(str);
                 let opt = { lang: 'es6' };
-                return 1;
+                let transformed = transformFormula(conved, opt);
+                return transformed;
             }
             function convertFormula(str) {
                 if (str.length === 0) {
@@ -194,7 +195,13 @@
                         }
                     }
                     if (opt.lang === 'es6') {
-                        // 
+                        let ifstmt = ['(function(){'];
+                        // TODO
+                        // randmize
+                        for (let ci=0;ci<condArray.length;ci++) {
+                            ifstmt.push('if('+condArray[ci]+') { return '+valueArray[ci]+'}');
+                        }
+                        ifstmt.push(' return null; })();');
                     } else {
                         opt.sideBad = 1;
                         var farray = ['iferror('];
@@ -210,73 +217,84 @@
                     }
                 }
                 if (f.indexOf('`') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        // TODO
+                        rep = '';
                     } else {
                         opt.sideBad = 1;
-
                         var left = '$4.0+if(""="$4",N("__param___")+len("$2"),0)';
                         var addr = 'regexreplace(address(row($1),column($1)-(' + left + '),4),"[0-9]+","")';
                         var itemLabel = 'indirect(' + addr + '&":"&' + addr + ')';
-                        var rep = 'iferror(index(if("$1"="$1",' + itemLabel + ',$1),$4.0+N("__left__")-len("$2")+N("__prev__")-1-($4.0)+len("$2")+row()+N("__formula__")),1/0)';
-
-                        f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)(`+)({([0-9--]+)}|([0-9--]*))/g, rep);
+                        rep = 'iferror(index(if("$1"="$1",' + itemLabel + ',$1),$4.0+N("__left__")-len("$2")+N("__prev__")-1-($4.0)+len("$2")+row()+N("__formula__")),1/0)';
                     }
+                    f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)(`+)({([0-9--]+)}|([0-9--]*))/g, rep);
                 }
                 if (f.indexOf('\'') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        rep = '$1.prev($2)';
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
                         var itemLabel = collabel + ':' + collabel;
                         // =iferror(index(電卓A,-1+N("__prev__")+row()+N("__formula__")),1/0) 
                         // =iferror(index(電卓,-2+N("__prev__")+row()+N("__formula__")),1/0)
-                        var rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$4.0+N("__prev__")-(' + prev + ')+row()+N("__formula__")),1/0)';
-
-                        f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)('+)({([0-9]+)}|([0-9]*))/g, rep);
+                        rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$4.0+N("__prev__")-(' + prev + ')+row()+N("__formula__")),1/0)';
                     }
+                    f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)('+)({([0-9]+)}|([0-9]*))/g, rep);
                 }
                 if (f.indexOf('pack') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        rep = '$1.pack()';
                     } else {
                         var target = 'offset($1,' + opt.frozenRows + '+N("__pack__"),0,' + (opt.maxRows - opt.frozenRows) + ',1)';
                         var subtarget = target.replace('+N("__pack__")', '');
-                        var rep = 'iferror(index(filter(' + target + ',' + subtarget + '<>""),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';
-                        f = f.replace(/pack\s*\(\s*([^\s\)]+)\s*\)/g, rep);
+                        rep = 'iferror(index(filter(' + target + ',' + subtarget + '<>""),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';  
                     }
+                    f = f.replace(/pack\s*\(\s*([^\s\)]+)\s*\)/g, rep);
                 }
                 if (f.indexOf('subseq') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        rep = '$1.subseq()';
                     } else {
                         var target = 'offset($1,' + opt.frozenRows + '+N("__subseq__"),0,' + (opt.maxRows - opt.frozenRows) + ',1)';
                         var subtarget = target.replace('+N("__subseq__")', '');
                         var start = 'match(index(filter(' + subtarget + ',' + subtarget + '<>""),1,1),' + subtarget + ',0)';
                         var end = 'match("_",arrayformula(if(offset(' + subtarget + ',' + start + '-1,0)="","_",offset(' + subtarget + ',' + start + '-1,0))),0)';
-                        var rep = 'iferror(index(offset(' + target + ',' + start + '-1,0,' + end + ',1),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';
-                        f = f.replace(/subseq\s*\(\s*([^\s\)]+)\s*\)/g, rep);
+                        rep = 'iferror(index(offset(' + target + ',' + start + '-1,0,' + end + ',1),if(row()-' + (opt.frozenRows) + '>0,row()-' + (opt.frozenRows) + ',-1)+N("__formula__")),1/0)';  
                     }
+                    f = f.replace(/subseq\s*\(\s*([^\s\)]+)\s*\)/g, rep);
                 }
                 if (f.indexOf('$') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        rep = '$1.$($3)';
                     } else {
                         var collabel = getColumnLabel(opt.column + 1);
                         var itemLabel = collabel + ':' + collabel;
-
-                        //var rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$3.0+N("__argv__")+N("__prev__")-1+' + (frozenRows + 1) + '+N("__formula__")),1/0)';
-                        var rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$3.0+N("__argv__")+if(index(if("$1"="",' + itemLabel + ',$1),-$3.0-1+' + (opt.frozenRows + 1) + ')="",1/0)+N("__prev__")-1+' + (opt.frozenRows + 1) + '+N("__formula__")),1/0)';
-
-                        f = f.replace(/([^=><\|`'"\$;,{&\s\+\-\*\/\(]*)(\$+)([0-9]+)/g, rep);
-                        if (f.indexOf('${') > -1) {
-                            f = f.replace(/([^=><\|`'"\$;,{&\s\+\-\*\/\(]*)(\$+){([0-9]+)}/g, rep);
-                        }
+                        rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$3.0+N("__argv__")+if(index(if("$1"="",' + itemLabel + ',$1),-$3.0-1+' + (opt.frozenRows + 1) + ')="",1/0)+N("__prev__")-1+' + (opt.frozenRows + 1) + '+N("__formula__")),1/0)';
+                    }
+                    f = f.replace(/([^=><\|`'"\$;,{&\s\+\-\*\/\(]*)(\$+)([0-9]+)/g, rep);
+                    if (f.indexOf('${') > -1) {
+                        f = f.replace(/([^=><\|`'"\$;,{&\s\+\-\*\/\(]*)(\$+){([0-9]+)}/g, rep);
                     }
                 }
                 if (f.indexOf('head') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        rep = '$1.head($2)';
                     } else {
-                        var rep = 'iferror(index($1,$2+N("__head__")+N("$1")-1+if("$2"="",1,0)+' + (opt.frozenRows + 1) + '+N("__formula__")),1/0)';
-                        f = f.replace(/head\s*\(\s*([^\s\),]+)\s*,*((-|\+)*[0-9]*)\s*\)/g, rep);
-                        if (itemName.length > 0) {
-                            var headname = 'N("__head__")+N("' + itemName + '")';
+                        rep = 'iferror(index($1,$2+N("__head__")+N("$1")-1+if("$2"="",1,0)+' + (opt.frozenRows + 1) + '+N("__formula__")),1/0)';
+                    }
+                    f = f.replace(/head\s*\(\s*([^\s\),]+)\s*,*((-|\+)*[0-9]*)\s*\)/g, rep);
+                    if (opt.lang === 'es6') {
+                        // nop
+                    } else {
+                        if (opt.itemName.length > 0) {
+                            var headname = 'N("__head__")+N("' + opt.itemName + '")';
                             if (f.indexOf(headname) > -1) {
                                 f = f.replace(headname, 'N("__head__")+N("__prev__")');
                             }
@@ -284,11 +302,13 @@
                     }
                 }
                 if (f.indexOf('last') > -1) {
+                    var rep;
                     if (opt.lang === 'es6') {
+                        rep = '$1.last($2)';
                     } else {
-                        var rep = 'iferror(index($1,-$3.0+N("__last__")+1-if("$3"="",1,0)+' + (opt.maxRows) + '+N("__formula__")),1/0)';
-                        f = f.replace(/last\s*\(\s*([^\s\),]+)\s*,*(-|\+)*([0-9]*)\s*\)/g, rep);
+                        rep = 'iferror(index($1,-$3.0+N("__last__")+1-if("$3"="",1,0)+' + (opt.maxRows) + '+N("__formula__")),1/0)';
                     }
+                    f = f.replace(/last\s*\(\s*([^\s\),]+)\s*,*(-|\+)*([0-9]*)\s*\)/g, rep);
                 }
                 return f;
             }
@@ -317,10 +337,10 @@
 
         あ.func = function (argv) {
             return argv[0] + 1;
-        }
+        };
         い.func = function (argv) {
             return あ.last() + 1;
-        }
+        };
         console.log(あ.next());
         console.log(い.next());
     }
