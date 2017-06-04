@@ -280,7 +280,7 @@
         }
     }
     function ctrlSelect(svg, id) {
-        config.ctrlable.state[id]=true;
+        config.ctrlable.state[id]=false;
         for (let sk in config.ctrlable.state) {
             let target = svg.querySelector(`g#${sk}`);
             let display;
