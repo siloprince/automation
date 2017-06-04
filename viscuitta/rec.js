@@ -182,10 +182,10 @@
                         }
                     } else {
                         var match = false;
-                        for (var name in config.iteraita) {
-                            if (!(name in skipHash) && name.length > vary) {
-                                if (name.charCodeAt(vary + 1) !== code) {
-                                    skipHash[name] = true;
+                        for (var ik in config.iteraita) {
+                            if (!(ik in skipHash) && ik.length > vary) {
+                                if (ik.charCodeAt(vary + 1) !== code) {
+                                    skipHash[ik] = true;
                                     continue;
                                 } else {
                                     match = true;
@@ -472,6 +472,128 @@
             }
         }
     }
+    class Rentaku {
+        constructor(statements, max) {
+            if (max) {
+                config.max = max;
+            }
+            config.iteraita = {};
+            let stmtArray = statements.split('@');
+            var decl;
+            for (let si = 0; si < stmtArray.length; si++) {
+                let stmt = stmtArray[si].trim();
+                let lines = stmt.split('\n');
+                decl = lines.pop();
+                if (si === 0) {
+                    if (lines.length !== 0) {
+                        throw ('invalid name:' + decl);
+                    }
+                } else if (si!==stmtArray.length-1) {
+                    if (!checkDecl(decl)) {
+                        throw ('invalid name:' + decl);
+                    }
+                }
+                let rest = lines.join();
+                if (rest.indexOf(']')) {
+                    
+                }
+            }
+            return;
+            function checkDecl(str) {
+                for (var si = 0; si < str.length; si++) {
+                    var code = str.charCodeAt(si);
+                    var char = str.substr(si, 1);
+                    // no lowercase
+                    if (!(
+                        ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
+                        || (128 <= code)
+                        || (vary > 0 && code === '_'.charCodeAt(0))
+                    )) {
+                        return false;
+                    }
+                }
+                return true;
+            }
+            function varyFormula(str, name) {
+                var vary = -1;
+                var skipHash = {};
+                var variable = [];
+                var formula = [];
+                for (var si = 0; si < str.length; si++) {
+                    var code = str.charCodeAt(si);
+                    var char = str.substr(si, 1);
+                    // no lowercase
+                    if (!(
+                        ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
+                        || (128 <= code)
+                        || (vary > 0 && code === '_'.charCodeAt(0))
+                    )) {
+                        if (vary === -1) {
+                            formula.push(char);
+                            vary = -1;
+                        } else {
+                            var vari = variable[variable.length - 1].join('');
+                            if (!(vari in config.iteraita)) {
+                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                            }
+                            if (
+                                code === '\''.charCodeAt(0)
+                                || code === '`'.charCodeAt(0)
+                                || code === '!'.charCodeAt(0)
+                                || code === '#'.charCodeAt(0)
+                                || code === '$'.charCodeAt(0)
+                                || code === '.'.charCodeAt(0)
+                                || code === ')'.charCodeAt(0)
+                            ) {
+                                formula.push(vari);
+                            } else {
+                                formula.push(vari + '.val()');
+                            }
+                            formula.push(char);
+                            vary = -1;
+                        }
+                    } else {
+                        var match = false;
+                        for (var ik in config.iteraita) {
+                            if (!(ik in skipHash) && ik.length > vary) {
+                                if (ik.charCodeAt(vary + 1) !== code) {
+                                    skipHash[ik] = true;
+                                    continue;
+                                } else {
+                                    match = true;
+                                }
+                            }
+                        }
+                        if (match) {
+                            if (vary === -1) {
+                                variable.push([]);
+                            }
+                            variable[variable.length - 1].push(char);
+                            vary++;
+                        } else {
+                            variable[variable.length - 1].push(char);
+                            var vari = variable[variable.length - 1].join('');
+                            throw ('unknown variable:' + vari + ' in ' + name + ' @ ' + str);
+                        }
+                    }
+                }
+                return formula.join('');
+            }
+        }
+        run() {
+
+        }
+    }
+
+    let rentaku = `
+    黄金比 @ 1 + 1/黄金比' [1]
+    フィボナッチ @ フィボナッチ' + フィボナッチ'' [0,1]
+    あ @ あ' + 1 [0]
+    い @ last(あ) +1
+    う @ あ + 2
+    `;
+    let ren = new Rentaku(rentaku);
+    ren.run();
 
     new Iteraita('黄金比', [1]);
     new Iteraita('フィボナッチ', [0, 1]);
