@@ -7,6 +7,8 @@
     class Iteraita {
         constructor(name, argv) {
             config.iteraita[name] = this;
+            this.name = name;
+            this._func = null;
             this.argv = argv;
             this.calc = argv.concat([]);
             this.values = [];
@@ -29,7 +31,12 @@
             return this.values[this.values.length - 1];
         }
         prev(index) {
-            return this.values[this.values.length - 1 - index];
+            let idx = this.values.length - 1 - index;
+            if (idx>=0) {
+                return this.values[idx];
+            } else {
+                return this.$(-idx-1);
+            }
         }
         next() {
             this.value = this._func(this.calc);
@@ -41,14 +48,13 @@
         set func(_func) {
             this._func = _func;
         }
-        rule(_rule) {
-            this._func = convToFunc(_rule);
-            function convToFunc(str) {
-                let conved = convertFormula(str);
-                let opt = { lang: 'es6' };
-                let transformed = transformFormula(conved, opt);
-                return transformed;
-            }
+        rule(str) {
+            let conved = convertFormula(str);
+            let opt = { lang: 'es6' , itemName: this.name };
+            let transformed = transformFormula(conved, opt);
+            eval('this._func = function (argv) { return ('+transformed+'); }');
+            return;
+
             function convertFormula(str) {
                 if (str.length === 0) {
                     return '';
@@ -233,7 +239,7 @@
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = '$1.prev($2)';
+                        rep = 'this.prev(((""==="$4")?"$2".length:1)-1)';
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -332,12 +338,14 @@
         フィボナッチ.func = function (argv) {
             return argv[0] + argv[1];
         };
-        console.log(黄金比.next());
-        console.log(フィボナッチ.next());
-
+        //console.log(黄金比.next());
+        //console.log(フィボナッチ.next());
+        /*
         あ.func = function (argv) {
             return argv[0] + 1;
         };
+        */
+        あ.rule(" あ' + 1 ");
         い.func = function (argv) {
             return あ.last() + 1;
         };

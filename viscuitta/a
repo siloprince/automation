@@ -1,0 +1,5 @@
+'use strict';
+let あ={};
+あ.prev = function (v) {console.log(v);};
+function a  (argv) { return ( あ.prev((""==="")?"'".length:2) + 2 ); }
+a();
