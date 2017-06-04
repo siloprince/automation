@@ -483,7 +483,7 @@
             for (let si = 0; si < stmtArray.length; si++) {
                 let stmt = stmtArray[si].trim();
                 let lines = stmt.split('\n');
-                decl = lines.pop();
+                decl = lines.pop().trim();
                 if (si === 0) {
                     if (lines.length !== 0) {
                         throw ('invalid name:' + decl);
@@ -495,14 +495,14 @@
                 }
                 let rest = lines.join();
                 if (rest.indexOf(']')) {
-                    
+
                 }
             }
             return;
             function checkDecl(str) {
                 for (var si = 0; si < str.length; si++) {
+                    var vary = si;
                     var code = str.charCodeAt(si);
-                    var char = str.substr(si, 1);
                     // no lowercase
                     if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
@@ -622,7 +622,7 @@
             };
             */
             あ.rule(" あ' + 1 ");
-            う.rule(" あい + 2 ");
+            う.rule(" あ + 2 ");
             /*
             い.func = function (argv) {
                 return あ.last() + 1;
