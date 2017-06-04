@@ -44,13 +44,13 @@
         rule(_rule) {
             this._func = convToFunc(_rule);
             function convToFunc(str) {
-                let conved = convertFormula(str, valRow);
+                let conved = convertFormula(str);
                 return 1;
             }
             function replaceAt(str, char, at) {
                 return str.substr(0, at) + char + str.substr(at + 1, str.length);
             }
-            function convertFormula(str, valRow) {
+            function convertFormula(str) {
                 if (str.length === 0) {
                     return '';
                 } else {
