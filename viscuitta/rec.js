@@ -128,6 +128,7 @@
         }
         next() {
             this.value = this._func(this.calc);
+            console.log(this._func.toString());
             this.calc.shift();
             this.calc.push(this.value);
             this.values.push(this.value);
@@ -141,7 +142,7 @@
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
-            console.log( varyAgain(transformed) );
+            console.log(varyAgain(transformed));
             eval('this._func = function (argv) { return (' + varyAgain(transformed) + '); }');
             return;
 
@@ -171,7 +172,7 @@
                             if (!(vari in config.iteraita)) {
                                 throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
                             }
-                            formula.push('config.iteraita["'+vari + '"]');
+                            formula.push('config.iteraita["' + vari + '"]');
                             formula.push(char);
                             vary = -1;
                         }
@@ -608,39 +609,9 @@
                 iter.rule(this.rules[di]);
             }
             this.starts = {};
-            for (let di = 0; di < this.decls.length; di++) {
-                let decl = this.decls[di];
-                if (!(decl in config.depend)) {
-                    this.starts[decl] = 0;
-                }
-            }
-            setStart(0,this.decls, this.starts);
+            this.setStart(this.decls, this.starts);
             return;
-            function setStart(depth,decls, starts) {
-                if (depth > decls.length) {
-                    throws('dependency loop detected.');
-                }
-                let more = false;
-                for (let decl in config.depend) {
-                    let tmp = -1;
-                    for (let dep in config.depend[decl]) {
-                        if (dep in starts) {
-                            tmp = Math.max(config.depend[decl][dep], tmp);
-                        }
-                    }
-                    if (tmp !== -1) {
-                        if (!(decl in starts)) {
-                            starts[decl] = 0;
-                        }
-                        starts[decl] += tmp;
-                    } else {
-                        more = true;
-                    }
-                }
-                if (more) {
-                    setStart(depth + 1,decls,starts);
-                }
-            }
+            
             function splitToFormulas(orgf, sideopt) {
                 var formulaArray = [];
                 if (orgf.indexOf('[') > -1) {
@@ -685,21 +656,66 @@
                 return true;
             }
         }
-        run() {
-            let max=0;
+        run(_max) {
+            if (_max) {
+                config.max = _max;
+                this.setStart(this.decls, this.starts);
+            }
+            let max = 0;
             for (let sk in this.starts) {
-                max = Math.max(this.starts[sk],max);
+                max = Math.max(this.starts[sk], max);
             }
             for (let i = 0; i < max + config.max; i++) {
                 for (let di = 0; di < this.decls.length; di++) {
                     let decl = this.decls[di];
                     let iter = config.iteraita[decl];
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
-                        console.log(decl+': '+iter.next());
+                        console.log(decl + ': ' + iter.next());
                     }
                 }
             }
         }
+         setStart(decls, starts) {
+                for (let di = 0; di < decls.length; di++) {
+                    let decl = decls[di];
+                    if (decl in starts) {
+                        delete starts[decl];
+                    }
+                }
+                for (let di = 0; di < decls.length; di++) {
+                    let decl = decls[di];
+                    if (!(decl in config.depend)) {
+                        starts[decl] = 0;
+                    }
+                }
+                setStartRepeat(0, decls, starts);
+
+                function setStartRepeat(depth, decls, starts) {
+                    if (depth > decls.length) {
+                        throws('dependency loop detected.');
+                    }
+                    let more = false;
+                    for (let decl in config.depend) {
+                        let tmp = -1;
+                        for (let dep in config.depend[decl]) {
+                            if (dep in starts) {
+                                tmp = Math.max(config.depend[decl][dep], tmp);
+                            }
+                        }
+                        if (tmp !== -1) {
+                            if (!(decl in starts)) {
+                                starts[decl] = 0;
+                            }
+                            starts[decl] += tmp;
+                        } else {
+                            more = true;
+                        }
+                    }
+                    if (more) {
+                        setStartRepeat(depth + 1, decls, starts);
+                    }
+                }
+            }
     }
 
     let rentaku = `
@@ -709,44 +725,44 @@
     い @ last(あ) +1
     う @ あ + 2
     `;
-    let ren = new Rentaku(rentaku,2);
-    ren.run();
-/*
-    new Iteraita('黄金比', [1]);
-    new Iteraita('フィボナッチ', [0, 1]);
-    let 黄金比 = config.iteraita['黄金比'];
-    let フィボナッチ = config.iteraita['フィボナッチ'];
-
-    new Iteraita('あ', [0]);
-    let あ = config.iteraita['あ'];
-    new Iteraita('い', [0]);
-    let い = config.iteraita['い'];
-    new Iteraita('う', [0]);
-    let う = config.iteraita['う'];
-    try {
-        for (let i = 0; i < config.max; i++) {
-            黄金比.func = function (argv) {
-                return 1 + 1 / argv[0];
-            };
-            フィボナッチ.func = function (argv) {
-                return argv[0] + argv[1];
-            };
-            //console.log(黄金比.next());
-            //console.log(フィボナッチ.next());
-            
-            あ.rule(" あ' + 1 ");
-            う.rule(" あ + 2 ");
-          
-            console.log('あ:' + あ.next());
-            console.log('う:' + う.next());
+    let ren = new Rentaku(rentaku, 2);
+    ren.run(1);
+    /*
+        new Iteraita('黄金比', [1]);
+        new Iteraita('フィボナッチ', [0, 1]);
+        let 黄金比 = config.iteraita['黄金比'];
+        let フィボナッチ = config.iteraita['フィボナッチ'];
+    
+        new Iteraita('あ', [0]);
+        let あ = config.iteraita['あ'];
+        new Iteraita('い', [0]);
+        let い = config.iteraita['い'];
+        new Iteraita('う', [0]);
+        let う = config.iteraita['う'];
+        try {
+            for (let i = 0; i < config.max; i++) {
+                黄金比.func = function (argv) {
+                    return 1 + 1 / argv[0];
+                };
+                フィボナッチ.func = function (argv) {
+                    return argv[0] + argv[1];
+                };
+                //console.log(黄金比.next());
+                //console.log(フィボナッチ.next());
+                
+                あ.rule(" あ' + 1 ");
+                う.rule(" あ + 2 ");
+              
+                console.log('あ:' + あ.next());
+                console.log('う:' + う.next());
+            }
+    
+            for (let i = 0; i < config.max; i++) {
+                い.rule("last(あ)+1");
+                console.log('い:' + い.next());
+            }
+        } catch (ex) {
+            console.log(ex);
         }
-
-        for (let i = 0; i < config.max; i++) {
-            い.rule("last(あ)+1");
-            console.log('い:' + い.next());
-        }
-    } catch (ex) {
-        console.log(ex);
-    }
-     */   
+         */
 })(console);
