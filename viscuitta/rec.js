@@ -600,12 +600,17 @@
                 let formulaArray = splitToFormulas(rest, sideopt);
                 let rule = formulaArray.shift();
                 // TODO: check dependencies by use of varyFormula
-                let argv = formulaArray;
+                
                 this.rules.push(rule);
+                let argv = [];
+                for (let fi=0;fi<formulaArray.length;fi++) {
+                    argv.push(eval(formulaArray[fi]));
+                }
                 this.argvs.push(argv);
             }
             for (let di = 0; di < this.decls.length; di++) {
-                new Iteraita(this.decls[di], this.argvs[di]);
+                let iter = new Iteraita(this.decls[di], this.argvs[di]);
+                iter.argv = this.argvs[di];
             }
             for (let di = 0; di < this.decls.length; di++) {
                 let decl = this.decls[di];
@@ -663,6 +668,11 @@
         run(_max) {
             if (_max) {
                 config.max = _max;
+                for (let di = 0; di < this.decls.length; di++) {
+                    let decl = this.decls[di];
+                    let iter = config.iteraita[decl];
+                    iter.rule(this.rules[di]);
+                }
                 this.setStart(this.decls, this.starts);
             }
             let max = 0;
@@ -674,7 +684,8 @@
                     let decl = this.decls[di];
                     let iter = config.iteraita[decl];
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
-                        console.log(decl + ': ' + iter.next());
+                        let val = iter.next();
+                        console.log(decl+': '+val);
                     }
                 }
             }
@@ -729,9 +740,9 @@
     い @ last(あ) +1
     う @ あ + 2
     `;
-    //let ren = new Rentaku(rentaku, 2);
-    //ren.run(10);
-    
+    let ren = new Rentaku(rentaku, 2);
+    ren.run(3);
+    /*
         new Iteraita('黄金比');
         new Iteraita('フィボナッチ');
         let 黄金比 = config.iteraita['黄金比'];
@@ -774,5 +785,5 @@
         } catch (ex) {
             console.log(ex);
         }
-         
+    */
 })(console);
