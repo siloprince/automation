@@ -742,48 +742,4 @@
     `;
     let ren = new Rentaku(rentaku, 2);
     ren.run(3);
-    /*
-        new Iteraita('黄金比');
-        new Iteraita('フィボナッチ');
-        let 黄金比 = config.iteraita['黄金比'];
-        黄金比.argv = [1];
-        let フィボナッチ = config.iteraita['フィボナッチ'];
-        フィボナッチ.argv = [0,1];
-    
-        new Iteraita('あ');
-        let あ = config.iteraita['あ'];
-        あ.argv = [0];
-        new Iteraita('い');
-        let い = config.iteraita['い'];
-        new Iteraita('う');
-        let う = config.iteraita['う'];
-      
-        try {
-            for (let i = 0; i < config.max; i++) {
-                黄金比.func = function (argv) {
-                    return 1 + 1 / argv[0];
-                };
-                フィボナッチ.func = function (argv) {
-                    return argv[0] + argv[1];
-                };
-                //console.log(黄金比.next());
-                //console.log(フィボナッチ.next());
-                
-                あ.rule(" あ' + 1");
-                う.rule(" あ + 2 ");
-              
-                console.log('あ:' + あ.next());
-                console.log('う:' + う.next());
-                
-            }
-    
-            for (let i = 0; i < config.max; i++) {
-                い.rule("last(あ)+1");
-                console.log('い:' + い.next());
-            }
-            
-        } catch (ex) {
-            console.log(ex);
-        }
-    */
 })(console);
