@@ -740,6 +740,21 @@
     い @ last(あ) +1
     う @ あ + 2
     `;
-    let ren = new Rentaku(rentaku, 2);
+    let ren = new Rentaku(rentaku);
     ren.run(3);
+
+    let rentaku2 = `
+    黄金比 @ 1 + 1/黄金比' [1]
+    フィボナッチ @ フィボナッチ' + フィボナッチ'' [0][1]
+    あ @ あ' + 1 [0]
+    い @ last(あ) +1
+    う @ あ + 2
+    `;
+    //new Rentaku(rentaku2).run(3);
+    // TODO: benchmark
+    // side support
+    // csv support
+    // conditional support
+    // live on html
+    // live on github.com
 })(console);
