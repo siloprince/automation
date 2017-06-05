@@ -4,6 +4,7 @@
         constval: 4,
         max: 10,
         iteraita: {},
+        depend: {},
     };
     class Iteraita {
         constructor(name, argv) {
@@ -140,19 +141,80 @@
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
-            eval('this._func = function (argv) { return (' + transformed + '); }');
+            console.log( varyAgain(transformed) );
+            eval('this._func = function (argv) { return (' + varyAgain(transformed) + '); }');
             return;
 
+            function varyAgain(str) {
+                var vary = -1;
+                var skipHash = {};
+                var variable = [];
+                var formula = [];
+
+                for (var si = 0; si < str.length; si++) {
+                    var code = str.charCodeAt(si);
+                    var char = str.substr(si, 1);
+                    // no lowercase
+                    if (code === ' '.charCodeAt(0) || code === '\t'.charCodeAt(0)) {
+                        // nop
+                    } else if (!(
+                        ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
+                        || (128 <= code)
+                        || (vary > 0 && code === '_'.charCodeAt(0))
+                    )) {
+                        if (vary === -1) {
+                            formula.push(char);
+                            vary = -1;
+                        } else {
+                            skipHash = {};
+                            var vari = variable[variable.length - 1].join('');
+                            if (!(vari in config.iteraita)) {
+                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                            }
+                            formula.push('config.iteraita["'+vari + '"]');
+                            formula.push(char);
+                            vary = -1;
+                        }
+                    } else {
+                        var match = false;
+                        for (var ik in config.iteraita) {
+                            if (!(ik in skipHash) && ik.length > vary) {
+                                if (ik.charCodeAt(vary + 1) !== code) {
+                                    skipHash[ik] = true;
+                                    continue;
+                                } else {
+                                    match = true;
+                                }
+                            }
+                        }
+                        if (match) {
+                            if (vary === -1) {
+                                variable.push([]);
+                            }
+                            variable[variable.length - 1].push(char);
+                            vary++;
+                        } else {
+                            variable[variable.length - 1].push(char);
+                            var vari = variable[variable.length - 1].join('');
+                            throw ('unknown variable:' + vari + ' in ' + name + ' @ ' + str);
+                        }
+                    }
+                }
+                return formula.join('');
+            }
             function varyFormula(str, name) {
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
                 var formula = [];
+
                 for (var si = 0; si < str.length; si++) {
                     var code = str.charCodeAt(si);
                     var char = str.substr(si, 1);
                     // no lowercase
-                    if (!(
+                    if (code === ' '.charCodeAt(0) || code === '\t'.charCodeAt(0)) {
+                        // nop
+                    } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
                         || (vary > 0 && code === '_'.charCodeAt(0))
@@ -170,11 +232,33 @@
                                 code === '\''.charCodeAt(0)
                                 || code === '`'.charCodeAt(0)
                                 || code === '!'.charCodeAt(0)
-                                || code === '#'.charCodeAt(0)
                                 || code === '$'.charCodeAt(0)
                                 || code === '.'.charCodeAt(0)
-                                || code === ')'.charCodeAt(0)
                             ) {
+                                formula.push(vari);
+                            } else if (
+                                code === ')'.charCodeAt(0)
+                                || code === ','.charCodeAt(0)
+                                || code === '#'.charCodeAt(0)
+                            ) {
+
+                                if (!(name in config.depend)) {
+                                    config.depend[name] = {};
+                                }
+                                if (!(vari in config.depend[name])) {
+                                    config.depend[name][vari] = 0;
+                                }
+                                if (str.indexOf('last(' + vari + ')') > -1) {
+                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+                                }
+                                // TODO: to be optimized
+                                if (str.indexOf('last(' + vari + ',') > -1) {
+                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+                                }
+                                // TODO: to be optimized
+                                if (str.indexOf(vari + '#') > -1) {
+                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+                                }
                                 formula.push(vari);
                             } else {
                                 formula.push(vari + '.val()');
@@ -473,9 +557,6 @@
                 return f;
             }
         }
-        depend() {
-
-        }
     }
     class Rentaku {
         constructor(statements, max, constval) {
@@ -526,8 +607,40 @@
                 let iter = config.iteraita[decl];
                 iter.rule(this.rules[di]);
             }
-
+            this.starts = {};
+            for (let di = 0; di < this.decls.length; di++) {
+                let decl = this.decls[di];
+                if (!(decl in config.depend)) {
+                    this.starts[decl] = 0;
+                }
+            }
+            setStart(0,this.decls, this.starts);
             return;
+            function setStart(depth,decls, starts) {
+                if (depth > decls.length) {
+                    throws('dependency loop detected.');
+                }
+                let more = false;
+                for (let decl in config.depend) {
+                    let tmp = -1;
+                    for (let dep in config.depend[decl]) {
+                        if (dep in starts) {
+                            tmp = Math.max(config.depend[decl][dep], tmp);
+                        }
+                    }
+                    if (tmp !== -1) {
+                        if (!(decl in starts)) {
+                            starts[decl] = 0;
+                        }
+                        starts[decl] += tmp;
+                    } else {
+                        more = true;
+                    }
+                }
+                if (more) {
+                    setStart(depth + 1,decls,starts);
+                }
+            }
             function splitToFormulas(orgf, sideopt) {
                 var formulaArray = [];
                 if (orgf.indexOf('[') > -1) {
@@ -573,6 +686,19 @@
             }
         }
         run() {
+            let max=0;
+            for (let sk in this.starts) {
+                max = Math.max(this.starts[sk],max);
+            }
+            for (let i = 0; i < max + config.max; i++) {
+                for (let di = 0; di < this.decls.length; di++) {
+                    let decl = this.decls[di];
+                    let iter = config.iteraita[decl];
+                    if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
+                        console.log(decl+': '+iter.next());
+                    }
+                }
+            }
         }
     }
 
@@ -583,9 +709,9 @@
     い @ last(あ) +1
     う @ あ + 2
     `;
-    let ren = new Rentaku(rentaku);
+    let ren = new Rentaku(rentaku,2);
     ren.run();
-
+/*
     new Iteraita('黄金比', [1]);
     new Iteraita('フィボナッチ', [0, 1]);
     let 黄金比 = config.iteraita['黄金比'];
@@ -607,18 +733,10 @@
             };
             //console.log(黄金比.next());
             //console.log(フィボナッチ.next());
-            /*
-            あ.func = function (argv) {
-                return argv[0] + 1;
-            };
-            */
+            
             あ.rule(" あ' + 1 ");
             う.rule(" あ + 2 ");
-            /*
-            い.func = function (argv) {
-                return あ.last() + 1;
-            };
-            */
+          
             console.log('あ:' + あ.next());
             console.log('う:' + う.next());
         }
@@ -630,4 +748,5 @@
     } catch (ex) {
         console.log(ex);
     }
+     */   
 })(console);
