@@ -1,5 +1,5 @@
 'use strict';
-(function (console) {
+(function (document, console) {
     let config = {
         constval: 4,
         max: 10,
@@ -13,7 +13,7 @@
             this._func = null;
             this._argv = null;
             this.calc = [];
-            this.values = [];
+            this._values = [];
             return;
 
             function convertItemName(str) {
@@ -104,42 +104,45 @@
             }
             return this._argv[this._argv.length - 1 - index];
         }
-        val() {
-            return this.value;
+        get value () {
+            return this._value;
+        }
+        get values ( ) {
+            return this._values;
         }
         last() {
-            while (this.values.length < config.max) {
-                this.values.push(this.next());
+            while (this._values.length < config.max) {
+                this._values.push(this.next());
             }
-            return this.values[this.values.length - 1];
+            return this._values[this._values.length - 1];
         }
         prev(index) {
-            let idx = this.values.length - 1 - index;
+            let idx = this._values.length - 1 - index;
             if (idx >= 0) {
-                return this.values[idx];
+                return this._values[idx];
             } else {
                 return this.$(-idx - 1);
             }
         }
         next() {
-            this.value = this._func(this.calc);
+            this._value = this._func(this.calc);
             this.calc.shift();
-            this.calc.push(this.value);
-            this.values.push(this.value);
-            return this.value;
+            this.calc.push(this._value);
+            this._values.push(this._value);
+            return this._value;
         }
         set func(_func) {
             this._func = _func;
-        } 
+        }
         set argv(_argv) {
             this._argv = _argv;
-            for (let ai=0;ai<this._argv.length;ai++) {
+            for (let ai = 0; ai < this._argv.length; ai++) {
                 this.calc.push(this._argv[ai]);
             }
             if (this._argv.length > 0) {
-                this.value = this._argv[this._argv.legnth - 1];
+                this._value = this._argv[this._argv.legnth - 1];
             } else {
-                this.value = 0;
+                this._value = 0;
             }
         }
         rule(str) {
@@ -266,7 +269,7 @@
                                 }
                                 formula.push(vari);
                             } else {
-                                formula.push(vari + '.val()');
+                                formula.push(vari + '.value');
                             }
                             formula.push(char);
                             vary = -1;
@@ -574,7 +577,7 @@
             config.iteraita = {};
             let stmtArray = statements.split('@');
             var decl;
-            this.decls = [];
+            this._decls = [];
             this.rules = [];
             this.argvs = [];
             for (let si = 0; si < stmtArray.length; si++) {
@@ -586,13 +589,13 @@
                         if (lines.length !== 0) {
                             throw ('invalid name:' + decl);
                         }
-                        this.decls.push(decl);
+                        this._decls.push(decl);
                         continue;
                     } else if (si !== stmtArray.length - 1) {
                         if (!checkDecl(decl)) {
                             throw ('invalid name:' + decl);
                         }
-                        this.decls.push(decl);
+                        this._decls.push(decl);
                     }
                 }
                 let rest = lines.join();
@@ -600,25 +603,25 @@
                 let formulaArray = splitToFormulas(rest, sideopt);
                 let rule = formulaArray.shift();
                 // TODO: check dependencies by use of varyFormula
-                
+
                 this.rules.push(rule);
                 let argv = [];
-                for (let fi=0;fi<formulaArray.length;fi++) {
+                for (let fi = 0; fi < formulaArray.length; fi++) {
                     argv.push(eval(formulaArray[fi]));
                 }
                 this.argvs.push(argv);
             }
-            for (let di = 0; di < this.decls.length; di++) {
-                let iter = new Iteraita(this.decls[di], this.argvs[di]);
+            for (let di = 0; di < this._decls.length; di++) {
+                let iter = new Iteraita(this._decls[di], this.argvs[di]);
                 iter.argv = this.argvs[di];
             }
-            for (let di = 0; di < this.decls.length; di++) {
-                let decl = this.decls[di];
+            for (let di = 0; di < this._decls.length; di++) {
+                let decl = this._decls[di];
                 let iter = config.iteraita[decl];
                 iter.rule(this.rules[di]);
             }
             this.starts = {};
-            this.setStart(this.decls, this.starts);
+            this.setStart(this._decls, this.starts);
             return;
 
             function splitToFormulas(orgf, sideopt) {
@@ -668,24 +671,23 @@
         run(_max) {
             if (_max) {
                 config.max = _max;
-                for (let di = 0; di < this.decls.length; di++) {
-                    let decl = this.decls[di];
+                for (let di = 0; di < this._decls.length; di++) {
+                    let decl = this._decls[di];
                     let iter = config.iteraita[decl];
                     iter.rule(this.rules[di]);
                 }
-                this.setStart(this.decls, this.starts);
+                this.setStart(this._decls, this.starts);
             }
             let max = 0;
             for (let sk in this.starts) {
                 max = Math.max(this.starts[sk], max);
             }
             for (let i = 0; i < max + config.max; i++) {
-                for (let di = 0; di < this.decls.length; di++) {
-                    let decl = this.decls[di];
+                for (let di = 0; di < this._decls.length; di++) {
+                    let decl = this._decls[di];
                     let iter = config.iteraita[decl];
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
-                        let val = iter.next();
-                        console.log(decl+': '+val);
+                        iter.next();
                     }
                 }
             }
@@ -731,30 +733,88 @@
                 }
             }
         }
+        get decls() {
+            return this._decls;
+        }
     }
-
-    let rentaku = `
+    config.rentaku = `
     黄金比 @ 1 + 1/黄金比' [1]
     フィボナッチ @ フィボナッチ' + フィボナッチ'' [0][1]
     あ @ あ' + 1 [0]
     い @ last(あ) +1
     う @ あ + 2
     `;
-    let ren = new Rentaku(rentaku);
-    ren.run(3);
+    if (!document) {
 
-    let rentaku2 = `
-    黄金比 @ 1 + 1/黄金比' [1]
-    フィボナッチ @ フィボナッチ' + フィボナッチ'' [0][1]
-    あ @ あ' + 1 [0]
-    い @ last(あ) +1
-    う @ あ + 2
-    `;
-    //new Rentaku(rentaku2).run(3);
-    // TODO: benchmark
-    // side support
-    // csv support
-    // conditional support
-    // live on html
-    // live on github.com
-})(console);
+        let ren = new Rentaku(config.rentaku);
+        ren.run(3);
+        for (let di=0;di<ren.decls.length;di++) {
+            let decl = ren.decls[di];
+            let iter = config.iteraita[decl];
+            console.log(decl+': '+iter.values);
+        }
+        // TODO: benchmark
+        // side support
+        // csv support
+        // conditional support
+        // live on html
+        // live on github.com
+    } else {
+        let script = document.currentScript;
+        let nowtime = new Date().getTime();
+        script.insertAdjacentHTML('afterend', `<textarea id="ta${nowtime}"></textarea>`);
+        let textarea = document.querySelector(`textarea#ta${nowtime}`);
+        let limit = config.max;
+        textarea.insertAdjacentHTML('afterend', `<span style="font-size:9pt;"> iteration limit: <input id="ip${nowtime}"input type="number" min="1" max="1000" step="1" style="width:40px;" value="${limit}"/></span>`);
+        let input = document.querySelector(`input#ip${nowtime}`);
+        input.insertAdjacentHTML('afterend', `<table id="tb${nowtime}" border="1"></table>`);
+        let table = document.querySelector(`table#tb${nowtime}`);
+        table.setAttribute('style','font-size:9pt;');
+        textarea.setAttribute('rows', 15);
+        textarea.setAttribute('cols', 80);
+        textarea.value = config.rentaku;
+
+        render(table,textarea.value);
+        textarea.addEventListener('keyup', function (e) {
+            if (e.key === 'Enter' || e.key === 'Escape') {
+                render(table,e.target.value);
+            }
+        }, false);
+        textarea.addEventListener('mouseout', function (e) {
+            render(table,e.target.value);
+        }, false);
+        input.addEventListener('change', function (e) {
+            render(table,textarea.value,e.target.value);
+        }, false);
+    }
+    
+    function render(table,value,max) {
+        if (!value) {
+            value = config.rentaku;
+        }        
+        if (!max) {
+            max = config.max;
+        }
+        let ren = new Rentaku(value);
+        ren.run(max);
+        let decls = ren.decls;
+        table.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
+        let theadTr = table.querySelector('thead tr');
+        let tbody = table.querySelector('tbody');
+        for (let di = 0; di < decls.length; di++) {
+            theadTr.insertAdjacentHTML('beforeend', `<th>${decls[di]}</th>`);
+        }
+        for (let ci = 0; ci < config.constval; ci++) {
+        }
+        for (let mi = 0; mi < config.max; mi++) {
+            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+            let tbodyTr = tbody.querySelector('tr:last-child');
+            for (let di = 0; di < decls.length; di++) {
+                let decl = decls[di];
+                let iteraita = config.iteraita[decl];
+                let cell = iteraita.values[mi];
+                tbodyTr.insertAdjacentHTML('beforeend', `<td style="text-align: right;">${cell}</td>`);
+            }
+        }
+    }
+})(typeof (document) !== 'undefined' ? document : null, console);
