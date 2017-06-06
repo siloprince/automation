@@ -781,9 +781,7 @@
         }
         // TODO: benchmark
         // side support
-        // csv support
         // conditional support
-        // live on html
         // live on github.com
     } else {
         let script = document.currentScript;
