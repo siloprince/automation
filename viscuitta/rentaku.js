@@ -741,6 +741,8 @@ TODO: to be fixed
                 }
             }
             setStartRepeat(0, decls, starts);
+            console.log(config.depend);
+            return;
 
             function setStartRepeat(depth, decls, starts) {
                 if (depth > decls.length) {
