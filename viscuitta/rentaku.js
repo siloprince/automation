@@ -154,8 +154,8 @@
             return this._rule;
         }
         set rule(str) {
-            this._rule = str;
             let conved = convertFormula(str);
+            this._rule = conved;
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
