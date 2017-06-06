@@ -257,6 +257,15 @@
                             if (!(vari in config.iteraita)) {
                                 throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
                             }
+                            if (name !== vari) {
+                                if (!(name in config.depend)) {
+                                    config.depend[name] = {};
+                                }
+                                if (!(vari in config.depend[name])) {
+                                    config.depend[name][vari] = 0;
+                                    console.log(name + ' ' + vari);
+                                }
+                            }
                             if (
                                 code === '\''.charCodeAt(0)
                                 || code === '`'.charCodeAt(0)
@@ -270,23 +279,24 @@
                                 || code === ','.charCodeAt(0)
                                 || code === '#'.charCodeAt(0)
                             ) {
+                                if (name !== vari) {
+                                    if (str.indexOf('last(' + vari + ')') > -1) {
 
-                                if (!(name in config.depend)) {
-                                    config.depend[name] = {};
-                                }
-                                if (!(vari in config.depend[name])) {
-                                    config.depend[name][vari] = 0;
-                                }
-                                if (str.indexOf('last(' + vari + ')') > -1) {
-                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-                                }
-                                // TODO: to be optimized
-                                if (str.indexOf('last(' + vari + ',') > -1) {
-                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-                                }
-                                // TODO: to be optimized
-                                if (str.indexOf(vari + '#') > -1) {
-                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+
+                                    }
+                                    // TODO: to be optimized
+                                    if (str.indexOf('last(' + vari + ',') > -1) {
+
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+
+                                    }
+                                    // TODO: to be optimized
+                                    if (str.indexOf(vari + '#') > -1) {
+
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+
+                                    }
                                 }
                                 formula.push(vari);
                             } else {
@@ -327,6 +337,18 @@
                         throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
                     }
                     formula.push(vari + '.value');
+
+                    if (name !== vari) {
+                        if (!(name in config.depend)) {
+
+                            config.depend[name] = {};
+                        }
+                        if (!(vari in config.depend[name])) {
+
+                            config.depend[name][vari] = 0;
+                            console.log(name + ' ' + vari);
+                        }
+                    }
                 }
                 return formula.join('');
             }
@@ -707,6 +729,7 @@
                 this.setStart(this._decls, this.starts);
             }
             let max = 0;
+            console.log(this.starts);
             for (let sk in this.starts) {
                 max = Math.max(this.starts[sk], max);
             }
@@ -719,15 +742,12 @@
                     }
                 }
             }
+            function getSum(decl, depend) {
+                depend[decl];
+            }
         }
         setStart(decls, starts) {
-            /*
-TODO: to be fixed
-あ @ 11
-い @	last(あ)
-う @ い
-// う：11の列になるずが0になる
-            */
+            // clear
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 if (decl in starts) {
@@ -740,8 +760,9 @@ TODO: to be fixed
                     starts[decl] = 0;
                 }
             }
-            setStartRepeat(0, decls, starts);
             console.log(config.depend);
+            console.log(starts);
+            setStartRepeat(0, decls, starts);
             return;
 
             function setStartRepeat(depth, decls, starts) {
@@ -762,10 +783,10 @@ TODO: to be fixed
                         }
                         starts[decl] += tmp;
                     } else {
-                        console.log(config.depend);
                         more = true;
                     }
                 }
+                console.log(starts);
                 if (more) {
                     setStartRepeat(depth + 1, decls, starts);
                 }
@@ -876,6 +897,11 @@ TODO: to be fixed
             }
         }
     } else {
+        let rentaku = `
+あ @ 11
+い @	last(あ)
+う @ い
+`;
         let ren = new Rentaku(config.rentaku);
         ren.run(3);
         for (let di = 0; di < ren.decls.length; di++) {
