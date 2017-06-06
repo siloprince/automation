@@ -630,8 +630,6 @@
                 let sideopt = { side: false };
                 let formulaArray = splitToFormulas(rest, sideopt);
                 let rule = formulaArray.shift();
-                // TODO: check dependencies by use of varyFormula
-
                 this.rules.push(rule);
                 let argv = [];
                 for (let fi = 0; fi < formulaArray.length; fi++) {
