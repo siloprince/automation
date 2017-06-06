@@ -165,6 +165,7 @@
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
+                var currentVariIndex = -1;
                 var formula = [];
 
                 for (var si = 0; si < str.length; si++) {
@@ -183,7 +184,8 @@
                             vary = -1;
                         } else {
                             skipHash = {};
-                            var vari = variable[variable.length - 1].join('');
+                            currentVariIndex = variable.length - 1;
+                            var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
                                 throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
                             }
@@ -216,12 +218,21 @@
                         }
                     }
                 }
+                if (currentVariIndex === (variable.length - 1) - 1) {
+                    currentVariIndex = variable.length - 1;
+                    var vari = variable[currentVariIndex].join('');
+                    if (!(vari in config.iteraita)) {
+                        throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                    }
+                    formula.push('config.iteraita["' + vari + '"]');
+                }
                 return formula.join('');
             }
             function varyFormula(str, name) {
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
+                var currentVariIndex = -1;
                 var formula = [];
 
                 for (var si = 0; si < str.length; si++) {
@@ -240,7 +251,8 @@
                             vary = -1;
                         } else {
                             skipHash = {};
-                            var vari = variable[variable.length - 1].join('');
+                            currentVariIndex = variable.length - 1;
+                            var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
                                 throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
                             }
@@ -306,6 +318,14 @@
                             throw ('unknown variable:' + vari + ' in ' + name + ' @ ' + str);
                         }
                     }
+                }
+                if (currentVariIndex === (variable.length - 1) - 1) {
+                    currentVariIndex = variable.length - 1;
+                    var vari = variable[currentVariIndex].join('');
+                    if (!(vari in config.iteraita)) {
+                        throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                    }
+                    formula.push(vari + '.value');
                 }
                 return formula.join('');
             }
