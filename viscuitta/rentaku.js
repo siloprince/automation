@@ -263,7 +263,6 @@
                                 }
                                 if (!(vari in config.depend[name])) {
                                     config.depend[name][vari] = 0;
-                                    console.log(name + ' ' + vari);
                                 }
                             }
                             if (
@@ -346,7 +345,6 @@
                         if (!(vari in config.depend[name])) {
 
                             config.depend[name][vari] = 0;
-                            console.log(name + ' ' + vari);
                         }
                     }
                 }
@@ -729,10 +727,10 @@
                 this.setStart(this._decls, this.starts);
             }
             let max = 0;
-            console.log(this.starts);
-            for (let sk in this.starts) {
-                max = Math.max(this.starts[sk], max);
+            for (let dk in config.depend) {
+                max = Math.max(max,getSum(dk, config.depend));
             }
+            max += config.max;
             for (let i = 0; i < max + config.max; i++) {
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
@@ -743,7 +741,16 @@
                 }
             }
             function getSum(decl, depend) {
-                depend[decl];
+                // assume no loop
+                var max = 0;
+                for (let dk in depend[decl]) {
+                    if (!depend[dk]) {
+                        max = Math.max(max, depend[decl][dk]);
+                    } else {
+                        max = Math.max(max, getSum(dk, depend));
+                    }
+                }
+                return max;
             }
         }
         setStart(decls, starts) {
@@ -760,8 +767,6 @@
                     starts[decl] = 0;
                 }
             }
-            console.log(config.depend);
-            console.log(starts);
             setStartRepeat(0, decls, starts);
             return;
 
@@ -774,7 +779,7 @@
                     let tmp = -1;
                     for (let dep in config.depend[decl]) {
                         if (dep in starts) {
-                            tmp = Math.max(config.depend[decl][dep], tmp);
+                            tmp = Math.max(config.depend[decl][dep]+starts[dep], tmp);
                         }
                     }
                     if (tmp !== -1) {
@@ -786,7 +791,6 @@
                         more = true;
                     }
                 }
-                console.log(starts);
                 if (more) {
                     setStartRepeat(depth + 1, decls, starts);
                 }
@@ -902,8 +906,8 @@
 い @	last(あ)
 う @ い
 `;
-        let ren = new Rentaku(config.rentaku);
-        ren.run(3);
+        let ren = new Rentaku(rentaku);
+        ren.run();
         for (let di = 0; di < ren.decls.length; di++) {
             let decl = ren.decls[di];
             let iter = config.iteraita[decl];
