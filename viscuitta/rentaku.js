@@ -604,6 +604,7 @@
                 config.constval = constval;
             }
             config.iteraita = {};
+            config.depend = {};
             let stmtArray = statements.split('@');
             var decl;
             this._decls = [];
@@ -736,7 +737,7 @@
 
             function setStartRepeat(depth, decls, starts) {
                 if (depth > decls.length) {
-                    throws('dependency loop detected.');
+                    throw('dependency loop detected.'+depth+' '+decls.length);
                 }
                 let more = false;
                 for (let decl in config.depend) {
@@ -752,6 +753,7 @@
                         }
                         starts[decl] += tmp;
                     } else {
+                        console.log(config.depend);
                         more = true;
                     }
                 }
