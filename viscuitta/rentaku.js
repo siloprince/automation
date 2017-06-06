@@ -11,6 +11,7 @@
             config.iteraita[name] = this;
             this.name = convertItemName(name);
             this._func = null;
+            this._rule = null;
             this._argv = null;
             this.calc = [];
             this._values = [];
@@ -104,11 +105,14 @@
             }
             return this._argv[this._argv.length - 1 - index];
         }
-        get value () {
+        get value() {
             return this._value;
         }
-        get values ( ) {
+        get values() {
             return this._values;
+        }
+        get argv() {
+            return this._argv;
         }
         last() {
             while (this._values.length < config.max) {
@@ -145,7 +149,11 @@
                 this._value = 0;
             }
         }
-        rule(str) {
+        get rule() {
+            return this._rule;
+        }
+        set rule(str) {
+            this._rule = str;
             let conved = convertFormula(str);
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
@@ -618,7 +626,7 @@
             for (let di = 0; di < this._decls.length; di++) {
                 let decl = this._decls[di];
                 let iter = config.iteraita[decl];
-                iter.rule(this.rules[di]);
+                iter.rule = this.rules[di];
             }
             this.starts = {};
             this.setStart(this._decls, this.starts);
@@ -674,7 +682,7 @@
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
                     let iter = config.iteraita[decl];
-                    iter.rule(this.rules[di]);
+                    iter.rule = this.rules[di];
                 }
                 this.setStart(this._decls, this.starts);
             }
@@ -748,10 +756,10 @@
 
         let ren = new Rentaku(config.rentaku);
         ren.run(3);
-        for (let di=0;di<ren.decls.length;di++) {
+        for (let di = 0; di < ren.decls.length; di++) {
             let decl = ren.decls[di];
             let iter = config.iteraita[decl];
-            console.log(decl+': '+iter.values);
+            console.log(decl + ': ' + iter.values);
         }
         // TODO: benchmark
         // side support
@@ -769,29 +777,29 @@
         let input = document.querySelector(`input#ip${nowtime}`);
         input.insertAdjacentHTML('afterend', `<table id="tb${nowtime}" border="1"></table>`);
         let table = document.querySelector(`table#tb${nowtime}`);
-        table.setAttribute('style','font-size:9pt;');
+        table.setAttribute('style', 'font-size:9pt;');
         textarea.setAttribute('rows', 15);
         textarea.setAttribute('cols', 80);
         textarea.value = config.rentaku;
 
-        render(table,textarea.value);
+        render(table, textarea.value);
         textarea.addEventListener('keyup', function (e) {
             if (e.key === 'Enter' || e.key === 'Escape') {
-                render(table,e.target.value);
+                render(table, e.target.value);
             }
         }, false);
         textarea.addEventListener('mouseout', function (e) {
-            render(table,e.target.value);
+            render(table, e.target.value);
         }, false);
         input.addEventListener('change', function (e) {
-            render(table,textarea.value,e.target.value);
+            render(table, textarea.value, e.target.value);
         }, false);
     }
-    
-    function render(table,value,max) {
+
+    function render(table, value, max) {
         if (!value) {
             value = config.rentaku;
-        }        
+        }
         if (!max) {
             max = config.max;
         }
@@ -801,10 +809,45 @@
         table.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
         let theadTr = table.querySelector('thead tr');
         let tbody = table.querySelector('tbody');
+        let theadThStyle = 'style="background-color:#444499;color:#ffffff;"';
         for (let di = 0; di < decls.length; di++) {
-            theadTr.insertAdjacentHTML('beforeend', `<th>${decls[di]}</th>`);
+            theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decls[di]}</th>`);
         }
+        let ruleTdStyle = 'style="background-color:#ffffcc;height:16pt;vertical-align:top;text-align: left;word-wrap:break-word;max-width:100pt;"';
+        {
+            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+            let tbodyTr = tbody.querySelector('tr:last-child');
+            for (let di = 0; di < decls.length; di++) {
+                let decl = decls[di];
+                let iteraita = config.iteraita[decl];
+                let cell = '';
+                if (iteraita.rule) {
+                    cell = iteraita.rule;
+                }
+                tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
+            }
+        }
+        let graphThStyle = 'style="background-color:#aa99ff;height:30pt;"';
+        {
+            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+            let tbodyTr = tbody.querySelector('tr:last-child');
+            for (let di = 0; di < decls.length; di++) {
+                tbodyTr.insertAdjacentHTML('beforeend', `<td ${graphThStyle}></td>`);
+            }
+        }
+        let argvTdStyle = 'style="background-color:#ccffcc;height:16pt;text-align: right;"';
         for (let ci = 0; ci < config.constval; ci++) {
+            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+            let tbodyTr = tbody.querySelector('tr:last-child');
+            for (let di = 0; di < decls.length; di++) {
+                let decl = decls[di];
+                let iteraita = config.iteraita[decl];
+                let cell = '';
+                if (iteraita.argv && ci < iteraita.argv.length && typeof (iteraita.argv[ci]) !== 'undefined') {
+                    cell = iteraita.argv[ci];
+                }
+                tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle}>${cell}</td>`);
+            }
         }
         for (let mi = 0; mi < config.max; mi++) {
             tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
