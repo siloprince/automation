@@ -727,10 +727,13 @@
                 this.setStart(this._decls, this.starts);
             }
             let max = 0;
-            for (let dk in config.depend) {
-                max = Math.max(max, getSum(dk, config.depend));
+            for (let sk in this.starts) {
+                max = Math.max(max, this.starts[sk]);
             }
             max += config.max;
+            console.log(max);
+            console.log(config.depend);
+            console.log(this.starts);
             for (let i = 0; i < max + config.max; i++) {
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
@@ -739,18 +742,6 @@
                         iter.next();
                     }
                 }
-            }
-            function getSum(decl, depend) {
-                // assume no loop
-                var max = 0;
-                for (let dk in depend[decl]) {
-                    if (!depend[dk]) {
-                        max = Math.max(max, depend[decl][dk]);
-                    } else {
-                        max = Math.max(max, getSum(dk, depend));
-                    }
-                }
-                return max;
             }
         }
         setStart(decls, starts) {
@@ -907,17 +898,10 @@
 う @ い
 `;
         let rentaku2 = `
-辺数 @         11
-自然数 @       自然数' + 1 [0]
-パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
-パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
-パイ @ 		パイの素A /パイの素B
-入力_角度 @ 	90/辺数
-角度変換 @ 		入力_角度*last(パイ)/180
-負タンの素A @ 	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
-負タンの素B @ 	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
-負タン @ 		    負タンの素A/負タンの素B
-コサイン自乗	@ 	last(負タン)
+あ @ あ' + 1 [0]
+い @ last(あ) +1
+う @ last(い) + 2
+え @ last(う) + 2
 `;
         let ren = new Rentaku(rentaku2);
         ren.run();
