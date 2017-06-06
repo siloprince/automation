@@ -3,6 +3,7 @@
     let config = {
         constval: 4,
         max: 10,
+        // TODO : config to be migrated to class Rentaku
         iteraita: {},
         depend: {},
     };
