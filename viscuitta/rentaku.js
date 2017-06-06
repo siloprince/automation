@@ -2,7 +2,7 @@
 (function (document, console) {
     let config = {
         constval: 4,
-        max: 10,
+        max: 5,
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
         depend: {},
@@ -728,7 +728,7 @@
             }
             let max = 0;
             for (let dk in config.depend) {
-                max = Math.max(max,getSum(dk, config.depend));
+                max = Math.max(max, getSum(dk, config.depend));
             }
             max += config.max;
             for (let i = 0; i < max + config.max; i++) {
@@ -779,7 +779,7 @@
                     let tmp = -1;
                     for (let dep in config.depend[decl]) {
                         if (dep in starts) {
-                            tmp = Math.max(config.depend[decl][dep]+starts[dep], tmp);
+                            tmp = Math.max(config.depend[decl][dep] + starts[dep], tmp);
                         }
                     }
                     if (tmp !== -1) {
@@ -906,7 +906,20 @@
 い @	last(あ)
 う @ い
 `;
-        let ren = new Rentaku(rentaku);
+        let rentaku2 = `
+辺数 @         11
+自然数 @       自然数' + 1 [0]
+パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
+パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
+パイ @ 		パイの素A /パイの素B
+入力_角度 @ 	90/辺数
+角度変換 @ 		入力_角度*last(パイ)/180
+負タンの素A @ 	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
+負タンの素B @ 	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
+負タン @ 		    負タンの素A/負タンの素B
+コサイン自乗	@ 	last(負タン)
+`;
+        let ren = new Rentaku(rentaku2);
         ren.run();
         for (let di = 0; di < ren.decls.length; di++) {
             let decl = ren.decls[di];
