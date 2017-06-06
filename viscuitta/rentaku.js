@@ -721,6 +721,13 @@
             }
         }
         setStart(decls, starts) {
+            /*
+TODO: to be fixed
+あ @ 11
+い @	last(あ)
+う @ い
+// う：11の列になるずが0になる
+            */
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 if (decl in starts) {
