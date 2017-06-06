@@ -643,7 +643,7 @@
                         continue;
                     } else if (si !== stmtArray.length - 1) {
                         if (!checkDecl(decl)) {
-                            throw ('invalid name:' + decl);
+                            throw ('unknown name:' + decl);
                         }
                         this._decls.push(decl);
                     }
