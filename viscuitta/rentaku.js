@@ -441,6 +441,8 @@
                             char = ':';
                         } else if (code === '’'.charCodeAt(0)) {
                             char = '\'';
+                        } else if (code === '　'.charCodeAt(0)) {
+                            char = ' ';
                         }
                         if (char) {
                             str = replaceAt(str, char, si);
