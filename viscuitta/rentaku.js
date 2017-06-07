@@ -122,11 +122,10 @@
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
-            let mod = function(x,y) {return x%y;}
+            let mod = function(x,y) {return x%y;};
             eval('this._func = function (argv) { return (' + varyAgain(transformed, this.name) + '); }');
             return;
             function varyAgain(str, name) {
-                console.log(str);
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -324,125 +323,6 @@
                 }
                 return formula.join('');
             }
-<<<<<<< HEAD
-=======
-            function convertFormula(str) {
-                if (str.length === 0) {
-                    return '';
-                } else {
-                    // zen to han
-                    for (var si = 0; si < str.length; si++) {
-                        var code = str.charCodeAt(si);
-                        var char = 0;
-                        if (code === '　'.charCodeAt(0)) {
-                            char = ' ';
-                        } else if (code === '０'.charCodeAt(0)) {
-                            char = '0';
-                        } else if (code === '１'.charCodeAt(0)) {
-                            char = '1';
-                        } else if (code === '２'.charCodeAt(0)) {
-                            char = '2';
-                        } else if (code === '３'.charCodeAt(0)) {
-                            char = '3';
-                        } else if (code === '４'.charCodeAt(0)) {
-                            char = '4';
-                        } else if (code === '５'.charCodeAt(0)) {
-                            char = '5';
-                        } else if (code === '６'.charCodeAt(0)) {
-                            char = '6';
-                        } else if (code === '７'.charCodeAt(0)) {
-                            char = '7';
-                        } else if (code === '８'.charCodeAt(0)) {
-                            char = '8';
-                        } else if (code === '９'.charCodeAt(0)) {
-                            char = '9';
-                        } else if (code === '＋'.charCodeAt(0)) {
-                            char = '+';
-                        } else if (code === '＊'.charCodeAt(0)) {
-                            char = '*';
-                        } else if (code === '｀'.charCodeAt(0)) {
-                            char = '`';
-                        } else if (code === '"'.charCodeAt(0)) {
-                            char = '"';
-                        } else if (code === '.'.charCodeAt(0)) {
-                            char = '.';
-                        } else if (code === '，'.charCodeAt(0)) {
-                            char = ',';
-                        } else if (code === '（'.charCodeAt(0)) {
-                            char = '(';
-                        } else if (code === '）'.charCodeAt(0)) {
-                            char = ')';
-                        } else if (code === '＜'.charCodeAt(0)) {
-                            char = '<';
-                        } else if (code === '＝'.charCodeAt(0)) {
-                            char = '=';
-                        } else if (code === '＞'.charCodeAt(0)) {
-                            char = '>';
-                        } else if (code === '｛'.charCodeAt(0)) {
-                            char = '{';
-                        } else if (code === '｝'.charCodeAt(0)) {
-                            char = '}';
-                        } else if (code === '｜'.charCodeAt(0)) {
-                            char = '|';
-                        } else if (code === '？'.charCodeAt(0)) {
-                            char = '?';
-                        } else if (code === '＄'.charCodeAt(0)) {
-                            char = '$';
-                        } else if (code === '＆'.charCodeAt(0)) {
-                            char = '&';
-                        } else if (code === '％'.charCodeAt(0)) {
-                            char = '%';
-                        } else if (code === '＃'.charCodeAt(0)) {
-                            char = '#';
-                        } else if (code === '！'.charCodeAt(0)) {
-                            char = '!';
-                        } else if (code === '＾'.charCodeAt(0)) {
-                            char = '^';
-                        } else if (code === '＠'.charCodeAt(0)) {
-                            char = '@';
-                        } else if (code === ';'.charCodeAt(0)) {
-                            char = ';';
-                        } else if (code === '：'.charCodeAt(0)) {
-                            char = ':';
-                        } else if (code === '’'.charCodeAt(0)) {
-                            char = '\'';
-                        } else if (code === '　'.charCodeAt(0)) {
-                            char = ' ';
-                        }
-                        if (char) {
-                            str = replaceAt(str, char, si);
-                        }
-                    }
-                    // double quote to single quote
-                    // zen - to han - 
-                    var strArray = [];
-                    if (str.indexOf('ー') > -1) {
-                        var lastcode = 0;
-                        var code = 0;
-                        for (var si = 0; si < str.length; si++) {
-                            lastcode = code;
-                            code = str.charCodeAt(si);
-                            var char = str.substr(si, 1);
-                            if (code === 'ー'.charCodeAt(0)) {
-                                if (lastcode < 128) {
-                                    strArray.push('-');
-                                } else {
-                                    strArray.push(char);
-                                }
-                            } else {
-                                strArray.push(char);
-                            }
-                        }
-                        str = strArray.join('');
-                    }
-                    console.log(str);
-                    return str;
-                }
-                function replaceAt(str, char, at) {
-                    return str.substr(0, at) + char + str.substr(at + 1, str.length);
-                }
-            }
->>>>>>> 2804ed56845a66d138b00576994b797f6a92ec5a
             function transformFormula(f, opt) {
                 if (f.indexOf('|') > -1) {
                     var splitArray = f.split('|');
@@ -801,10 +681,15 @@
                     for (var si = 0; si < str.length; si++) {
                         lastcode = code;
                         code = str.charCodeAt(si);
+                        var char = str.substr(si,1);
                         if (code === 'ー'.charCodeAt(0)) {
                             if (lastcode < 128) {
                                 strArray.push('-');
+                            } else {
+                                strArray.push(char);
                             }
+                        } else {
+                            strArray.push(char);
                         }
                     }
                     str = strArray.join('');
@@ -937,9 +822,6 @@
                 max = Math.max(max, this.starts[sk]);
             }
             max += config.max;
-            console.log(max);
-            console.log(config.depend);
-            console.log(this.starts);
             for (let i = 0; i < max + config.max; i++) {
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
@@ -1126,7 +1008,7 @@ let rentaku3 = `
 `;
         try {
             let ren = new Rentaku(rentaku3);
-            ren.run(70);
+            ren.run(5);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let iter = config.iteraita[decl];
