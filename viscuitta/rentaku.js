@@ -455,14 +455,20 @@
                         for (var si = 0; si < str.length; si++) {
                             lastcode = code;
                             code = str.charCodeAt(si);
+                            var char = str.substr(si,1); 
                             if (code === 'ー'.charCodeAt(0)) {
                                 if (lastcode < 128) {
                                     strArray.push('-');
+                                } else {
+                                    strArray.push(char);
                                 }
+                            } else {
+                                strArray.push(char);
                             }
                         }
                         str = strArray.join('');
                     }
+                    console.log(str);
                     return str;
                 }
                 function replaceAt(str, char, at) {
@@ -914,12 +920,12 @@
 う @ い
 `;
         let rentaku2 = `
-あ2 @ あ2' + 1 [0]
-い @ last(あ2) +1
+あー2 @ あー2' + 1 [0]
+い @ last(あー2) +1
 う @ last(い) + 2
 え @ last(う) + 2
 `;
-//try {
+try {
         let ren = new Rentaku(rentaku2);
         ren.run();
         for (let di = 0; di < ren.decls.length; di++) {
@@ -927,10 +933,10 @@
             let iter = config.iteraita[decl];
             console.log(decl + ': ' + iter.values);
         }
-//} catch(e){
-//        console.log(e);
+} catch(e){
+        console.log(e);
         //console.log(config.iteraita);
-//}
+}
         // TODO: benchmark
         // side support
         // conditional support
