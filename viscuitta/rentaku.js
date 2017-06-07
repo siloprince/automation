@@ -159,10 +159,11 @@
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
-            eval('this._func = function (argv) { return (' + varyAgain(transformed,this.name) + '); }');
+            let mod = function(x,y) {return x%y;}
+            eval('this._func = function (argv) { return (' + varyAgain(transformed, this.name) + '); }');
             return;
-
-            function varyAgain(str,name) {
+            function varyAgain(str, name) {
+                console.log(str);
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -178,11 +179,11 @@
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary >= 0 && 
-                           ( 
+                        || (vary >= 0 &&
+                            (
                                 '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
-                            ||  code === '_'.charCodeAt(0)
-                           )
+                                || code === '_'.charCodeAt(0)
+                            )
                         )
                     )) {
                         if (vary === -1) {
@@ -193,7 +194,7 @@
                             currentVariIndex = variable.length - 1;
                             var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
-                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                                throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                             }
                             formula.push('config.iteraita["' + vari + '"]');
                             formula.push(char);
@@ -204,7 +205,6 @@
                         for (var ik in config.iteraita) {
                             if (!(ik in skipHash) && ik.length > vary) {
                                 if (ik.charCodeAt(vary + 1) !== code) {
-                                    
                                     skipHash[ik] = true;
                                     continue;
                                 } else {
@@ -212,10 +212,10 @@
                                 }
                             }
                         }
+                        if (vary === -1) {
+                            variable.push([]);
+                        }
                         if (match) {
-                            if (vary === -1) {
-                                variable.push([]);
-                            }
                             variable[variable.length - 1].push(char);
                             vary++;
                         } else {
@@ -229,7 +229,7 @@
                     currentVariIndex = variable.length - 1;
                     var vari = variable[currentVariIndex].join('');
                     if (!(vari in config.iteraita)) {
-                        throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                        throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
                     formula.push('config.iteraita["' + vari + '"]');
                 }
@@ -251,11 +251,11 @@
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary >= 0 && 
-                           ( 
+                        || (vary >= 0 &&
+                            (
                                 '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
-                            ||  code === '_'.charCodeAt(0)
-                           )
+                                || code === '_'.charCodeAt(0)
+                            )
                         )
                     )) {
                         if (vary === -1) {
@@ -266,7 +266,7 @@
                             currentVariIndex = variable.length - 1;
                             var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
-                                throw ('unknown variable:' +char+' '+vary+' '+ vari + 'in ' + name + '  @ ' + str);
+                                throw ('unknown variable:' + char + ' ' + vary + ' ' + vari + ' in ' + name + '  @ ' + str);
                             }
                             if (name !== vari) {
                                 if (!(name in config.depend)) {
@@ -327,10 +327,10 @@
                                 }
                             }
                         }
+                        if (vary === -1) {
+                            variable.push([]);
+                        }
                         if (match) {
-                            if (vary === -1) {
-                                variable.push([]);
-                            }
                             variable[variable.length - 1].push(char);
                             vary++;
                         } else {
@@ -344,7 +344,7 @@
                     currentVariIndex = variable.length - 1;
                     var vari = variable[currentVariIndex].join('');
                     if (!(vari in config.iteraita)) {
-                        throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                        throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
                     formula.push(vari + '.value');
 
@@ -457,7 +457,7 @@
                         for (var si = 0; si < str.length; si++) {
                             lastcode = code;
                             code = str.charCodeAt(si);
-                            var char = str.substr(si,1); 
+                            var char = str.substr(si, 1);
                             if (code === 'ー'.charCodeAt(0)) {
                                 if (lastcode < 128) {
                                     strArray.push('-');
@@ -727,11 +727,11 @@
                     if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary >= 0 && 
-                           ( 
+                        || (vary >= 0 &&
+                            (
                                 '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
-                            ||  code === '_'.charCodeAt(0)
-                           )
+                                || code === '_'.charCodeAt(0)
+                            )
                         )
                     )) {
                         return false;
@@ -927,18 +927,18 @@
 う @ last(い) + 2
 え @ last(う) + 2
 `;
-try {
-        let ren = new Rentaku(rentaku2);
-        ren.run();
-        for (let di = 0; di < ren.decls.length; di++) {
-            let decl = ren.decls[di];
-            let iter = config.iteraita[decl];
-            console.log(decl + ': ' + iter.values);
+        try {
+            let ren = new Rentaku(rentaku2);
+            ren.run();
+            for (let di = 0; di < ren.decls.length; di++) {
+                let decl = ren.decls[di];
+                let iter = config.iteraita[decl];
+                console.log(decl + ': ' + iter.values);
+            }
+        } catch (e) {
+            console.log(e);
+            //console.log(config.iteraita);
         }
-} catch(e){
-        console.log(e);
-        //console.log(config.iteraita);
-}
         // TODO: benchmark
         // side support
         // conditional support
