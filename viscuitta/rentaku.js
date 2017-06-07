@@ -2,7 +2,7 @@
 (function (document, console) {
     let config = {
         constval: 4,
-        max: 10,
+        max: 5,
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
         depend: {},
@@ -122,10 +122,11 @@
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
-            eval('this._func = function (argv) { return (' + varyAgain(transformed) + '); }');
+            let mod = function(x,y) {return x%y;}
+            eval('this._func = function (argv) { return (' + varyAgain(transformed, this.name) + '); }');
             return;
-
-            function varyAgain(str) {
+            function varyAgain(str, name) {
+                console.log(str);
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -141,7 +142,12 @@
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary > 0 && code === '_'.charCodeAt(0))
+                        || (vary >= 0 &&
+                            (
+                                '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
+                                || code === '_'.charCodeAt(0)
+                            )
+                        )
                     )) {
                         if (vary === -1) {
                             formula.push(char);
@@ -151,7 +157,7 @@
                             currentVariIndex = variable.length - 1;
                             var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
-                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                                throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                             }
                             formula.push('config.iteraita["' + vari + '"]');
                             formula.push(char);
@@ -169,10 +175,10 @@
                                 }
                             }
                         }
+                        if (vary === -1) {
+                            variable.push([]);
+                        }
                         if (match) {
-                            if (vary === -1) {
-                                variable.push([]);
-                            }
                             variable[variable.length - 1].push(char);
                             vary++;
                         } else {
@@ -186,7 +192,7 @@
                     currentVariIndex = variable.length - 1;
                     var vari = variable[currentVariIndex].join('');
                     if (!(vari in config.iteraita)) {
-                        throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                        throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
                     formula.push('config.iteraita["' + vari + '"]');
                 }
@@ -208,7 +214,12 @@
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary > 0 && code === '_'.charCodeAt(0))
+                        || (vary >= 0 &&
+                            (
+                                '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
+                                || code === '_'.charCodeAt(0)
+                            )
+                        )
                     )) {
                         if (vary === -1) {
                             formula.push(char);
@@ -218,7 +229,15 @@
                             currentVariIndex = variable.length - 1;
                             var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
-                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                                throw ('unknown variable:' + char + ' ' + vary + ' ' + vari + ' in ' + name + '  @ ' + str);
+                            }
+                            if (name !== vari) {
+                                if (!(name in config.depend)) {
+                                    config.depend[name] = {};
+                                }
+                                if (!(vari in config.depend[name])) {
+                                    config.depend[name][vari] = 0;
+                                }
                             }
                             if (
                                 code === '\''.charCodeAt(0)
@@ -233,23 +252,24 @@
                                 || code === ','.charCodeAt(0)
                                 || code === '#'.charCodeAt(0)
                             ) {
+                                if (name !== vari) {
+                                    if (str.indexOf('last(' + vari + ')') > -1) {
 
-                                if (!(name in config.depend)) {
-                                    config.depend[name] = {};
-                                }
-                                if (!(vari in config.depend[name])) {
-                                    config.depend[name][vari] = 0;
-                                }
-                                if (str.indexOf('last(' + vari + ')') > -1) {
-                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-                                }
-                                // TODO: to be optimized
-                                if (str.indexOf('last(' + vari + ',') > -1) {
-                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-                                }
-                                // TODO: to be optimized
-                                if (str.indexOf(vari + '#') > -1) {
-                                    config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+
+                                    }
+                                    // TODO: to be optimized
+                                    if (str.indexOf('last(' + vari + ',') > -1) {
+
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+
+                                    }
+                                    // TODO: to be optimized
+                                    if (str.indexOf(vari + '#') > -1) {
+
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
+
+                                    }
                                 }
                                 formula.push(vari);
                             } else {
@@ -270,10 +290,10 @@
                                 }
                             }
                         }
+                        if (vary === -1) {
+                            variable.push([]);
+                        }
                         if (match) {
-                            if (vary === -1) {
-                                variable.push([]);
-                            }
                             variable[variable.length - 1].push(char);
                             vary++;
                         } else {
@@ -287,12 +307,142 @@
                     currentVariIndex = variable.length - 1;
                     var vari = variable[currentVariIndex].join('');
                     if (!(vari in config.iteraita)) {
-                        throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                        throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
                     formula.push(vari + '.value');
+
+                    if (name !== vari) {
+                        if (!(name in config.depend)) {
+
+                            config.depend[name] = {};
+                        }
+                        if (!(vari in config.depend[name])) {
+
+                            config.depend[name][vari] = 0;
+                        }
+                    }
                 }
                 return formula.join('');
             }
+<<<<<<< HEAD
+=======
+            function convertFormula(str) {
+                if (str.length === 0) {
+                    return '';
+                } else {
+                    // zen to han
+                    for (var si = 0; si < str.length; si++) {
+                        var code = str.charCodeAt(si);
+                        var char = 0;
+                        if (code === '　'.charCodeAt(0)) {
+                            char = ' ';
+                        } else if (code === '０'.charCodeAt(0)) {
+                            char = '0';
+                        } else if (code === '１'.charCodeAt(0)) {
+                            char = '1';
+                        } else if (code === '２'.charCodeAt(0)) {
+                            char = '2';
+                        } else if (code === '３'.charCodeAt(0)) {
+                            char = '3';
+                        } else if (code === '４'.charCodeAt(0)) {
+                            char = '4';
+                        } else if (code === '５'.charCodeAt(0)) {
+                            char = '5';
+                        } else if (code === '６'.charCodeAt(0)) {
+                            char = '6';
+                        } else if (code === '７'.charCodeAt(0)) {
+                            char = '7';
+                        } else if (code === '８'.charCodeAt(0)) {
+                            char = '8';
+                        } else if (code === '９'.charCodeAt(0)) {
+                            char = '9';
+                        } else if (code === '＋'.charCodeAt(0)) {
+                            char = '+';
+                        } else if (code === '＊'.charCodeAt(0)) {
+                            char = '*';
+                        } else if (code === '｀'.charCodeAt(0)) {
+                            char = '`';
+                        } else if (code === '"'.charCodeAt(0)) {
+                            char = '"';
+                        } else if (code === '.'.charCodeAt(0)) {
+                            char = '.';
+                        } else if (code === '，'.charCodeAt(0)) {
+                            char = ',';
+                        } else if (code === '（'.charCodeAt(0)) {
+                            char = '(';
+                        } else if (code === '）'.charCodeAt(0)) {
+                            char = ')';
+                        } else if (code === '＜'.charCodeAt(0)) {
+                            char = '<';
+                        } else if (code === '＝'.charCodeAt(0)) {
+                            char = '=';
+                        } else if (code === '＞'.charCodeAt(0)) {
+                            char = '>';
+                        } else if (code === '｛'.charCodeAt(0)) {
+                            char = '{';
+                        } else if (code === '｝'.charCodeAt(0)) {
+                            char = '}';
+                        } else if (code === '｜'.charCodeAt(0)) {
+                            char = '|';
+                        } else if (code === '？'.charCodeAt(0)) {
+                            char = '?';
+                        } else if (code === '＄'.charCodeAt(0)) {
+                            char = '$';
+                        } else if (code === '＆'.charCodeAt(0)) {
+                            char = '&';
+                        } else if (code === '％'.charCodeAt(0)) {
+                            char = '%';
+                        } else if (code === '＃'.charCodeAt(0)) {
+                            char = '#';
+                        } else if (code === '！'.charCodeAt(0)) {
+                            char = '!';
+                        } else if (code === '＾'.charCodeAt(0)) {
+                            char = '^';
+                        } else if (code === '＠'.charCodeAt(0)) {
+                            char = '@';
+                        } else if (code === ';'.charCodeAt(0)) {
+                            char = ';';
+                        } else if (code === '：'.charCodeAt(0)) {
+                            char = ':';
+                        } else if (code === '’'.charCodeAt(0)) {
+                            char = '\'';
+                        } else if (code === '　'.charCodeAt(0)) {
+                            char = ' ';
+                        }
+                        if (char) {
+                            str = replaceAt(str, char, si);
+                        }
+                    }
+                    // double quote to single quote
+                    // zen - to han - 
+                    var strArray = [];
+                    if (str.indexOf('ー') > -1) {
+                        var lastcode = 0;
+                        var code = 0;
+                        for (var si = 0; si < str.length; si++) {
+                            lastcode = code;
+                            code = str.charCodeAt(si);
+                            var char = str.substr(si, 1);
+                            if (code === 'ー'.charCodeAt(0)) {
+                                if (lastcode < 128) {
+                                    strArray.push('-');
+                                } else {
+                                    strArray.push(char);
+                                }
+                            } else {
+                                strArray.push(char);
+                            }
+                        }
+                        str = strArray.join('');
+                    }
+                    console.log(str);
+                    return str;
+                }
+                function replaceAt(str, char, at) {
+                    return str.substr(0, at) + char + str.substr(at + 1, str.length);
+                }
+            }
+>>>>>>> 2804ed56845a66d138b00576994b797f6a92ec5a
             function transformFormula(f, opt) {
                 if (f.indexOf('|') > -1) {
                     var splitArray = f.split('|');
@@ -694,7 +844,7 @@
                         continue;
                     } else if (si !== stmtArray.length - 1) {
                         if (!checkDecl(decl)) {
-                            throw ('invalid name:' + decl);
+                            throw ('unknown name:' + decl);
                         }
                         this._decls.push(decl);
                     }
@@ -759,7 +909,12 @@
                     if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary > 0 && code === '_'.charCodeAt(0))
+                        || (vary >= 0 &&
+                            (
+                                '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
+                                || code === '_'.charCodeAt(0)
+                            )
+                        )
                     )) {
                         return false;
                     }
@@ -779,8 +934,12 @@
             }
             let max = 0;
             for (let sk in this.starts) {
-                max = Math.max(this.starts[sk], max);
+                max = Math.max(max, this.starts[sk]);
             }
+            max += config.max;
+            console.log(max);
+            console.log(config.depend);
+            console.log(this.starts);
             for (let i = 0; i < max + config.max; i++) {
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
@@ -792,13 +951,7 @@
             }
         }
         setStart(decls, starts) {
-            /*
-    TODO: to be fixed
-    あ @ 11
-    い @	last(あ)
-    う @ い
-    // う：11の列になるずが0になる
-            */
+            // clear
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 if (decl in starts) {
@@ -812,7 +965,6 @@
                 }
             }
             setStartRepeat(0, decls, starts);
-            console.log(config.depend);
             return;
 
             function setStartRepeat(depth, decls, starts) {
@@ -824,7 +976,7 @@
                     let tmp = -1;
                     for (let dep in config.depend[decl]) {
                         if (dep in starts) {
-                            tmp = Math.max(config.depend[decl][dep], tmp);
+                            tmp = Math.max(config.depend[decl][dep] + starts[dep], tmp);
                         }
                     }
                     if (tmp !== -1) {
@@ -833,7 +985,6 @@
                         }
                         starts[decl] += tmp;
                     } else {
-                        console.log(config.depend);
                         more = true;
                     }
                 }
@@ -853,20 +1004,7 @@
     い @ last(あ) +1
     う @ あ + 2
     `;
-    if (!document) {
-
-        let ren = new Rentaku(config.rentaku);
-        ren.run(3);
-        for (let di = 0; di < ren.decls.length; di++) {
-            let decl = ren.decls[di];
-            let iter = config.iteraita[decl];
-            console.log(decl + ': ' + iter.values);
-        }
-        // TODO: benchmark
-        // side support
-        // conditional support
-        // live on github.com
-    } else {
+    if (document) {
         let script = document.currentScript;
         let nowtime = new Date().getTime();
         script.insertAdjacentHTML('afterend', `<textarea id="ta${nowtime}"></textarea>`);
@@ -893,70 +1031,114 @@
         input.addEventListener('change', function (e) {
             render(table, textarea.value, e.target.value);
         }, false);
-    }
+        return;
 
-    function render(table, value, max) {
-        if (!value) {
-            value = config.rentaku;
-        }
-        if (!max) {
-            max = config.max;
-        }
-        let ren = new Rentaku(value);
-        ren.run(max);
-        let decls = ren.decls;
-        table.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
-        let theadTr = table.querySelector('thead tr');
-        let tbody = table.querySelector('tbody');
-        let theadThStyle = 'style="background-color:#444499;color:#ffffff;"';
-        for (let di = 0; di < decls.length; di++) {
-            theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decls[di]}</th>`);
-        }
-        let ruleTdStyle = 'style="background-color:#ffffcc;height:16pt;vertical-align:top;text-align: left;word-wrap:break-word;max-width:100pt;"';
-        {
-            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
-            let tbodyTr = tbody.querySelector('tr:last-child');
+        function render(table, value, max) {
+            if (!value) {
+                value = config.rentaku;
+            }
+            if (!max) {
+                max = config.max;
+            }
+            let ren = new Rentaku(value);
+            ren.run(max);
+            let decls = ren.decls;
+            table.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
+            let theadTr = table.querySelector('thead tr');
+            let tbody = table.querySelector('tbody');
+            let theadThStyle = 'style="background-color:#444499;color:#ffffff;"';
             for (let di = 0; di < decls.length; di++) {
-                let decl = decls[di];
-                let iteraita = config.iteraita[decl];
-                let cell = '';
-                if (iteraita.rule) {
-                    cell = iteraita.rule;
+                theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decls[di]}</th>`);
+            }
+            let ruleTdStyle = 'style="background-color:#ffffcc;height:16pt;vertical-align:top;text-align: left;word-wrap:break-word;max-width:100pt;"';
+            {
+                tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+                let tbodyTr = tbody.querySelector('tr:last-child');
+                for (let di = 0; di < decls.length; di++) {
+                    let decl = decls[di];
+                    let iteraita = config.iteraita[decl];
+                    let cell = '';
+                    if (iteraita.rule) {
+                        cell = iteraita.rule;
+                    }
+                    tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
                 }
-                tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
             }
-        }
-        let graphThStyle = 'style="background-color:#aa99ff;height:30pt;"';
-        {
-            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
-            let tbodyTr = tbody.querySelector('tr:last-child');
-            for (let di = 0; di < decls.length; di++) {
-                tbodyTr.insertAdjacentHTML('beforeend', `<td ${graphThStyle}></td>`);
-            }
-        }
-        let argvTdStyle = 'style="background-color:#ccffcc;height:16pt;text-align: right;"';
-        for (let ci = 0; ci < config.constval; ci++) {
-            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
-            let tbodyTr = tbody.querySelector('tr:last-child');
-            for (let di = 0; di < decls.length; di++) {
-                let decl = decls[di];
-                let iteraita = config.iteraita[decl];
-                let cell = '';
-                if (iteraita.argv && ci < iteraita.argv.length && typeof (iteraita.argv[ci]) !== 'undefined') {
-                    cell = iteraita.argv[ci];
+            let graphThStyle = 'style="background-color:#aa99ff;height:30pt;"';
+            {
+                tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+                let tbodyTr = tbody.querySelector('tr:last-child');
+                for (let di = 0; di < decls.length; di++) {
+                    tbodyTr.insertAdjacentHTML('beforeend', `<td ${graphThStyle}></td>`);
                 }
-                tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle}>${cell}</td>`);
+            }
+            let argvTdStyle = 'style="background-color:#ccffcc;height:16pt;text-align: right;"';
+            for (let ci = 0; ci < config.constval; ci++) {
+                tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+                let tbodyTr = tbody.querySelector('tr:last-child');
+                for (let di = 0; di < decls.length; di++) {
+                    let decl = decls[di];
+                    let iteraita = config.iteraita[decl];
+                    let cell = '';
+                    if (iteraita.argv && ci < iteraita.argv.length && typeof (iteraita.argv[ci]) !== 'undefined') {
+                        cell = iteraita.argv[ci];
+                    }
+                    tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle}>${cell}</td>`);
+                }
+            }
+            for (let mi = 0; mi < config.max; mi++) {
+                tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
+                let tbodyTr = tbody.querySelector('tr:last-child');
+                for (let di = 0; di < decls.length; di++) {
+                    let decl = decls[di];
+                    let iteraita = config.iteraita[decl];
+                    let cell = iteraita.values[mi];
+                    tbodyTr.insertAdjacentHTML('beforeend', `<td style="text-align: right;">${cell}</td>`);
+                }
             }
         }
-        for (let mi = 0; mi < config.max; mi++) {
-            tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
-            let tbodyTr = tbody.querySelector('tr:last-child');
-            for (let di = 0; di < decls.length; di++) {
-                let decl = decls[di];
-                let iteraita = config.iteraita[decl];
-                let cell = iteraita.values[mi];
-                tbodyTr.insertAdjacentHTML('beforeend', `<td style="text-align: right;">${cell}</td>`);
+    } else {
+        let rentaku = `
+あ @ 11
+い @	last(あ)
+う @ い
+`;
+        let rentaku2 = `
+あー2 @ あー2' + 1 [0]
+い @ last(あー2) +1
+う @ last(い) + 2
+え @ last(う) + 2
+`;
+let rentaku3 = `
+  辺数 @ 		11
+  自然数 @		自然数' + 1 [0]
+  パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
+  パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
+  パイ @ 		パイの素A /パイの素B
+  入力_角度 @ 	90/辺数
+  角度変換 @ 	入力_角度*last(パイ)/180
+  負タンの素A @	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
+  負タンの素B @	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
+  負タン @ 	負タンの素A/負タンの素B
+  コサイン自乗 @ 1/(1+last(負タン)*last(負タン))
+  コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
+  コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
+`;
+        try {
+            let ren = new Rentaku(rentaku3);
+            ren.run(70);
+            for (let di = 0; di < ren.decls.length; di++) {
+                let decl = ren.decls[di];
+                let iter = config.iteraita[decl];
+                console.log(decl + ': ' + iter.values);
             }
+        } catch (e) {
+            console.log(e);
+            //console.log(config.iteraita);
         }
+        // TODO: benchmark
+        // side support
+        // conditional support
+        // live on github.com
     }
 })(typeof (document) !== 'undefined' ? document : null, console);
