@@ -159,10 +159,10 @@
             let varied = varyFormula(conved, this.name);
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
-            eval('this._func = function (argv) { return (' + varyAgain(transformed) + '); }');
+            eval('this._func = function (argv) { return (' + varyAgain(transformed,this.name) + '); }');
             return;
 
-            function varyAgain(str) {
+            function varyAgain(str,name) {
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -178,7 +178,12 @@
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary > 0 && code === '_'.charCodeAt(0))
+                        || (vary >= 0 && 
+                           ( 
+                                '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
+                            ||  code === '_'.charCodeAt(0)
+                           )
+                        )
                     )) {
                         if (vary === -1) {
                             formula.push(char);
@@ -199,6 +204,7 @@
                         for (var ik in config.iteraita) {
                             if (!(ik in skipHash) && ik.length > vary) {
                                 if (ik.charCodeAt(vary + 1) !== code) {
+                                    
                                     skipHash[ik] = true;
                                     continue;
                                 } else {
@@ -245,7 +251,12 @@
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary > 0 && code === '_'.charCodeAt(0))
+                        || (vary >= 0 && 
+                           ( 
+                                '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
+                            ||  code === '_'.charCodeAt(0)
+                           )
+                        )
                     )) {
                         if (vary === -1) {
                             formula.push(char);
@@ -255,7 +266,7 @@
                             currentVariIndex = variable.length - 1;
                             var vari = variable[currentVariIndex].join('');
                             if (!(vari in config.iteraita)) {
-                                throw ('unknown variable:' + vari + 'in ' + name + '  @ ' + str);
+                                throw ('unknown variable:' +char+' '+vary+' '+ vari + 'in ' + name + '  @ ' + str);
                             }
                             if (name !== vari) {
                                 if (!(name in config.depend)) {
@@ -708,7 +719,12 @@
                     if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
-                        || (vary > 0 && code === '_'.charCodeAt(0))
+                        || (vary >= 0 && 
+                           ( 
+                                '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
+                            ||  code === '_'.charCodeAt(0)
+                           )
+                        )
                     )) {
                         return false;
                     }
@@ -898,11 +914,12 @@
 う @ い
 `;
         let rentaku2 = `
-あ @ あ' + 1 [0]
-い @ last(あ) +1
+あ2 @ あ2' + 1 [0]
+い @ last(あ2) +1
 う @ last(い) + 2
 え @ last(う) + 2
 `;
+//try {
         let ren = new Rentaku(rentaku2);
         ren.run();
         for (let di = 0; di < ren.decls.length; di++) {
@@ -910,6 +927,10 @@
             let iter = config.iteraita[decl];
             console.log(decl + ': ' + iter.values);
         }
+//} catch(e){
+//        console.log(e);
+        //console.log(config.iteraita);
+//}
         // TODO: benchmark
         // side support
         // conditional support
