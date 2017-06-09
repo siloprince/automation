@@ -228,6 +228,7 @@
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
             let again = varyAgain(transformed, name);
+            //console.log(again);
             return again;
 
             function varyAgain(str, name) {
@@ -439,6 +440,7 @@
                 return formula.join('');
             }
             function transformFormula(f, opt) {
+                //console.log(f);
                 if (f.indexOf('|') > -1) {
                     var splitArray = f.split('|');
                     var valueArray = [];
@@ -484,6 +486,7 @@
                         }
                         ifstmt.push(' return(null); })()');
                         f = ifstmt.join('');
+                        //console.log(f);
                     } else {
                         opt.sideBad = 1;
                         var farray = ['iferror('];
@@ -1287,7 +1290,7 @@
         let andor = `
 あ @ あ' + あ'' [0][1]
 い @ い' + 2 [1][あ]
-う @ あ | あ<4
+う @ あ | あ < 30
 `;
         //try 
         {
