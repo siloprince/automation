@@ -123,6 +123,22 @@
             let opt = { lang: 'es6', itemName: this.name };
             let transformed = transformFormula(varied, opt);
             let mod = function(x,y) {return x%y;};
+            let and = function() {　
+                let args = Array.prototype.slice.call(arguments, 0);　
+                let ret = true;
+                for (let ai=0;ai<args.length;ai++) {
+                    ret = ret && args[ai];
+                }
+                return ret;
+            };
+            let or = function() {　
+                let args = Array.prototype.slice.call(arguments, 0);
+                let ret = false;
+                for (let ai=0;ai<args.length;ai++) {
+                    ret = ret || args[ai];
+                }
+                return ret;
+            };
             eval('this._func = function (argv) { return (' + varyAgain(transformed, this.name) + '); }');
             return;
             function varyAgain(str, name) {
@@ -137,7 +153,7 @@
                     var char = str.substr(si, 1);
                     // no lowercase
                     if (code === ' '.charCodeAt(0) || code === '\t'.charCodeAt(0)) {
-                        // nop
+                        formula.push(' ');
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
@@ -367,7 +383,8 @@
                         for (let ci = 0; ci < condArray.length; ci++) {
                             ifstmt.push('if(' + condArray[ci] + ') { return ' + valueArray[ci] + '}');
                         }
-                        ifstmt.push(' return null; })();');
+                        ifstmt.push(' return null; })()');
+                        f = ifstmt.join('');
                     } else {
                         opt.sideBad = 1;
                         var farray = ['iferror('];
@@ -1087,8 +1104,12 @@ let rentakuL = `
   コサイン @ コサイン自乗ルート2の素 (1-2((角度変換/パイ! mod 2)-((角度変換/パイ! mod 2) mod 1)))
 } [11]
 `;
+let andor = `
+あ @ あ' + 1 [0]
+い @ あ | あ <= 3
+`;
         try {
-            let ren = new Rentaku(rentaku3);
+            let ren = new Rentaku(andor);
             ren.run(5);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
