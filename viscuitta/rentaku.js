@@ -10,7 +10,7 @@
     class Iteraita {
         constructor(name) {
             config.iteraita[name] = this;
-            this.name = convertItemName(name,this);
+            this.name = convertItemName(name, this);
             this._func = null;
             this._rule = null;
             this._argv = null;
@@ -18,7 +18,7 @@
             this._values = [];
             return;
 
-            function convertItemName(str,self) {
+            function convertItemName(str, self) {
                 // TODO: support more bad characters
                 str = self.convertZenToHan(str).trim();
                 str = str.toUpperCase();
@@ -117,19 +117,19 @@
             return this._rule;
         }
         getBaseFunctions() {
-            let mod = function(x,y) {return x%y;};
-            let and = function() {　
-                let args = Array.prototype.slice.call(arguments, 0);　
+            let mod = function (x, y) { return x % y; };
+            let and = function () {
+                let args = Array.prototype.slice.call(arguments, 0);
                 let ret = true;
-                for (let ai=0;ai<args.length;ai++) {
+                for (let ai = 0; ai < args.length; ai++) {
                     ret = ret && args[ai];
                 }
                 return ret;
             };
-            let or = function() {　
+            let or = function () {
                 let args = Array.prototype.slice.call(arguments, 0);
                 let ret = false;
-                for (let ai=0;ai<args.length;ai++) {
+                for (let ai = 0; ai < args.length; ai++) {
                     ret = ret || args[ai];
                 }
                 return ret;
@@ -140,8 +140,8 @@
                 or: or
             };
         }
-        convertPostProcess(str, name) {
-            let varied = varyFormula(str, name);
+        convertPostProcess(str, name, side) {
+            let varied = varyFormula(str, name, side);
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
             let again = varyAgain(transformed, name);
@@ -219,7 +219,7 @@
                 }
                 return formula.join('');
             }
-            function varyFormula(str, name) {
+            function varyFormula(str, name, side) {
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -294,7 +294,11 @@
                                 }
                                 formula.push(vari);
                             } else {
-                                formula.push(vari + '.value');
+                                if (!side) {
+                                    formula.push(vari + '.vaule');
+                                } else {
+                                    formula.push(vari + '.values');
+                                }
                             }
                             formula.push(char);
                             vary = -1;
@@ -330,8 +334,11 @@
                     if (!(vari in config.iteraita)) {
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
-                    formula.push(vari + '.value');
-
+                    if (!side) {
+                        formula.push(vari + '.value');
+                    } else {
+                        formula.push(vari + '.values');
+                    }
                     if (name !== vari) {
                         if (!(name in config.depend)) {
 
@@ -505,7 +512,8 @@
         set rule(str) {
             let conved = this.convertZenToHan(str);
             this._rule = conved;
-            let post = this.convertPostProcess(conved, this.name);
+            let side = false;
+            let post = this.convertPostProcess(conved, this.name, side);
             let base = this.getBaseFunctions();
             let mod = base.mod;
             let and = base.and;
@@ -717,7 +725,7 @@
                     for (var si = 0; si < str.length; si++) {
                         lastcode = code;
                         code = str.charCodeAt(si);
-                        var char = str.substr(si,1);
+                        var char = str.substr(si, 1);
                         if (code === 'ー'.charCodeAt(0)) {
                             if (lastcode < 128) {
                                 strArray.push('-');
@@ -794,14 +802,11 @@
                 let mod = base.mod;
                 let and = base.and;
                 let or = base.or;
-                for (let ai=0;ai<argv.length;ai++) {
+                let side = true;
+                for (let ai = 0; ai < argv.length; ai++) {
                     let conved = iter.convertZenToHan(argv[ai]);
-                    let str = iter.convertPostProcess(conved, decl);
-                    if (str.indexOf('config.iteraita["')>-1) {
-                        argv[ai] = str;
-                    } else {
-                        argv[ai] = eval(str);
-                    }
+                    let str = iter.convertPostProcess(conved, decl, side);
+                    argv[ai] = str;
                 }
                 iter.argv = argv;
             }
@@ -878,6 +883,30 @@
                     let decl = this._decls[di];
                     let iter = config.iteraita[decl];
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
+                        let sides = 1;
+                        let sideArray = [];
+                        if (this.starts[decl] === i) {
+                            let argv = iter.argv;
+                            for (let ai = 0; ai < argv.length; ai++) {
+                                let tmp = eval(argv[ai]);
+                                if (Array.isArray(tmp)) {
+                                    sides = tmp.length;
+                                } else {
+
+                                }
+                                sideArray.push(tmp);
+                            }
+                            for (let ai = 0; ai < argv.length; ai++) {
+                                let tmp = eval(argv[ai]);
+                                if (Array.isArray(tmp)) {
+                                    sides = tmp.length;
+                                } else {
+
+                                }
+                                sideArray.push(tmp);
+                            }
+                            iter.argv = sideArray;
+                        }
                         iter.next();
                     }
                 }
@@ -1042,7 +1071,7 @@
 う @ last(い) + 2
 え @ last(う) + 2
 `;
-let rentaku3 = `
+        let rentaku3 = `
   辺数 @ 		11
   自然数 @		自然数' + 1 [0]
   パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
@@ -1057,7 +1086,7 @@ let rentaku3 = `
   コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
 `;
-let rentaku4 = `
+        let rentaku4 = `
   辺数 @ 		11
   自然数 @		自然数' + 1 [0]
   パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
@@ -1073,7 +1102,7 @@ let rentaku4 = `
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
   コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
 `;
-let rentaku5 = `
+        let rentaku5 = `
   辺数 @ 		11
   自然数 @		自然数' + 1 [0]
   パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
@@ -1093,7 +1122,7 @@ let rentaku5 = `
   コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
   サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
 `;
-let rentakuN = `
+        let rentakuN = `
   辺数 @ 		11
   自然数 @	   ' + 1 [0]
   パイの素A @  6* ' +  (2*自然数-1)*(2*自然数-1)* '' [1][3]
@@ -1108,7 +1137,7 @@ let rentakuN = `
   コサイン自乗ルート2の素 @ 2* ' + (コサイン自乗-1)* '' [0][1]
   コサイン @ コサイン自乗ルート2の素 *(1-2*((角度変換/パイ! mod 2)-((角度変換/パイ! mod 2) mod 1)))
 `;
-let rentakuM = `
+        let rentakuM = `
   辺数 @ 	    11
   自然数 @	    ' + 1 [0]
   パイの素 @  6' +  (2自然数-1) (2自然数-1) '' [0][1]
@@ -1121,7 +1150,7 @@ let rentakuM = `
   コサイン自乗ルート2の素 @ 2 ' + (コサイン自乗-1) '' [0][1]
   コサイン @ コサイン自乗ルート2の素 (1-2((角度変換/パイ! mod 2)-((角度変換/パイ! mod 2) mod 1)))
 `;
-let rentakuL = `
+        let rentakuL = `
  コサイン @ $コサイン {
   辺数 @ 	 $0  [$0]  /* 辺数 @ 	 $0 でも可 */
   自然数 @	    ' + 1 [0]
@@ -1136,11 +1165,16 @@ let rentakuL = `
   コサイン @ コサイン自乗ルート2の素 (1-2((角度変換/パイ! mod 2)-((角度変換/パイ! mod 2) mod 1)))
 } [11]
 `;
-let andor = `
+        let andor2 = `
 あ @ あ' + 1 [0]
-い @ い' + 1 [あ]
+い @ い' + 1 [last(あ)]
 `;
-        try {
+        let andor = `
+あ @ あ' + 1 [0]
+い @ い' + 2 [あ]
+`;
+        try 
+        {
             let ren = new Rentaku(andor);
             ren.run(5);
             for (let di = 0; di < ren.decls.length; di++) {
@@ -1148,7 +1182,10 @@ let andor = `
                 let iter = config.iteraita[decl];
                 console.log(decl + ': ' + iter.values);
             }
-        } catch (e) {
+        }
+        catch 
+        //let _ = function
+        (e) {
             console.log(e);
             //console.log(config.iteraita);
         }
