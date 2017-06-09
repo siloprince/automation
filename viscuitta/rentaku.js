@@ -379,7 +379,7 @@
                                 formula.push(vari);
                             } else {
                                 if (!side) {
-                                    formula.push(vari + '.vaule');
+                                    formula.push(vari + '.value');
                                 } else {
                                     formula.push(vari + '.values');
                                 }
@@ -1281,6 +1281,7 @@
         let andor2 = `
 あ @ あ' + 1 [0]
 い @ い' + 1 [last(あ)]
+う @ あ | あ < 30
 `;
         let andor3 = `
 あ @ あ' + 1 [0]
@@ -1290,7 +1291,7 @@
         let andor = `
 あ @ あ' + あ'' [0][1]
 い @ い' + 2 [1][あ]
-う @ あ | あ < 30
+う @ あ | あ < 5
 `;
         //try 
         {
