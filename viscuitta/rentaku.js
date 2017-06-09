@@ -5,15 +5,77 @@
         max: 5,
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
+        instances: {},
         depend: {},
     };
+    class Instance {
+        constructor(iteraita) {
+            this.iteraita = iteraita;
+            this._rule = null;
+            this._argv = null;
+            this.calc = [];
+            this._values = [];
+            return;
+        }
+        $(index) {
+            if (index < 0) {
+                return null;
+            }
+            if (index >= this._argv.length) {
+                return null;
+            }
+            return this._argv[this._argv.length - 1 - index];
+        }
+        get value() {
+            return this._value;
+        }
+        get values() {
+            return this._values;
+        }
+        get argv() {
+            return this._argv;
+        }
+        last() {
+            while (this._values.length < config.max) {
+                this._values.push(this.next());
+            }
+            return this._values[this._values.length - 1];
+        }
+        prev(index) {
+            let idx = this._values.length - 1 - index;
+            if (idx >= 0) {
+                return this._values[idx];
+            } else {
+                return this.$(-idx - 1);
+            }
+        }
+        next() {
+            this._value = this._func(this.calc);
+            this.calc.shift();
+            this.calc.push(this._value);
+            this._values.push(this._value);
+            return this._value;
+        }
+        set argv(_argv) {
+            this._argv = _argv;
+            for (let ai = 0; ai < this._argv.length; ai++) {
+                this.calc.push(this._argv[ai]);
+            }
+            if (this._argv.length > 0) {
+                this._value = this._argv[this._argv.legnth - 1];
+            } else {
+                this._value = 0;
+            }
+        }
+    }
     class Iteraita {
-        constructor(name) {
+        constructor(name, argc) {
             config.iteraita[name] = this;
             this.name = convertItemName(name, this);
             this._func = null;
             this._rule = null;
             this._argv = null;
+            this.argc = argc;
             this.calc = [];
             this._values = [];
             return;
@@ -59,6 +121,23 @@
                 }
                 return str;
             }
+        }
+        new(argv) {
+            let len = 0;
+            for (let ai=0;ai<argv.length;ai++) {
+                if (typeof(argv[ai])!=='undefined') {
+                    len++;
+                }
+            }
+            if (len !== this.argc) {
+                throw 'the following number of length of argv is required:' + this.argc + ' '+len;
+            }
+            let ret = new Instance(this);
+            if (!(this.name in config.instances)) {
+                config.instances[this.name] = [];
+            }
+            config.instances[this.name].push(ret);
+            return ret;
         }
         $(index) {
             if (index < 0) {
@@ -345,8 +424,11 @@
                             config.depend[name] = {};
                         }
                         if (!(vari in config.depend[name])) {
-
-                            config.depend[name][vari] = 0;
+                            if (!side) {
+                                config.depend[name][vari] = 0;
+                            } else {
+                                config.depend[name][vari] = config.max;
+                            }
                         }
                     }
                 }
@@ -791,7 +873,13 @@
                 this.argvs.push(argv);
             }
             for (let di = 0; di < this._decls.length; di++) {
-                let iter = new Iteraita(this._decls[di], this.argvs[di]);
+                let argc = 0;
+                for (let ai=0;ai<this.argvs[di].length;ai++) {
+                    if (this.argvs[di][ai]!==''){
+                        argc++;
+                    }
+                }
+                new Iteraita(this._decls[di], argc);
             }
             for (let di = 0; di < this._decls.length; di++) {
                 let decl = this._decls[di];
@@ -877,35 +965,43 @@
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
             }
+            // main loop
             max += config.max;
             for (let i = 0; i < max + config.max; i++) {
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
                     let iter = config.iteraita[decl];
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
-                        let sides = 1;
-                        let sideArray = [];
                         if (this.starts[decl] === i) {
+                            let sideArray = [];
+                            let minSides = config.max + 1;
                             let argv = iter.argv;
                             for (let ai = 0; ai < argv.length; ai++) {
                                 let tmp = eval(argv[ai]);
                                 if (Array.isArray(tmp)) {
-                                    sides = tmp.length;
+                                    minSides = Math.min(minSides, tmp.length);
+                                    sideArray.push(tmp);
                                 } else {
-
+                                    sideArray.push([tmp]);
                                 }
-                                sideArray.push(tmp);
                             }
-                            for (let ai = 0; ai < argv.length; ai++) {
-                                let tmp = eval(argv[ai]);
-                                if (Array.isArray(tmp)) {
-                                    sides = tmp.length;
-                                } else {
-
+                            if (minSides===config.max+1) {
+                                minSides = 1;
+                            }
+                            for (let mi = 0; mi < minSides; mi++) {
+                                let tmpargv = [];
+                                for (let ai = 0; ai < argv.length; ai++) {
+                                    if (sideArray[ai].length===1) {
+                                        tmpargv.push((sideArray[ai][0]));
+                                    } else {
+                                        tmpargv.push((sideArray[ai][mi]));
+                                    }
                                 }
-                                sideArray.push(tmp);
+                                iter.new(tmpargv);
+                                if (mi===0) {
+                                    iter.argv = tmpargv;
+                                }
                             }
-                            iter.argv = sideArray;
                         }
                         iter.next();
                     }
@@ -1172,8 +1268,9 @@
         let andor = `
 あ @ あ' + 1 [0]
 い @ い' + 2 [あ]
+う @ last(あ)
 `;
-        try 
+        //try 
         {
             let ren = new Rentaku(andor);
             ren.run(5);
@@ -1183,8 +1280,8 @@
                 console.log(decl + ': ' + iter.values);
             }
         }
-        catch 
-        //let _ = function
+        //catch
+        let _ = function
         (e) {
             console.log(e);
             //console.log(config.iteraita);
