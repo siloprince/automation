@@ -116,12 +116,7 @@
         get rule() {
             return this._rule;
         }
-        set rule(str) {
-            let conved = this.convertZenToHan(str);
-            this._rule = conved;
-            let varied = varyFormula(conved, this.name);
-            let opt = { lang: 'es6', itemName: this.name };
-            let transformed = transformFormula(varied, opt);
+        getBaseFunctions() {
             let mod = function(x,y) {return x%y;};
             let and = function() {　
                 let args = Array.prototype.slice.call(arguments, 0);　
@@ -139,8 +134,19 @@
                 }
                 return ret;
             };
-            eval('this._func = function (argv) { return (' + varyAgain(transformed, this.name) + '); }');
-            return;
+            return {
+                mod: mod,
+                and: and,
+                or: or
+            };
+        }
+        convertPostProcess(str, name) {
+            let varied = varyFormula(str, name);
+            let opt = { lang: 'es6', itemName: name };
+            let transformed = transformFormula(varied, opt);
+            let again = varyAgain(transformed, name);
+            return again;
+
             function varyAgain(str, name) {
                 var vary = -1;
                 var skipHash = {};
@@ -496,6 +502,17 @@
                 return f;
             }
         }
+        set rule(str) {
+            let conved = this.convertZenToHan(str);
+            this._rule = conved;
+            let post = this.convertPostProcess(conved, this.name);
+            let base = this.getBaseFunctions();
+            let mod = base.mod;
+            let and = base.and;
+            let or = base.or;
+            eval('this._func = function (argv) { return (' + post + '); }');
+            return;
+        }
         convertZenToHan(str) {
             if (str.length === 0) {
                 return '';
@@ -759,19 +776,34 @@
                 let rule = formulaArray.shift();
                 this.rules.push(rule);
                 let argv = [];
+
                 for (let fi = 0; fi < formulaArray.length; fi++) {
-                    argv.push(eval(formulaArray[fi]));
+                    argv.push(formulaArray[fi]);
                 }
                 this.argvs.push(argv);
             }
             for (let di = 0; di < this._decls.length; di++) {
                 let iter = new Iteraita(this._decls[di], this.argvs[di]);
-                iter.argv = this.argvs[di];
             }
             for (let di = 0; di < this._decls.length; di++) {
                 let decl = this._decls[di];
                 let iter = config.iteraita[decl];
                 iter.rule = this.rules[di];
+                let argv = this.argvs[di];
+                let base = iter.getBaseFunctions();
+                let mod = base.mod;
+                let and = base.and;
+                let or = base.or;
+                for (let ai=0;ai<argv.length;ai++) {
+                    let conved = iter.convertZenToHan(argv[ai]);
+                    let str = iter.convertPostProcess(conved, decl);
+                    if (str.indexOf('config.iteraita["')>-1) {
+                        argv[ai] = str;
+                    } else {
+                        argv[ai] = eval(str);
+                    }
+                }
+                iter.argv = argv;
             }
             this.starts = {};
             this.setStart(this._decls, this.starts);
@@ -1106,7 +1138,7 @@ let rentakuL = `
 `;
 let andor = `
 あ @ あ' + 1 [0]
-い @ あ | あ <= 3
+い @ い' + 1 [あ]
 `;
         try {
             let ren = new Rentaku(andor);
