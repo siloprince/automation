@@ -242,7 +242,7 @@
                     var char = str.substr(si, 1);
                     // no lowercase
                     if (code === ' '.charCodeAt(0) || code === '\t'.charCodeAt(0)) {
-                        formula.push(' ');
+                        //formula.push(' ');
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || (128 <= code)
@@ -480,9 +480,9 @@
                         // TODO
                         // randmize
                         for (let ci = 0; ci < condArray.length; ci++) {
-                            ifstmt.push('if(' + condArray[ci] + ') { return ' + valueArray[ci] + '}');
+                            ifstmt.push('if(' + condArray[ci] + ') { return(' + valueArray[ci] + ')}');
                         }
-                        ifstmt.push(' return null; })()');
+                        ifstmt.push(' return(null); })()');
                         f = ifstmt.join('');
                     } else {
                         opt.sideBad = 1;
@@ -1287,7 +1287,7 @@
         let andor = `
 あ @ あ' + あ'' [0][1]
 い @ い' + 2 [1][あ]
-う @ last(あ)
+う @ あ | あ<4
 `;
         //try 
         {
