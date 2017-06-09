@@ -1191,7 +1191,5 @@
         }
         // TODO: benchmark
         // side support
-        // conditional support
-        // live on github.com
     }
 })(typeof (document) !== 'undefined' ? document : null, console);
