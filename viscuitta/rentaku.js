@@ -32,9 +32,6 @@
         get values() {
             return this._values;
         }
-        get argv() {
-            return this._argv;
-        }
         last() {
             while (this._values.length < config.max) {
                 this._values.push(this.next());
@@ -50,11 +47,15 @@
             }
         }
         next() {
-            this._value = this._func(this.calc);
+            let func = this.iteraita.func;
+            this._value = func(this,this.calc);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
             return this._value;
+        }
+        get argv() {
+            return this._argv;
         }
         set argv(_argv) {
             this._argv = _argv;
@@ -132,7 +133,7 @@
             if (len !== this.argc) {
                 throw 'the following number of length of argv is required:' + this.argc + ' '+len;
             }
-            let ret = new Instance(this);
+            let ret = new Instance(this,argv);
             if (!(this.name in config.instances)) {
                 config.instances[this.name] = [];
             }
@@ -172,11 +173,14 @@
             }
         }
         next() {
-            this._value = this._func(this.calc);
+            this._value = this._func(this, this.calc);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
             return this._value;
+        }
+        get func() {
+            return this._func;
         }
         set func(_func) {
             this._func = _func;
@@ -259,7 +263,7 @@
                             if (!(vari in config.iteraita)) {
                                 throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                             }
-                            formula.push('config.iteraita["' + vari + '"]');
+                            formula.push('config.instances["' + vari + '"][0]');
                             formula.push(char);
                             vary = -1;
                         }
@@ -294,7 +298,7 @@
                     if (!(vari in config.iteraita)) {
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
-                    formula.push('config.iteraita["' + vari + '"]');
+                    formula.push('config.instances["' + vari + '"][0]');
                 }
                 return formula.join('');
             }
@@ -511,7 +515,7 @@
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = 'this.prev(((""==="$4")?"$2".length:1)-1)';
+                        rep = 'self.prev(((""==="$4")?"$2".length:1)-1)';
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -600,7 +604,7 @@
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            eval('this._func = function (argv) { return (' + post + '); }');
+            eval('this._func = function (self, argv) { return (' + post + '); }');
             return;
         }
         convertZenToHan(str) {
@@ -978,6 +982,8 @@
                             let argv = iter.argv;
                             for (let ai = 0; ai < argv.length; ai++) {
                                 let tmp = eval(argv[ai]);
+                                    //console.log('>>'+argv[ai]);
+                                    //console.log(tmp+' '+i+' '+decl);
                                 if (Array.isArray(tmp)) {
                                     minSides = Math.min(minSides, tmp.length);
                                     sideArray.push(tmp);
@@ -997,13 +1003,21 @@
                                         tmpargv.push((sideArray[ai][mi]));
                                     }
                                 }
-                                iter.new(tmpargv);
-                                if (mi===0) {
+                                //console.log(decl);
+                                let inst = iter.new(tmpargv);
+                                inst.argv = tmpargv;
+                                if (false) {
                                     iter.argv = tmpargv;
                                 }
                             }
+                            //console.log(decl+' '+minSides);
                         }
-                        iter.next();
+                        //console.log(decl);
+                        //console.log(config.instances[decl]);
+                        for (let ii=0;ii<config.instances[decl].length;ii++) {
+                            let inst = config.instances[decl][ii];
+                            inst.next();
+                        }
                     }
                 }
             }
@@ -1276,8 +1290,10 @@
             ren.run(5);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
-                let iter = config.iteraita[decl];
-                console.log(decl + ': ' + iter.values);
+                let inst = config.instances[decl];
+                for (let ii=0;ii<inst.length;ii++) {
+                    console.log(decl + ': ' + inst[ii].values);
+                }
             }
         }
         //catch
