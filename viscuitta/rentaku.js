@@ -48,7 +48,7 @@
         }
         next() {
             let func = this.iteraita.func;
-            this._value = func(this,this.calc);
+            this._value = func(this,this.calc,this._values.length);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -361,7 +361,6 @@
                                 formula.push(vari);
                             } else if (
                                 code === ')'.charCodeAt(0)
-                                || code === ','.charCodeAt(0)
                                 || code === '#'.charCodeAt(0)
                             ) {
                                 if (name !== vari) {
@@ -385,8 +384,11 @@
                                 }
                                 formula.push(vari);
                             } else {
+                                /*
+                                || code === ','.charCodeAt(0)
+                                */
                                 if (!side) {
-                                    formula.push(vari + '.value');
+                                    formula.push(vari + '.values[idx]');
                                 } else {
                                     formula.push(vari + '.values');
                                 }
@@ -426,7 +428,7 @@
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
                     if (!side) {
-                        formula.push(vari + '.value');
+                        formula.push(vari + '.values[idx]');
                     } else {
                         formula.push(vari + '.values');
                     }
@@ -489,7 +491,7 @@
                         // TODO
                         // randmize
                         for (let ci = 0; ci < condArray.length; ci++) {
-                            ifstmt.push('if(' + condArray[ci] + ') { return(' + valueArray[ci] + ')}');
+                            ifstmt.push('if(' + condArray[ci].replace(/([^=]*)=([^=]*)/g,'$1===$2') + ') { return(' + valueArray[ci] + ')}');
                         }
                         ifstmt.push(' return(null); })()');
                         f = ifstmt.join('');
@@ -614,7 +616,7 @@
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            eval('this._func = function (self, argv) { return (' + post + '); }');
+            eval('this._func = function (self, argv,idx) { return (' + post + '); }');
             return;
         }
         convertZenToHan(str) {
@@ -1207,26 +1209,7 @@
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
   コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
 `;
-        let rentaku5 = `
-  辺数 @ 		11
-  自然数 @		自然数' + 1 [0]
-  パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
-  パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
-  パイ @ 		パイの素A /パイの素B
-  入力_角度 @ 	90/辺数
-  角度変換 @ 	入力_角度*last(パイ)/180
-  負タンの素A @	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
-  負タンの素B @	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
-  負タン @ 	負タンの素A/負タンの素B
-  コサイン自乗 @ 1/(1+last(負タン)*last(負タン))
-  コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
-  コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
-  コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
-  コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
-  サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数>辺数))
-  コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
-  サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
-`;
+ 
         let rentakuN = `
   辺数 @ 		11
   自然数 @	   ' + 1 [0]
@@ -1301,10 +1284,34 @@
   コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
 `;
+       let rentaku5 = `
+  辺数 @ 		11
+  自然数 @		自然数' + 1 [0]
+  パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
+  パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
+  パイ @ 		パイの素A /パイの素B
+  入力_角度 @ 	90/辺数
+  角度変換 @ 	入力_角度*last(パイ)/180
+  負タンの素A @	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
+  負タンの素B @	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
+  負タン @ 	負タンの素A/負タンの素B
+  コサイン自乗 @ 1/(1+last(負タン)*last(負タン))
+  コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
+  コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
+  コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
+  コサイン4N倍角抜粋1 @ 自然数 | mod(自然数,4)=0
+  コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
+`;
+/*
+  コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
+  サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数>辺数))
+  コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
+  サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
+  */
         //try 
         {
-            let ren = new Rentaku(rentaku3);
-            ren.run(5);
+            let ren = new Rentaku(rentaku5);
+            ren.run(6);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
