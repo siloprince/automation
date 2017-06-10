@@ -26,9 +26,6 @@
             }
             return this._argv[this._argv.length - 1 - index];
         }
-        get value() {
-            return this._value;
-        }
         get values() {
             return this._values;
         }
@@ -48,7 +45,7 @@
         }
         next() {
             let func = this.iteraita.func;
-            this._value = func(this,this.calc,this._values.length);
+            this._value = func(this, this.calc, this._values.length);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -91,10 +88,10 @@
                 var head = str.charCodeAt(0);
                 var last = str.charCodeAt(str.length - 1);
                 if (
-                        'A'.charCodeAt(0) <= head 
-                    && head < 'Z'.charCodeAt(0) 
-                    && '0'.charCodeAt(0) <= last 
-                    && last < '9'.charCodeAt(0) 
+                    'A'.charCodeAt(0) <= head
+                    && head < 'Z'.charCodeAt(0)
+                    && '0'.charCodeAt(0) <= last
+                    && last < '9'.charCodeAt(0)
                     && str.indexOf('_') === -1
                 ) {
                     var sarray = [];
@@ -131,59 +128,23 @@
         }
         new(argv) {
             let len = 0;
-            for (let ai=0;ai<argv.length;ai++) {
-                if (typeof(argv[ai])!=='undefined') {
+            for (let ai = 0; ai < argv.length; ai++) {
+                if (typeof (argv[ai]) !== 'undefined') {
                     len++;
                 }
             }
             if (len !== this.argc) {
-                throw 'the following number of length of argv is required:' + this.argc + ' '+len;
+                throw 'the following number of length of argv is required:' + this.argc + ' ' + len;
             }
-            let ret = new Instance(this,argv);
+            let ret = new Instance(this, argv);
             if (!(this.name in config.instances)) {
                 config.instances[this.name] = [];
             }
             config.instances[this.name].push(ret);
             return ret;
         }
-        $(index) {
-            if (index < 0) {
-                return null;
-            }
-            if (index >= this._argv.length) {
-                return null;
-            }
-            return this._argv[this._argv.length - 1 - index];
-        }
-        get value() {
-            return this._value;
-        }
-        get values() {
-            return this._values;
-        }
         get argv() {
             return this._argv;
-        }
-        last() {
-            while (this._values.length < config.max) {
-                this._values.push(this.next());
-            }
-            return this._values[this._values.length - 1];
-        }
-        prev(index) {
-            let idx = this._values.length - 1 - index;
-            if (idx >= 0) {
-                return this._values[idx];
-            } else {
-                return this.$(-idx - 1);
-            }
-        }
-        next() {
-            this._value = this._func(this, this.calc);
-            this.calc.shift();
-            this.calc.push(this._value);
-            this._values.push(this._value);
-            return this._value;
         }
         get func() {
             return this._func;
@@ -350,7 +311,7 @@
                                     config.depend[name][vari] = 0;
                                 }
                             }
-                            let pushed=false;
+                            let pushed = false;
                             if (
                                 code === '\''.charCodeAt(0)
                                 || code === '`'.charCodeAt(0)
@@ -359,7 +320,7 @@
                                 || code === '.'.charCodeAt(0)
                             ) {
                                 formula.push(vari);
-                                pushed=true;
+                                pushed = true;
                             } else if (
                                 code === '#'.charCodeAt(0)
                             ) {
@@ -372,31 +333,31 @@
                                     }
                                 }
                                 formula.push(vari);
-                                pushed=true;
+                                pushed = true;
                             } else if (
                                 code === ')'.charCodeAt(0)
                             ) {
                                 if (name !== vari) {
                                     if (str.indexOf('last(' + vari + ')') > -1) {
 
-                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);                            
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
                                         formula.push(vari);
-                                        pushed=true;
+                                        pushed = true;
                                     }
                                 }
-                                
+
                             }
                             if (!pushed) {
-                                if(
-                                    code === ')'.charCodeAt(0) && 
+                                if (
+                                    code === ')'.charCodeAt(0) &&
                                     str.indexOf('last(' + vari + ')') > -1
                                 ) {
                                     formula.push(vari);
-                                    pushed=true;
+                                    pushed = true;
                                 } else {
-                                 /*
-                                || code === ','.charCodeAt(0)
-                                */
+                                    /*
+                                   || code === ','.charCodeAt(0)
+                                   */
                                     if (!side) {
                                         formula.push(vari + '.values[idx]');
                                     } else {
@@ -502,7 +463,7 @@
                         // TODO
                         // randmize
                         for (let ci = 0; ci < condArray.length; ci++) {
-                            ifstmt.push('if(' + condArray[ci].replace(/([^=]*)=([^=]*)/g,'$1===$2') + ') { return(' + valueArray[ci] + ')}');
+                            ifstmt.push('if(' + condArray[ci].replace(/([^=]*)=([^=]*)/g, '$1===$2') + ') { return(' + valueArray[ci] + ')}');
                         }
                         ifstmt.push(' return(null); })()');
                         f = ifstmt.join('');
@@ -901,8 +862,8 @@
             }
             for (let di = 0; di < this._decls.length; di++) {
                 let argc = 0;
-                for (let ai=0;ai<this.argvs[di].length;ai++) {
-                    if (this.argvs[di][ai]!==''){
+                for (let ai = 0; ai < this.argvs[di].length; ai++) {
+                    if (this.argvs[di][ai] !== '') {
                         argc++;
                     }
                 }
@@ -1005,8 +966,8 @@
                             let argv = iter.argv;
                             for (let ai = 0; ai < argv.length; ai++) {
                                 let tmp = eval(argv[ai]);
-                                    //console.log('>>'+argv[ai]);
-                                    //console.log(tmp+' '+i+' '+decl);
+                                //console.log('>>'+argv[ai]);
+                                //console.log(tmp+' '+i+' '+decl);
                                 if (Array.isArray(tmp)) {
                                     minSides = Math.min(minSides, tmp.length);
                                     sideArray.push(tmp);
@@ -1014,13 +975,13 @@
                                     sideArray.push([tmp]);
                                 }
                             }
-                            if (minSides===config.max+1) {
+                            if (minSides === config.max + 1) {
                                 minSides = 1;
                             }
                             for (let mi = 0; mi < minSides; mi++) {
                                 let tmpargv = [];
                                 for (let ai = 0; ai < argv.length; ai++) {
-                                    if (sideArray[ai].length===1) {
+                                    if (sideArray[ai].length === 1) {
                                         tmpargv.push((sideArray[ai][0]));
                                     } else {
                                         tmpargv.push((sideArray[ai][mi]));
@@ -1037,7 +998,7 @@
                         }
                         //console.log(decl);
                         //console.log(config.instances[decl]);
-                        for (let ii=0;ii<config.instances[decl].length;ii++) {
+                        for (let ii = 0; ii < config.instances[decl].length; ii++) {
                             let inst = config.instances[decl][ii];
                             inst.next();
                         }
@@ -1220,7 +1181,7 @@
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
   コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
 `;
- 
+
         let rentakuN = `
   辺数 @ 		11
   自然数 @	   ' + 1 [0]
@@ -1295,7 +1256,7 @@
   コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
 `;
-       let rentaku5 = `
+        let rentaku5 = `
   辺数 @ 		11
   自然数 @		自然数' + 1 [0]
   パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
@@ -1313,12 +1274,12 @@
   コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
   サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数<辺数))
 `;
-/*
-  コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
-  サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数>辺数))
-  コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
-  サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
-  */
+        /*
+          コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
+          サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数>辺数))
+          コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
+          サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
+          */
         //try 
         {
             let ren = new Rentaku(rentaku5);
@@ -1326,7 +1287,7 @@
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
-                for (let ii=0;ii<inst.length;ii++) {
+                for (let ii = 0; ii < inst.length; ii++) {
                     console.log(decl + ': ' + inst[ii].values);
                 }
             }
