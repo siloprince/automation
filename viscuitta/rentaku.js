@@ -88,7 +88,6 @@
                 if (/[~\-\+\*\/<>=!#'"%&;:,\(\)\|\.\\\^\?`{}@\$]/.test(str)) {
                     str = str.replace(/[~\-\+\*\/<>=!#'"%&;:,\(\)\|\.\\\^\?`{}@\$]/g, '＿');
                 }
-                console.log(str);
                 var head = str.charCodeAt(0);
                 var last = str.charCodeAt(str.length - 1);
                 if (
@@ -351,6 +350,7 @@
                                     config.depend[name][vari] = 0;
                                 }
                             }
+                            let pushed=false;
                             if (
                                 code === '\''.charCodeAt(0)
                                 || code === '`'.charCodeAt(0)
@@ -359,22 +359,11 @@
                                 || code === '.'.charCodeAt(0)
                             ) {
                                 formula.push(vari);
+                                pushed=true;
                             } else if (
-                                code === ')'.charCodeAt(0)
-                                || code === '#'.charCodeAt(0)
+                                code === '#'.charCodeAt(0)
                             ) {
                                 if (name !== vari) {
-                                    if (str.indexOf('last(' + vari + ')') > -1) {
-
-                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-
-                                    }
-                                    // TODO: to be optimized
-                                    if (str.indexOf('last(' + vari + ',') > -1) {
-
-                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-
-                                    }
                                     // TODO: to be optimized
                                     if (str.indexOf(vari + '#') > -1) {
 
@@ -383,14 +372,36 @@
                                     }
                                 }
                                 formula.push(vari);
-                            } else {
-                                /*
+                                pushed=true;
+                            } else if (
+                                code === ')'.charCodeAt(0)
+                            ) {
+                                if (name !== vari) {
+                                    if (str.indexOf('last(' + vari + ')') > -1) {
+
+                                        config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);                            
+                                        formula.push(vari);
+                                        pushed=true;
+                                    }
+                                }
+                                
+                            }
+                            if (!pushed) {
+                                if(
+                                    code === ')'.charCodeAt(0) && 
+                                    str.indexOf('last(' + vari + ')') > -1
+                                ) {
+                                    formula.push(vari);
+                                    pushed=true;
+                                } else {
+                                 /*
                                 || code === ','.charCodeAt(0)
                                 */
-                                if (!side) {
-                                    formula.push(vari + '.values[idx]');
-                                } else {
-                                    formula.push(vari + '.values');
+                                    if (!side) {
+                                        formula.push(vari + '.values[idx]');
+                                    } else {
+                                        formula.push(vari + '.values');
+                                    }
                                 }
                             }
                             formula.push(char);
@@ -1299,8 +1310,8 @@
   コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
   コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
-  コサイン4N倍角抜粋1 @ 自然数 | mod(自然数,4)=0
   コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
+  サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数<辺数))
 `;
 /*
   コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
