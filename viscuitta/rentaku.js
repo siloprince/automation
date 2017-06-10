@@ -85,12 +85,19 @@
                 // TODO: support more bad characters
                 str = self.convertZenToHan(str).trim();
                 str = str.toUpperCase();
-                if (/[_~\-\+\*\/<>=!#'"%&;:,\(\)\|\.\\\^\?`{}@\$]/.test(str)) {
-                    str = str.replace(/[_~\-\+\*\/<>=!#'"%&;:,\(\)\|\.\\\^\?`{}@\$]/g, '＿');
+                if (/[~\-\+\*\/<>=!#'"%&;:,\(\)\|\.\\\^\?`{}@\$]/.test(str)) {
+                    str = str.replace(/[~\-\+\*\/<>=!#'"%&;:,\(\)\|\.\\\^\?`{}@\$]/g, '＿');
                 }
+                console.log(str);
                 var head = str.charCodeAt(0);
                 var last = str.charCodeAt(str.length - 1);
-                if ('A'.charCodeAt(0) <= head && head < 'Z'.charCodeAt(0) && '0'.charCodeAt(0) <= last && last < '9'.charCodeAt(0) && str.indexOf('_') === -1) {
+                if (
+                        'A'.charCodeAt(0) <= head 
+                    && head < 'Z'.charCodeAt(0) 
+                    && '0'.charCodeAt(0) <= last 
+                    && last < '9'.charCodeAt(0) 
+                    && str.indexOf('_') === -1
+                ) {
                     var sarray = [];
                     var numflag = 0;
                     for (var si = 0; si < str.length; si++) {
@@ -1184,21 +1191,6 @@
 う @ last(い) + 2
 え @ last(う) + 2
 `;
-        let rentaku3 = `
-  辺数 @ 		11
-  自然数 @		自然数' + 1 [0]
-  パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
-  パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
-  パイ @ 		パイの素A /パイの素B
-  入力_角度 @ 	90/辺数
-  角度変換 @ 	入力_角度*last(パイ)/180
-  負タンの素A @	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
-  負タンの素B @	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
-  負タン @ 	負タンの素A/負タンの素B
-  コサイン自乗 @ 1/(1+last(負タン)*last(負タン))
-  コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
-  コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
-`;
         let rentaku4 = `
   辺数 @ 		11
   自然数 @		自然数' + 1 [0]
@@ -1293,9 +1285,25 @@
 い @ い' + 2 [1][あ]
 う @ あ | あ < 5
 `;
+
+        let rentaku3 = `
+  辺数 @ 		11
+  自然数 @		自然数' + 1 [0]
+  パイの素A @  	6*パイの素A' +  (2*自然数-1)*(2*自然数-1)* パイの素A'' [1][3]
+  パイの素B @  	6*パイの素B' +  (2*自然数-1)*(2*自然数-1)* パイの素B'' [0][1]
+  パイ @ 		パイの素A /パイの素B
+  入力_角度 @ 	90/辺数
+  角度変換 @ 	入力_角度*last(パイ)/180
+  負タンの素A @	(2*自然数-1)/角度変換 * 負タンの素A' - 負タンの素A'' [1][0]
+  負タンの素B @	(2*自然数-1)/角度変換 * 負タンの素B' - 負タンの素B''	[0][1]
+  負タン @ 	負タンの素A/負タンの素B
+  コサイン自乗 @ 1/(1+last(負タン)*last(負タン))
+  コサイン自乗ルート2の素 @ 2* コサイン自乗ルート2の素' + (コサイン自乗-1)*コサイン自乗ルート2の素'' [0][1]
+  コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
+`;
         //try 
         {
-            let ren = new Rentaku(andor);
+            let ren = new Rentaku(rentaku3);
             ren.run(5);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
