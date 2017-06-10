@@ -463,7 +463,7 @@
                         // TODO
                         // randmize
                         for (let ci = 0; ci < condArray.length; ci++) {
-                            ifstmt.push('if(' + condArray[ci].replace(/([^=]*)=([^=]*)/g, '$1===$2') + ') { return(' + valueArray[ci] + ')}');
+                            ifstmt.push('if(' + condArray[ci].replace(/([^<=>])=([^=]*)/g, '$1===$2') + ') { return(' + valueArray[ci] + ')}');
                         }
                         ifstmt.push(' return(null); })()');
                         f = ifstmt.join('');
@@ -1272,11 +1272,9 @@
   コサイン @ コサイン自乗ルート2の素 *(1-2*(mod(角度変換/last(パイ),2)-mod(mod(角度変換/last(パイ),2),1)))
   コサインN倍角 @	2*last(コサイン)*コサインN倍角' - コサインN倍角''　[last(コサイン)]　[1]
   コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
-  サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数<辺数))
+  サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数<=辺数))
 `;
         /*
-          コサイン4N倍角抜粋 @ コサインN倍角 | mod(自然数,4)=0
-          サイン4N倍角抜粋 @ -コサインN倍角 | and((mod(自然数+2+辺数,4)=0),(自然数>辺数))
           コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
           サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
           */
