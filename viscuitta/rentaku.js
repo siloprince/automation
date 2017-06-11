@@ -2,7 +2,7 @@
 (function (document, console) {
     let config = {
         constval: 4,
-        max: 5,
+        max: 11,
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
         instances: {},
@@ -30,9 +30,6 @@
             return this._values;
         }
         last() {
-            while (this._values.length < config.max) {
-                this._values.push(this.next());
-            }
             return this._values[this._values.length - 1];
         }
         prev(index) {
@@ -616,6 +613,7 @@
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
+            console.log(this.name+':'+post);
             eval('this._func = function (self, argv,idx) { return (' + post + '); }');
             return;
         }
@@ -969,6 +967,7 @@
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
             }
+            console.log(this.starts);
             // main loop
             max += config.max;
             for (let i = 0; i < max + config.max; i++) {
