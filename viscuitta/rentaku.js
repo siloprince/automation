@@ -17,6 +17,9 @@
             this._values = [];
             return;
         }
+        get name() {
+            return this.iteraita.name;
+        }
         $(index) {
             if (index < 0) {
                 return null;
@@ -66,7 +69,7 @@
     class Iteraita {
         constructor(name, argc) {
             config.iteraita[name] = this;
-            this.name = convertItemName(name, this);
+            this._name = convertItemName(name, this);
             this._func = null;
             this._rule = null;
             this._argv = null;
@@ -134,11 +137,14 @@
                 throw 'the following number of length of argv is required:' + this.argc + ' ' + len;
             }
             let ret = new Instance(this, argv);
-            if (!(this.name in config.instances)) {
-                config.instances[this.name] = [];
+            if (!(this._name in config.instances)) {
+                config.instances[this._name] = [];
             }
-            config.instances[this.name].push(ret);
+            config.instances[this._name].push(ret);
             return ret;
+        }
+        get name() {
+            return this._name;
         }
         get argv() {
             return this._argv;
@@ -508,7 +514,7 @@
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = 'self.prev(((""==="$4")?"$2".length:1)-1)';
+                        rep = `$1.prev(((""==="$4")?"$2".length:1)+($1.name===${opt.itemName}.name?-1:0))`;
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -608,12 +614,12 @@
             let conved = this.convertZenToHan(str);
             this._rule = conved;
             let side = false;
-            let post = this.convertPostProcess(conved, this.name, side, true);
+            let post = this.convertPostProcess(conved, this._name, side, true);
             let base = this.getBaseFunctions();
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            //console.log(this.name+':'+post);
+            console.log(this._name+':'+post);
             eval('this._func = function (self, argv,idx) { return (' + post + '); }');
             return;
         }
@@ -984,9 +990,10 @@
 
                             //console.log(minSides+':'+decl);
                             for (let ai = 0; ai < argv.length; ai++) {
+                                console.log(argv[ai]);
                                 let tmp = eval(argv[ai]);
                                 //console.log('>>'+argv[ai]);
-                                //console.log(tmp+' '+decl);
+                                console.log(tmp+' '+decl+' '+argv[ai]);
                                 if (Array.isArray(tmp)) {
                                     minSides = Math.min(minSides, tmp.length);
 
@@ -1158,7 +1165,7 @@ XX @ XX' + 1 [サインN倍角]
                         cell = iteraita.rule;
                     }
                     let instances = config.instances[decl];
-                    console.log(instances.length);
+                    //console.log(instances.length);
                     for (let ii = 0; ii < instances.length; ii++) {
                         tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
                     }
@@ -1343,14 +1350,22 @@ XX @ XX' + 1 [サインN倍角]
 サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
 
 `
+/*
+			
+辺長	@ 20
+回転数 @ 1
+点X @ 点X' -辺長 *コサインN倍角 | 自然数 <= 辺数*回転数
+点Y @ 点Y' + 辺長 * サインN倍角 | 自然数 <= 辺数*回転数
+線 $3+1-mod($3,1) | { or(and(($0-$2)*($0-$2)<0.0001,自然数=$2+1-mod($2+1,1)),and(($1-$3)*($1-$3)<0.0001,(自然数-$2-1+mod($2+1,1))*(自然数-$0+mod($0,1))<=0)) }
+$3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1))+1-mod($3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1)),1) | { and(($0-$2)*($0-$2)>=0.0001,(自然数-$2-1+mod($2+1,1))*(自然数-$0+mod($0,1))<=0) } [点X'][点Y'][点X][点Y]
+*/
             ;
-
         let test = `
+い @ あ'
 あ @ あ' + あ'' [0][1]
-い @ い' + 2 [1][あ]
-う @ あ [あ]
 `;
 /*
+う @ あ | あ < 4 [あ'] 
 う @ あ [あ+1]
 う @ あ [あ']
 */
@@ -1363,7 +1378,7 @@ XX @ XX' + 1 [サインN倍角]
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
-                console.log(inst.length);
+                //console.log(inst.length);
                 for (let ii = 0; ii < inst.length; ii++) {
                     console.log(decl + ': ' + inst[ii].values);
                 }
@@ -1378,5 +1393,6 @@ XX @ XX' + 1 [サインN倍角]
         // TODO: benchmark
         // side support
         // pack, subseq
+        // support [] and |
     }
 })(typeof (document) !== 'undefined' ? document : null, console);
