@@ -276,7 +276,6 @@
                 return formula.join('');
             }
             function varyFormula(str, name, side, init) {
-                console.log('!!! ' + name + ' ' + side);
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -424,11 +423,10 @@
                             config.depend[name] = {};
                         }
                         if (!(vari in config.depend[name])) {
-                            if (!side) {
-                                config.depend[name][vari] = 0;
-                            } else {
-                                config.depend[name][vari] = config.max;
-                            }
+                            config.depend[name][vari] = 0;
+                        }
+                        if (side) {
+                            config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
                         }
                     }
                 }
@@ -905,7 +903,6 @@
                 iter.update(this.rules[di], this.argvs[di], decl, true);
             }
             this.starts = {};
-            console.log(config.depend);
             this.setStart(this._decls, this.starts);
             return;
 
@@ -1310,19 +1307,14 @@
 コサインの素 @ - コサインの素' * 外角*外角 / (2*自然数 * (2*自然数-1)) [1]
 コサイン @ コサイン' + コサインの素 [1]
 コサインN倍角 @ 2*last(コサイン)*コサインN倍角' - コサインN倍角''  [last(コサイン)] [1]
-サインの素 @ - サインの素' * 外角*外角 / (2*自然数 * (2*自然数+1)) [外角]
-サイン @ サイン' + サインの素 [外角]
+サインの素 @ - サインの素' * 外角*外角 / (2*自然数 * (2*自然数+1)) [last(外角)]
+サイン @ サイン' + サインの素 [last(外角)]
+サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
 `;
-        /*
-        
-        サイン @ サイン' + サインの素 [last(外角)]
-        
-        サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
-        */
         //try 
         {
             let ren = new Rentaku(rentakuXX);
-            ren.run(6);
+            ren.run();
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
