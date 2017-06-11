@@ -850,6 +850,7 @@
                 config.constval = constval;
             }
             config.iteraita = {};
+            config.instances = {};
             config.depend = {};
             let stmtArray = statements.split('@');
             var decl;
@@ -1071,12 +1072,28 @@
             return this._decls;
         }
     }
-    config.rentaku = `
+    config.rentaku2 = `
     黄金比 @ 1 + 1/黄金比' [1]
     フィボナッチ @ フィボナッチ' + フィボナッチ'' [0][1]
     あ @ あ' + 1 [0]
     い @ last(あ) +1
     う @ あ + 2
+    `;
+    config.rentaku = `
+		
+自然数	 @ 自然数'+1	
+パイの素_A @ 6*パイの素_A' +  (2*自然数-1)*(2*自然数-1)*パイの素_A'' [1] [3]
+パイの素_B @ 6*パイの素_B' +  (2*自然数-1)*(2*自然数-1)*パイの素_B'' [0] [1]
+パイ @ パイの素_A/パイの素_B	
+辺数 @ 11	
+外角 @ 2* last(パイ)/辺数
+コサインの素 @ - コサインの素' * 外角*外角 / (2*自然数 * (2*自然数-1)) [1]
+コサイン @ コサイン' + コサインの素 [1]
+サインの素 @ - サインの素' * 外角*外角 / (2*自然数 * (2*自然数+1)) [last(外角)]
+サイン @ サイン' + サインの素 [last(外角)]
+コサインN倍角 @ 2*last(コサイン)*コサインN倍角' - コサインN倍角''  [last(コサイン)] [1]
+サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
+
     `;
     if (document) {
         let script = document.currentScript;
@@ -1115,14 +1132,19 @@
                 max = config.max;
             }
             let ren = new Rentaku(value);
-            ren.run(max);
+            ren.run();
             let decls = ren.decls;
             table.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
             let theadTr = table.querySelector('thead tr');
             let tbody = table.querySelector('tbody');
             let theadThStyle = 'style="background-color:#444499;color:#ffffff;"';
             for (let di = 0; di < decls.length; di++) {
-                theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decls[di]}</th>`);
+                let decl = decls[di];
+                let instances = config.instances[decl];
+                
+                for (let ii = 0; ii < instances.length; ii++) {
+                    theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decl}</th>`);
+                }
             }
             let ruleTdStyle = 'style="background-color:#ffffcc;height:16pt;vertical-align:top;text-align: left;word-wrap:break-word;max-width:100pt;"';
             {
@@ -1135,7 +1157,11 @@
                     if (iteraita.rule) {
                         cell = iteraita.rule;
                     }
-                    tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
+                    let instances = config.instances[decl];
+                    console.log(instances.length);
+                    for (let ii = 0; ii < instances.length; ii++) {
+                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
+                    }
                 }
             }
             let graphThStyle = 'style="background-color:#aa99ff;height:30pt;"';
@@ -1143,7 +1169,11 @@
                 tbody.insertAdjacentHTML('beforeend', `<tr></tr>`);
                 let tbodyTr = tbody.querySelector('tr:last-child');
                 for (let di = 0; di < decls.length; di++) {
-                    tbodyTr.insertAdjacentHTML('beforeend', `<td ${graphThStyle}></td>`);
+                    let decl = decls[di];
+                    let instances = config.instances[decl];
+                    for (let ii = 0; ii < instances.length; ii++) {
+                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${graphThStyle}></td>`);
+                    }
                 }
             }
             let argvTdStyle = 'style="background-color:#ccffcc;height:16pt;text-align: right;"';
@@ -1152,12 +1182,15 @@
                 let tbodyTr = tbody.querySelector('tr:last-child');
                 for (let di = 0; di < decls.length; di++) {
                     let decl = decls[di];
-                    let iteraita = config.iteraita[decl];
-                    let cell = '';
-                    if (iteraita.argv && ci < iteraita.argv.length && typeof (iteraita.argv[ci]) !== 'undefined') {
-                        cell = iteraita.argv[ci];
+                    let instances = config.instances[decl];
+                    for (let ii = 0; ii < instances.length; ii++) {
+                        let instance = instances[ii];
+                        let cell = '';
+                        if (instance.argv && ci < instance.argv.length && typeof (instance.argv[ci]) !== 'undefined') {
+                            cell = instance.argv[ci];
+                        }
+                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle}>${cell}</td>`);
                     }
-                    tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle}>${cell}</td>`);
                 }
             }
             for (let mi = 0; mi < config.max; mi++) {
@@ -1165,9 +1198,12 @@
                 let tbodyTr = tbody.querySelector('tr:last-child');
                 for (let di = 0; di < decls.length; di++) {
                     let decl = decls[di];
-                    let iteraita = config.iteraita[decl];
-                    let cell = iteraita.values[mi];
-                    tbodyTr.insertAdjacentHTML('beforeend', `<td style="text-align: right;">${cell}</td>`);
+                    let instances = config.instances[decl];
+                    for (let ii = 0; ii < instances.length; ii++) {
+                        let instance = instances[ii];
+                        let cell = instance.values[mi];
+                        tbodyTr.insertAdjacentHTML('beforeend', `<td style="text-align: right;">${cell}</td>`);
+                    }
                 }
             }
         }
@@ -1312,7 +1348,7 @@
 サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
 
 `
-;
+            ;
         //try 
         {
             let ren = new Rentaku(rentakuXX);
