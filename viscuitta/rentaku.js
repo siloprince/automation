@@ -613,7 +613,7 @@
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            console.log(this.name+':'+post);
+            //console.log(this.name+':'+post);
             eval('this._func = function (self, argv,idx) { return (' + post + '); }');
             return;
         }
@@ -955,19 +955,20 @@
         }
         run(_max) {
             if (_max) {
+                config.depend = {};
                 config.max = _max;
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
                     let iter = config.iteraita[decl];
                     iter.update(this.rules[di], this.argvs[di], decl, false);
                 }
+                this.starts = {};
                 this.setStart(this._decls, this.starts);
             }
             let max = 0;
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
             }
-            console.log(this.starts);
             // main loop
             max += config.max;
             for (let i = 0; i < max + config.max; i++) {
@@ -1313,7 +1314,7 @@
         //try 
         {
             let ren = new Rentaku(rentakuXX);
-            ren.run();
+            ren.run(3);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
