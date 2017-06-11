@@ -190,11 +190,16 @@
                 or: or
             };
         }
-        convertPostProcess(str, name, side) {
-            let varied = varyFormula(str, name, side);
+        convertPostProcess(str, name, side, init) {
+            let varied = varyFormula(str, name, side, init);
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
-            let again = varyAgain(transformed, name);
+            let again;
+            if (init) {
+                again = varyAgain(transformed, name);
+            } else {
+                again = transformed;
+            }
             //console.log(again);
             return again;
 
@@ -270,7 +275,8 @@
                 }
                 return formula.join('');
             }
-            function varyFormula(str, name, side) {
+            function varyFormula(str, name, side, init) {
+                console.log('!!! ' + name + ' ' + side);
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -358,10 +364,14 @@
                                     /*
                                    || code === ','.charCodeAt(0)
                                    */
-                                    if (!side) {
-                                        formula.push(vari + '.values[idx]');
+                                    if (init) {
+                                        if (!side) {
+                                            formula.push(vari + '.values[idx]');
+                                        } else {
+                                            formula.push(vari + '.values');
+                                        }
                                     } else {
-                                        formula.push(vari + '.values');
+                                        formula.push(vari);
                                     }
                                 }
                             }
@@ -399,10 +409,14 @@
                     if (!(vari in config.iteraita)) {
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
-                    if (!side) {
-                        formula.push(vari + '.values[idx]');
+                    if (init) {
+                        if (!side) {
+                            formula.push(vari + '.values[idx]');
+                        } else {
+                            formula.push(vari + '.values');
+                        }
                     } else {
-                        formula.push(vari + '.values');
+                        formula.push(vari);
                     }
                     if (name !== vari) {
                         if (!(name in config.depend)) {
@@ -579,11 +593,27 @@
                 return f;
             }
         }
+        update(rule, argv, decl, init) {
+            this.rule = rule;
+            let base = this.getBaseFunctions();
+            let mod = base.mod;
+            let and = base.and;
+            let or = base.or;
+            let side = true;
+            for (let ai = 0; ai < argv.length; ai++) {
+                let conved = this.convertZenToHan(argv[ai]);
+                let str = this.convertPostProcess(conved, decl, side, init);
+                argv[ai] = str;
+            }
+            if (init) {
+                this.argv = argv;
+            }
+        }
         set rule(str) {
             let conved = this.convertZenToHan(str);
             this._rule = conved;
             let side = false;
-            let post = this.convertPostProcess(conved, this.name, side);
+            let post = this.convertPostProcess(conved, this.name, side, true);
             let base = this.getBaseFunctions();
             let mod = base.mod;
             let and = base.and;
@@ -872,21 +902,10 @@
             for (let di = 0; di < this._decls.length; di++) {
                 let decl = this._decls[di];
                 let iter = config.iteraita[decl];
-                iter.rule = this.rules[di];
-                let argv = this.argvs[di];
-                let base = iter.getBaseFunctions();
-                let mod = base.mod;
-                let and = base.and;
-                let or = base.or;
-                let side = true;
-                for (let ai = 0; ai < argv.length; ai++) {
-                    let conved = iter.convertZenToHan(argv[ai]);
-                    let str = iter.convertPostProcess(conved, decl, side);
-                    argv[ai] = str;
-                }
-                iter.argv = argv;
+                iter.update(this.rules[di], this.argvs[di], decl, true);
             }
             this.starts = {};
+            console.log(config.depend);
             this.setStart(this._decls, this.starts);
             return;
 
@@ -945,7 +964,7 @@
                 for (let di = 0; di < this._decls.length; di++) {
                     let decl = this._decls[di];
                     let iter = config.iteraita[decl];
-                    iter.rule = this.rules[di];
+                    iter.update(this.rules[di], this.argvs[di], decl, false);
                 }
                 this.setStart(this._decls, this.starts);
             }
@@ -964,12 +983,16 @@
                             let sideArray = [];
                             let minSides = config.max + 1;
                             let argv = iter.argv;
+
+                            //console.log(minSides+':'+decl);
                             for (let ai = 0; ai < argv.length; ai++) {
                                 let tmp = eval(argv[ai]);
                                 //console.log('>>'+argv[ai]);
-                                //console.log(tmp+' '+i+' '+decl);
+                                //console.log(tmp+' '+decl);
                                 if (Array.isArray(tmp)) {
                                     minSides = Math.min(minSides, tmp.length);
+
+                                    //console.log(minSides+':'+decl);
                                     sideArray.push(tmp);
                                 } else {
                                     sideArray.push([tmp]);
@@ -978,6 +1001,7 @@
                             if (minSides === config.max + 1) {
                                 minSides = 1;
                             }
+                            //console.log(minSides+':'+decl);
                             for (let mi = 0; mi < minSides; mi++) {
                                 let tmpargv = [];
                                 for (let ai = 0; ai < argv.length; ai++) {
@@ -990,9 +1014,6 @@
                                 //console.log(decl);
                                 let inst = iter.new(tmpargv);
                                 inst.argv = tmpargv;
-                                if (false) {
-                                    iter.argv = tmpargv;
-                                }
                             }
                             //console.log(decl+' '+minSides);
                         }
@@ -1278,9 +1299,29 @@
           コサイン4N倍角	サイン4N倍角 @ 	pack(コサイン4N倍角抜粋) | 自然数 <= 辺数	
           サイン4N倍角 @	pack(サイン4N倍角抜粋) | 自然数 <= 辺数
           */
+
+        let rentakuXX = `							
+自然数	 @ 自然数'+1	
+パイの素_A @ 6*パイの素_A' +  (2*自然数-1)*(2*自然数-1)*パイの素_A'' [1] [3]
+パイの素_B @ 6*パイの素_B' +  (2*自然数-1)*(2*自然数-1)*パイの素_B'' [0] [1]
+パイ @ パイの素_A/パイの素_B	
+辺数 @ 5	
+外角 @ 2* last(パイ)/辺数
+コサインの素 @ - コサインの素' * 外角*外角 / (2*自然数 * (2*自然数-1)) [1]
+コサイン @ コサイン' + コサインの素 [1]
+コサインN倍角 @ 2*last(コサイン)*コサインN倍角' - コサインN倍角''  [last(コサイン)] [1]
+サインの素 @ - サインの素' * 外角*外角 / (2*自然数 * (2*自然数+1)) [外角]
+サイン @ サイン' + サインの素 [外角]
+`;
+        /*
+        
+        サイン @ サイン' + サインの素 [last(外角)]
+        
+        サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
+        */
         //try 
         {
-            let ren = new Rentaku(rentaku5);
+            let ren = new Rentaku(rentakuXX);
             ren.run(6);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
@@ -1298,5 +1339,6 @@
         }
         // TODO: benchmark
         // side support
+        // pack, subseq
     }
 })(typeof (document) !== 'undefined' ? document : null, console);
