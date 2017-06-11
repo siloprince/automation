@@ -2,7 +2,7 @@
 (function (document, console) {
     let config = {
         constval: 4,
-        max: 11,
+        max: 4,
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
         instances: {},
@@ -1093,7 +1093,7 @@
 サイン @ サイン' + サインの素 [last(外角)]
 コサインN倍角 @ 2*last(コサイン)*コサインN倍角' - コサインN倍角''  [last(コサイン)] [1]
 サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
-
+XX @ XX' + 1 [サインN倍角]
     `;
     if (document) {
         let script = document.currentScript;
@@ -1289,11 +1289,6 @@
 い @ い' + 2 [あ]
 う @ last(あ)
 `;
-        let andor = `
-あ @ あ' + あ'' [0][1]
-い @ い' + 2 [1][あ]
-う @ あ | あ < 5
-`;
 
         let rentaku3 = `
   辺数 @ 		11
@@ -1349,13 +1344,26 @@
 
 `
             ;
+
+        let test = `
+あ @ あ' + あ'' [0][1]
+い @ い' + 2 [1][あ]
+う @ あ [あ]
+`;
+/*
+う @ あ [あ+1]
+う @ あ [あ']
+*/
         //try 
         {
-            let ren = new Rentaku(rentakuXX);
-            ren.run(30);
+            let ren = new Rentaku(test);
+            ren.run();
+            // bug
+            // ren.run(3);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
+                console.log(inst.length);
                 for (let ii = 0; ii < inst.length; ii++) {
                     console.log(decl + ': ' + inst[ii].values);
                 }
