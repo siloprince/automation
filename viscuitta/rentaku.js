@@ -45,7 +45,7 @@
         }
         next() {
             let func = this.iteraita.func;
-            this._value = func(this, this.calc, this._values.length);
+            this._value = func(this.calc, this._values.length);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -621,7 +621,7 @@
             let and = base.and;
             let or = base.or;
             //console.log(this._name+':'+post);
-            eval('this._func = function (self, argv,idx) { return (' + post + '); }');
+            eval('this._func = function (argv,idx) { return (' + post + '); }');
             return;
         }
         convertZenToHan(str) {
