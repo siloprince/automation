@@ -601,13 +601,14 @@
             let and = base.and;
             let or = base.or;
             let side = true;
+            let updated = [];
             for (let ai = 0; ai < argv.length; ai++) {
                 let conved = this.convertZenToHan(argv[ai]);
                 let str = this.convertPostProcess(conved, decl, side, init);
-                argv[ai] = str;
+                updated.push(str);
             }
             if (init) {
-                this.argv = argv;
+                this.argv = updated;
             }
         }
         set rule(str) {
@@ -619,7 +620,7 @@
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            console.log(this._name+':'+post);
+            //console.log(this._name+':'+post);
             eval('this._func = function (self, argv,idx) { return (' + post + '); }');
             return;
         }
@@ -969,9 +970,9 @@
                     let iter = config.iteraita[decl];
                     iter.update(this.rules[di], this.argvs[di], decl, false);
                 }
-                this.starts = {};
                 this.setStart(this._decls, this.starts);
             }
+            //console.log(this.starts);
             let max = 0;
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
@@ -990,10 +991,10 @@
 
                             //console.log(minSides+':'+decl);
                             for (let ai = 0; ai < argv.length; ai++) {
-                                console.log(argv[ai]);
+                                //console.log(argv[ai]);
                                 let tmp = eval(argv[ai]);
                                 //console.log('>>'+argv[ai]);
-                                console.log(tmp+' '+decl+' '+argv[ai]);
+                                //console.log(tmp+' '+decl+' '+argv[ai]);
                                 if (Array.isArray(tmp)) {
                                     minSides = Math.min(minSides, tmp.length);
 
@@ -1361,8 +1362,9 @@ $3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1))+1-mod($3+($1-$3)/($0-$2)*(自然
 */
             ;
         let test = `
-い @ あ'
 あ @ あ' + あ'' [0][1]
+い @ あ'
+う @ う' [あ]
 `;
 /*
 う @ あ | あ < 4 [あ'] 
@@ -1372,7 +1374,8 @@ $3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1))+1-mod($3+($1-$3)/($0-$2)*(自然
         //try 
         {
             let ren = new Rentaku(test);
-            ren.run();
+            //console.log(config.depend);
+            ren.run(4);
             // bug
             // ren.run(3);
             for (let di = 0; di < ren.decls.length; di++) {
