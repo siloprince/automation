@@ -57,9 +57,7 @@
         }
         next() {
             let func = this.iteraita.func;
-            //console.log(this.calc+' '+this._values.length+' '+this.index+' '+this.name);
             this._value = func(this.calc, this._values.length, this.index, this.name);
-            //console.log(1111+' '+this._value);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -209,9 +207,7 @@
             };
         }
         convertPostProcess(str, name, side) {
-           // console.log('xx'+str);
             let varied = varyFormula(str, name, side);
-           // console.log('xx'+varied);
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
             let again;
@@ -220,7 +216,6 @@
             } else {
                 again = transformed;
             }
-            //console.log(again);
             return again;
 
             function varyAgain(str, name) {
@@ -235,7 +230,7 @@
                     var char = str.substr(si, 1);
                     // no lowercase
                     if (code === ' '.charCodeAt(0) || code === '\t'.charCodeAt(0)) {
-                        //formula.push(' ');
+                        // no wsp
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
                         || code === '_'.charCodeAt(0)
@@ -294,8 +289,6 @@
                     formula.push('config.instances["' + vari + '"][0]');
                 }
                 let ret = formula.join('');
-                //console.log(str);
-                //console.log(ret);
                 return ret;
             }
             function varyFormula(str, name, side) {
@@ -304,7 +297,6 @@
                 var variable = [];
                 var currentVariIndex = -1;
                 var formula = [];
-                //console.log(str + ' ' + name + ' ' + side);
                 for (var si = 0; si < str.length; si++) {
                     var code = str.charCodeAt(si);
                     var char = str.substr(si, 1);
@@ -337,22 +329,9 @@
                                     config.depend[name] = {};
                                 }
                                 if (!(vari in config.depend[name])) {
-                                    //console.log('>>'+name+' '+vari+' '+side);
-                                    if (side) {
-                                        //config.depend[name][vari] = config.max;
-                                    } else {
+                                    if (!side) {
                                         config.depend[name][vari] = 0;
                                     }
-
-                                    /*
-                                    if (name.indexOf('_') === 0) {
-                                        config.depend[name][vari] = config.max;
-                                    } else {
-                                        if (!side) {
-                                            config.depend[name][vari] = 0;
-                                        }
-                                    }
-                                    */
                                 }
                             }
                             let pushed = false;
@@ -368,14 +347,6 @@
                             } else if (
                                 code === '#'.charCodeAt(0)
                             ) {
-                                if (name !== vari) {
-                                    // TODO: to be optimized
-                                    if (str.indexOf(vari + '#') > -1) {
-
-                                        //config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-
-                                    }
-                                }
                                 formula.push(vari);
                                 pushed = true;
                             } else if (
@@ -383,8 +354,6 @@
                             ) {
                                 if (name !== vari) {
                                     if (str.indexOf('last(' + vari + ')') > -1) {
-
-                                        //config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
                                         formula.push(vari);
                                         pushed = true;
                                     }
@@ -399,17 +368,8 @@
                                     formula.push(vari);
                                     pushed = true;
                                 } else {
-                                    /*
-                                   || code === ','.charCodeAt(0)
-                                   */
                                     if (!(name in config.rentaku.init)) {
                                         formula.push(vari + '.values[idx]');
-                                        /*
-                                        if (!side) {
-                                            formula.push(vari + '.values[idx]');
-                                        } else {
-                                            formula.push(vari + '.values');
-                                        }*/
                                     } else {
                                         formula.push(vari);
                                     }
@@ -451,12 +411,6 @@
                     }
                     if (!(name in config.rentaku.init)) {
                         formula.push(vari + '.values[idx]');
-                        /*
-                        if (!side) {
-                            formula.push(vari + '.values[idx]');
-                        } else {
-                            formula.push(vari + '.values');
-                        }*/
                     } else {
                         formula.push(vari);
                     }
@@ -466,36 +420,16 @@
                             config.depend[name] = {};
                         }
                         if (!(vari in config.depend[name])) {
-
-                                    //console.log('<<<'+name+' '+vari+' '+side);
-                            if (side) {
-                                //config.depend[name][vari] = config.max;
-                            } else {
+                            if (!side) {
                                 config.depend[name][vari] = 0;
                             }
-
-                            /*
-                            if (name.indexOf('_') === 0) {
-                                config.depend[name][vari] = config.max;
-                            } else {
-                                if (!side) {
-                                    config.depend[name][vari] = 0;
-                                }
-                            }
-                            */
                         }
-                        /*
-                        if (side) {
-                            config.depend[name][vari] = Math.max(config.max, config.depend[name][vari]);
-                        }*/
                     }
                 }
-                let ret = formula.join('')
-                //  console.log(vari+' '+ret);
+                let ret = formula.join('');
                 return ret;
             }
             function transformFormula(f, opt) {
-                //console.log(f);
                 if (f.indexOf('|') > -1) {
                     var splitArray = f.split('|');
                     var valueArray = [];
@@ -541,7 +475,6 @@
                         }
                         ifstmt.push(' return(null); })()');
                         f = ifstmt.join('');
-                        //console.log(f);
                     } else {
                         opt.sideBad = 1;
                         var farray = ['iferror('];
@@ -661,7 +594,6 @@
             let or = base.or;
             let side = true;
             let updated = [];
-            //console.log(decl+' '+111);
             for (let ai = 0; ai < argv.length; ai++) {
                 // ignore nested []
                 if (argv[ai].indexOf('[') > -1) {
@@ -669,18 +601,9 @@
                     updated.push(valstr);
                     continue;
                 }
-            //console.log(2222);
                 let conved = this.convertZenToHan(argv[ai]);
-                //console.log(2222);
                 let str = this.convertPostProcess(conved, decl, true);
-
-                //    console.log('!!!!>'+decl);
-                //console.log(3333+str);
-
-           /// console.log(str+' '+conved);
                 if (str.indexOf('config.instances') > -1) {
-
-                   // console.log('================'+str);
                     let _decl = '_' + config.rentaku.tmp;
                     let _iter = new Iteraita(_decl, 0);
                     config.rentaku.tmp++;
@@ -692,9 +615,6 @@
                     config.rentaku.rules.push(argv[ai]);
                     config.rentaku.argvs.push([]);
                     config.depend[decl][_decl] = config.max;
-                    //_iter.update(argv[ai], [], _decl);
-                    // console.log(str);
-                    //console.log('>>>'+_decl);
                 }
 
                 updated.push(str);
@@ -708,13 +628,11 @@
             let conved = this.convertZenToHan(str);
             this._rule = conved;
             let side = false;
-            //console.log(4444);
             let post = this.convertPostProcess(conved, this._name, side);
             let base = this.getBaseFunctions();
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            //console.log(this._name+':'+post);
             eval('this._func = function (argv,idx,id,name) { return (' + post + '); }');
             return;
         }
@@ -997,7 +915,6 @@
             for (let di = 0; di < config.rentaku.decls.length; di++) {
                 let decl = config.rentaku.decls[di];
                 let iter = config.iteraita[decl];
-                //console.log(5555);
                 iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl, true);
             }
             this.starts = {};
@@ -1065,8 +982,6 @@
                 }
                 this.setStart(config.rentaku.decls, this.starts, this.checked);
             }
-            //console.log(config.depend);
-            //console.log(this.starts);
             let max = 0;
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
@@ -1078,55 +993,23 @@
                     let decl = config.rentaku.decls[di];
                     let iter = config.iteraita[decl];
                     let argv = iter.argv;
-                    /*
-                    if (decl.indexOf('_') === 0) {
-                        continue;
-                    }
-                    */
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
                         if (this.starts[decl] === i) {
-                           // console.log('>>>' + decl);
                             let sideArray = [];
                             let minSides = config.max + 1;
-
-
-                            // console.log(minSides+':'+decl+' '+argv);
-                            // console.log(iter);
                             for (let ai = 0; ai < argv.length; ai++) {
-                                //console.log(argv[ai]);
                                 if (decl in config.rentaku.hash && ai in config.rentaku.hash[decl]) {
                                     let _decl = config.rentaku.hash[decl][ai];
-                                    //console.log(i + ' ' + _decl + ' ' + decl);
-                                    //console.log(config);
-                                    /*
-                                                                        config.iteraita[_decl].new([]);
-                                    */
-                                   // console.log(config.instances[_decl]);
                                     let tmp = config.instances[_decl][0].values;
                                     minSides = Math.min(minSides, tmp.length);
-                                 //   console.log(minSides + ':' + decl + ' ' + tmp);
                                     sideArray.push(tmp);
                                 } else {
                                     sideArray.push([eval(argv[ai])]);
                                 }
-                                /*
-                                let name = decl;
-                                let id = 0;
-                                let evstr = argv[ai];
-                                //eval('this._func = function (argv,idx,id,name) { return (' + post + '); }');
-                                //console.log(tmp+' '+decl+' '+argv[ai]);
-                                if (evstr.indexOf('config.instances["') > -1) {
-                                    let arraystr = `(function(){return(${evstr})})()`;
-                                    
-                                } else {
-                                    sideArray.push([eval(evstr)]);
-                                }
-                                */
                             }
                             if (minSides === config.max + 1) {
                                 minSides = 1;
                             }
-                           // console.log(minSides + ':' + decl);
                             for (let mi = 0; mi < minSides; mi++) {
                                 let tmpargv = [];
                                 for (let ai = 0; ai < argv.length; ai++) {
@@ -1138,19 +1021,7 @@
                                 }
                                 let inst = iter.new(tmpargv);
                             }
-
-                            //console.log(decl+' '+minSides);
-                        }/*
-                        for (let ai = 0; ai < argv.length; ai++) {
-                            //console.log(argv[ai]);
-                            if (decl in config.rentaku.hash && ai in config.rentaku.hash[decl]) {
-                                let _decl = config.rentaku.hash[decl][ai];
-                                config.instances[_decl][0].next();
-                            }
-                        }*/
-                      //  console.log(decl + ' ' + config.instances[decl]);
-                        //console.log(config.instances[decl]);
-
+                        }
                         for (let ii = 0; ii < config.instances[decl].length; ii++) {
                             let inst = config.instances[decl][ii];
                             inst.next();
@@ -1161,7 +1032,6 @@
         }
         setStart(decls, starts, checked) {
             // clear
-
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 if (decl in starts) {
@@ -1182,11 +1052,9 @@
 
             function setStartRepeat(depth, decls, starts) {
                 if (depth > decls.length) {
-                    console.log(decls);
                     throw ('dependency loop detected.' + depth + ' ' + decls.length);
                 }
                 let more = false;
-                //console.log(starts);
                 for (let decl in config.depend) {
                     if (!(decl in checked)) {
                         checked[decl] = {};
@@ -1194,7 +1062,6 @@
                     let tmp = -1;
                     for (let dep in config.depend[decl]) {
                         if (dep in starts) {
-                            //tmp = Math.max(config.depend[decl][dep] + starts[dep], tmp);
                             if (!(dep in checked[decl])) {
                                 checked[decl][dep] = true;
                                 tmp = Math.max(config.depend[decl][dep] + starts[dep], tmp);
@@ -1307,7 +1174,6 @@ XX @ XX' + 1 [サインN倍角]
                         cell = iteraita.rule;
                     }
                     let instances = config.instances[decl];
-                    //console.log(instances.length);
                     for (let ii = 0; ii < instances.length; ii++) {
                         tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
                     }
@@ -1515,14 +1381,12 @@ XX @ XX' + 1 [サインN倍角]
         //try 
         {
             let ren = new Rentaku(test);
-            //console.log(config.depend);
             ren.run();
             // bug
             // ren.run(3);
             for (let di = 0; di < ren.decls.length; di++) {
                 let decl = ren.decls[di];
                 let inst = config.instances[decl];
-                //console.log(inst.length);
                 for (let ii = 0; ii < inst.length; ii++) {
                     console.log(decl + ': ' + inst[ii].values);
                 }
@@ -1532,11 +1396,9 @@ XX @ XX' + 1 [サインN倍角]
         let _ = function
         (e) {
             console.log(e);
-            //console.log(config.iteraita);
         }
         // TODO: benchmark
         // side support
         // pack, subseq
-        // support [] and |
     }
 })(typeof (document) !== 'undefined' ? document : null, console);
