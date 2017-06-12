@@ -1010,7 +1010,7 @@
                                     let arraystr = `(function(){return(${evstr})})()`;
                                     let tmp = eval(arraystr);
                                     minSides = Math.min(minSides, tmp.length);
-                                    console.log(minSides+':'+decl+' '+tmp);
+                                    //console.log(minSides+':'+decl+' '+tmp);
                                     sideArray.push(tmp);
                                 } else {
                                     sideArray.push([eval(evstr)]);
