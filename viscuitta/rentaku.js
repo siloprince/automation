@@ -251,6 +251,7 @@
                             if (!(vari in config.iteraita)) {
                                 throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                             }
+                            // TODO: [0] varyAgain
                             formula.push('config.instances["' + vari + '"][0]');
                             formula.push(char);
                             vary = -1;
@@ -286,6 +287,7 @@
                     if (!(vari in config.iteraita)) {
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
+                    // TODO: [0] varyAgain
                     formula.push('config.instances["' + vari + '"][0]');
                 }
                 let ret = formula.join('');
@@ -1000,6 +1002,9 @@
                             for (let ai = 0; ai < argv.length; ai++) {
                                 if (decl in config.rentaku.hash && ai in config.rentaku.hash[decl]) {
                                     let _decl = config.rentaku.hash[decl][ai];
+                                    // TODO: [0] run
+                                    console.log(config.instances);
+                                    console.log(_decl + ' @ ' + decl);
                                     let tmp = config.instances[_decl][0].values;
                                     minSides = Math.min(minSides, tmp.length);
                                     sideArray.push(tmp);
@@ -1041,48 +1046,38 @@
                     delete checked[decl];
                 }
             }
+            let loop = true;
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 if (!(decl in config.depend)) {
                     starts[decl] = 0;
+                    loop = false;
                 }
             }
-            setStartRepeat(0, decls, starts);
+            if (loop) {
+                throw ('dependency loop detected.: no ends');
+            }
+            setStartRepeat(config.max, decls, starts);
             return;
 
             function setStartRepeat(depth, decls, starts) {
-                if (depth > decls.length) {
-                    throw ('dependency loop detected.' + depth + ' ' + decls.length);
-                }
-                let more = false;
-                for (let decl in config.depend) {
-                    if (!(decl in checked)) {
-                        checked[decl] = {};
-                    }
-                    let tmp = -1;
-                    for (let dep in config.depend[decl]) {
-                        if (dep in starts) {
-                            if (!(dep in checked[decl])) {
-                                checked[decl][dep] = true;
-                                tmp = Math.max(config.depend[decl][dep] + starts[dep], tmp);
-                            } else {
-                                tmp = 0;
+                console.log(config.depend);
+                console.log(1111);
+                let checked = {};
+                for (let i = 0; i < depth; i++) {
+                        for (let vi in config.depend) {
+                            for (let vj in config.depend[vi]) {
+                                if (vj in starts) {
+                                    starts[vi] = starts[vj] + config.depend[vi][vj];
+                                    break;
+                                }
                             }
                         }
-                    }
-                    if (tmp !== -1) {
-                        if (!(decl in starts)) {
-                            starts[decl] = 0;
-                        }
-                        starts[decl] += tmp;
-                    } else {
-                        more = true;
-                    }
                 }
-                if (more) {
-                    setStartRepeat(depth + 1, decls, starts);
-                }
+            console.log(2222);
+            console.log(starts);
             }
+
         }
         get decls() {
             return config.rentaku.decls;
@@ -1370,9 +1365,9 @@ XX @ XX' + 1 [サインN倍角]
             ;
         let test = `
 あ @ あ' + あ'' [0][1]
-い @ あ'
+い @ あ'| { あ < 4 }
 う @ う'+1  [あ'+い]
-え @ え' [う]
+え @ え'  [う]
 `;
         /*
         う @ あ | あ < 4 [あ'] 
@@ -1382,6 +1377,7 @@ XX @ XX' + 1 [サインN倍角]
         //try 
         {
             let ren = new Rentaku(test);
+            console.log(config.depend);
             ren.run();
             // bug
             // ren.run(3);
@@ -1399,6 +1395,7 @@ XX @ XX' + 1 [サインN倍角]
             console.log(e);
         }
         // TODO: benchmark
+        // [last]
         // side support
         // pack, subseq
     }
