@@ -49,9 +49,9 @@
         }
         next() {
             let func = this.iteraita.func;
-            console.log(this.calc+' '+this._values.length+' '+this.index+' '+this.name);
+            //console.log(this.calc+' '+this._values.length+' '+this.index+' '+this.name);
             this._value = func(this.calc, this._values.length,this.index,this.name);
-            console.log(1111+' '+this._value);
+            //console.log(1111+' '+this._value);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -283,8 +283,8 @@
                     formula.push('config.instances["' + vari + '"][0]');
                 }
                 let ret = formula.join('');
-                console.log(str);
-                console.log(ret);
+                //console.log(str);
+                //console.log(ret);
                 return ret;
             }
             function varyFormula(str, name, side, init) {
