@@ -1003,16 +1003,17 @@
                                 //console.log(argv[ai]);
                                 let name = decl;
                                 let id = 0;
-                                let tmp = eval(argv[ai]);
-                                //console.log('>>'+argv[ai]);
+                                let evstr  = argv[ai];
+                                //eval('this._func = function (argv,idx,id,name) { return (' + post + '); }');
                                 //console.log(tmp+' '+decl+' '+argv[ai]);
-                                if (Array.isArray(tmp)) {
+                                if (evstr.indexOf('config.instances["')>-1) {
+                                    let arraystr = `(function(){return(${evstr})})()`;
+                                    let tmp = eval(arraystr);
                                     minSides = Math.min(minSides, tmp.length);
-
-                                    //console.log(minSides+':'+decl);
+                                    console.log(minSides+':'+decl+' '+tmp);
                                     sideArray.push(tmp);
                                 } else {
-                                    sideArray.push([tmp]);
+                                    sideArray.push([eval(evstr)]);
                                 }
                             }
                             if (minSides === config.max + 1) {
