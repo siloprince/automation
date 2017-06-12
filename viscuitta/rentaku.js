@@ -6,19 +6,25 @@
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
         instances: {},
+        rentaku: {
+            decls: [],
+            rules: [],
+            argvs: [],
+            tmp: 0,
+        },
         depend: {},
     };
     class Instance {
         constructor(iteraita) {
             this.iteraita = iteraita;
-            this._index = config.instances[this.iteraita.name].length; 
+            this._index = config.instances[this.iteraita.name].length;
             this._rule = null;
             this._argv = null;
             this.calc = [];
             this._values = [];
             return;
         }
-        get index(){
+        get index() {
             return this._index;
         }
         get name() {
@@ -50,7 +56,7 @@
         next() {
             let func = this.iteraita.func;
             //console.log(this.calc+' '+this._values.length+' '+this.index+' '+this.name);
-            this._value = func(this.calc, this._values.length,this.index,this.name);
+            this._value = func(this.calc, this._values.length, this.index, this.name);
             //console.log(1111+' '+this._value);
             this.calc.shift();
             this.calc.push(this._value);
@@ -227,11 +233,11 @@
                         //formula.push(' ');
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
+                        || code === '_'.charCodeAt(0)
                         || (128 <= code)
                         || (vary >= 0 &&
                             (
                                 '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
-                                || code === '_'.charCodeAt(0)
                             )
                         )
                     )) {
@@ -302,11 +308,11 @@
                         // nop
                     } else if (!(
                         ('A'.charCodeAt(0) <= code && code <= 'Z'.charCodeAt(0))
+                        || code === '_'.charCodeAt(0)
                         || (128 <= code)
                         || (vary >= 0 &&
                             (
                                 '0'.charCodeAt(0) <= code && code <= '9'.charCodeAt(0)
-                                || code === '_'.charCodeAt(0)
                             )
                         )
                     )) {
@@ -612,8 +618,25 @@
             let side = true;
             let updated = [];
             for (let ai = 0; ai < argv.length; ai++) {
+                // ignore nested []
+                if (argv[ai].indexOf('[')>-1) {
+                    updated.push('0');
+                    continue;
+                }
                 let conved = this.convertZenToHan(argv[ai]);
                 let str = this.convertPostProcess(conved, decl, side, init);
+                
+                if (str.indexOf('config.instances')>-1) {
+                    let _decl = '_'+config.rentaku.tmp;
+                    let _iter = new Iteraita(_decl,0);
+                    config.rentaku.tmp++;
+                    config.rentaku.decls.push(_decl);
+                    config.rentaku.rules.push(argv[ai]);
+                    config.rentaku.argvs.push([]);
+                    _iter.update(argv[ai] ,[], _decl, init);
+                    console.log(str);
+                    console.log(_decl);    
+                }
                 updated.push(str);
             }
             if (init) {
@@ -870,9 +893,6 @@
             config.depend = {};
             let stmtArray = statements.split('@');
             var decl;
-            this._decls = [];
-            this.rules = [];
-            this.argvs = [];
             for (let si = 0; si < stmtArray.length; si++) {
                 let stmt = stmtArray[si].trim();
                 let lines = stmt.split('\n');
@@ -882,43 +902,43 @@
                         if (lines.length !== 0) {
                             throw ('invalid name:' + decl);
                         }
-                        this._decls.push(decl);
+                        config.rentaku.decls.push(decl);
                         continue;
                     } else if (si !== stmtArray.length - 1) {
                         if (!checkDecl(decl)) {
                             throw ('unknown name:' + decl);
                         }
-                        this._decls.push(decl);
+                        config.rentaku.decls.push(decl);
                     }
                 }
                 let rest = lines.join();
                 let sideopt = { side: false };
                 let formulaArray = splitToFormulas(rest, sideopt);
                 let rule = formulaArray.shift();
-                this.rules.push(rule);
+                config.rentaku.rules.push(rule);
                 let argv = [];
 
                 for (let fi = 0; fi < formulaArray.length; fi++) {
                     argv.push(formulaArray[fi]);
                 }
-                this.argvs.push(argv);
+                config.rentaku.argvs.push(argv);
             }
-            for (let di = 0; di < this._decls.length; di++) {
+            for (let di = 0; di < config.rentaku.decls.length; di++) {
                 let argc = 0;
-                for (let ai = 0; ai < this.argvs[di].length; ai++) {
-                    if (this.argvs[di][ai] !== '') {
+                for (let ai = 0; ai < config.rentaku.argvs[di].length; ai++) {
+                    if (config.rentaku.argvs[di][ai] !== '') {
                         argc++;
                     }
                 }
-                new Iteraita(this._decls[di], argc);
+                new Iteraita(config.rentaku.decls[di], argc);
             }
-            for (let di = 0; di < this._decls.length; di++) {
-                let decl = this._decls[di];
+            for (let di = 0; di < config.rentaku.decls.length; di++) {
+                let decl = config.rentaku.decls[di];
                 let iter = config.iteraita[decl];
-                iter.update(this.rules[di], this.argvs[di], decl, true);
+                iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl, true);
             }
             this.starts = {};
-            this.setStart(this._decls, this.starts);
+            this.setStart(config.rentaku.decls, this.starts);
             return;
 
             function splitToFormulas(orgf, sideopt) {
@@ -974,12 +994,12 @@
             if (_max) {
                 config.depend = {};
                 config.max = _max;
-                for (let di = 0; di < this._decls.length; di++) {
-                    let decl = this._decls[di];
+                for (let di = 0; di < config.rentaku.decls.length; di++) {
+                    let decl = config.rentaku.decls[di];
                     let iter = config.iteraita[decl];
-                    iter.update(this.rules[di], this.argvs[di], decl, false);
+                    iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl, false);
                 }
-                this.setStart(this._decls, this.starts);
+                this.setStart(config.rentaku.decls, this.starts);
             }
             //console.log(this.starts);
             let max = 0;
@@ -989,8 +1009,8 @@
             // main loop
             max += config.max;
             for (let i = 0; i < max + config.max; i++) {
-                for (let di = 0; di < this._decls.length; di++) {
-                    let decl = this._decls[di];
+                for (let di = 0; di < config.rentaku.decls.length; di++) {
+                    let decl = config.rentaku.decls[di];
                     let iter = config.iteraita[decl];
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
                         if (this.starts[decl] === i) {
@@ -1003,10 +1023,10 @@
                                 //console.log(argv[ai]);
                                 let name = decl;
                                 let id = 0;
-                                let evstr  = argv[ai];
+                                let evstr = argv[ai];
                                 //eval('this._func = function (argv,idx,id,name) { return (' + post + '); }');
                                 //console.log(tmp+' '+decl+' '+argv[ai]);
-                                if (evstr.indexOf('config.instances["')>-1) {
+                                if (evstr.indexOf('config.instances["') > -1) {
                                     let arraystr = `(function(){return(${evstr})})()`;
                                     let tmp = eval(arraystr);
                                     minSides = Math.min(minSides, tmp.length);
@@ -1035,7 +1055,7 @@
                             }
                             //console.log(decl+' '+minSides);
                         }
-                        //console.log(decl);
+                        //console.log(decl+' '+ config.rentaku.decls);
                         //console.log(config.instances[decl]);
                         for (let ii = 0; ii < config.instances[decl].length; ii++) {
                             let inst = config.instances[decl][ii];
@@ -1089,17 +1109,17 @@
             }
         }
         get decls() {
-            return this._decls;
+            return config.rentaku.decls;
         }
     }
-    config.rentaku2 = `
+    config.data0 = `
     黄金比 @ 1 + 1/黄金比' [1]
     フィボナッチ @ フィボナッチ' + フィボナッチ'' [0][1]
     あ @ あ' + 1 [0]
     い @ last(あ) +1
     う @ あ + 2
     `;
-    config.rentaku = `
+    config.data = `
 		
 自然数	 @ 自然数'+1	[0]
 パイの素_A @ 6*パイの素_A' +  (2*自然数-1)*(2*自然数-1)*パイの素_A'' [1] [3]
@@ -1128,7 +1148,7 @@ XX @ XX' + 1 [サインN倍角]
         table.setAttribute('style', 'font-size:9pt;');
         textarea.setAttribute('rows', 15);
         textarea.setAttribute('cols', 80);
-        textarea.value = config.rentaku;
+        textarea.value = config.data;
 
         render(table, textarea.value);
         textarea.addEventListener('keyup', function (e) {
@@ -1161,7 +1181,7 @@ XX @ XX' + 1 [サインN倍角]
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 let instances = config.instances[decl];
-                
+
                 for (let ii = 0; ii < instances.length; ii++) {
                     theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decl}</th>`);
                 }
@@ -1363,26 +1383,26 @@ XX @ XX' + 1 [サインN倍角]
 サインN倍角 @ 2*last(コサイン)*サインN倍角' - サインN倍角'' [-last(サイン)] [0]
 
 `
-/*
-			
-辺長	@ 20
-回転数 @ 1
-点X @ 点X' -辺長 *コサインN倍角 | 自然数 <= 辺数*回転数
-点Y @ 点Y' + 辺長 * サインN倍角 | 自然数 <= 辺数*回転数
-線 $3+1-mod($3,1) | { or(and(($0-$2)*($0-$2)<0.0001,自然数=$2+1-mod($2+1,1)),and(($1-$3)*($1-$3)<0.0001,(自然数-$2-1+mod($2+1,1))*(自然数-$0+mod($0,1))<=0)) }
-$3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1))+1-mod($3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1)),1) | { and(($0-$2)*($0-$2)>=0.0001,(自然数-$2-1+mod($2+1,1))*(自然数-$0+mod($0,1))<=0) } [点X'][点Y'][点X][点Y]
-*/
+            /*
+                    	
+            辺長	@ 20
+            回転数 @ 1
+            点X @ 点X' -辺長 *コサインN倍角 | 自然数 <= 辺数*回転数
+            点Y @ 点Y' + 辺長 * サインN倍角 | 自然数 <= 辺数*回転数
+            線 $3+1-mod($3,1) | { or(and(($0-$2)*($0-$2)<0.0001,自然数=$2+1-mod($2+1,1)),and(($1-$3)*($1-$3)<0.0001,(自然数-$2-1+mod($2+1,1))*(自然数-$0+mod($0,1))<=0)) }
+            $3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1))+1-mod($3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1)),1) | { and(($0-$2)*($0-$2)>=0.0001,(自然数-$2-1+mod($2+1,1))*(自然数-$0+mod($0,1))<=0) } [点X'][点Y'][点X][点Y]
+            */
             ;
         let test = `
 あ @ あ' + あ'' [0][1]
 い @ あ'
 う @ う'+1 | あ < 4 [あ]
 `;
-/*
-う @ あ | あ < 4 [あ'] 
-う @ あ [あ+1]
-う @ あ [あ']
-*/
+        /*
+        う @ あ | あ < 4 [あ'] 
+        う @ あ [あ+1]
+        う @ あ [あ']
+        */
         //try 
         {
             let ren = new Rentaku(test);
