@@ -11,11 +11,15 @@
     class Instance {
         constructor(iteraita) {
             this.iteraita = iteraita;
+            this._index = config.instances[this.iteraita.name].length; 
             this._rule = null;
             this._argv = null;
             this.calc = [];
             this._values = [];
             return;
+        }
+        get index(){
+            return this._index;
         }
         get name() {
             return this.iteraita.name;
@@ -45,7 +49,9 @@
         }
         next() {
             let func = this.iteraita.func;
-            this._value = func(this.calc, this._values.length);
+            console.log(this.calc+' '+this._values.length+' '+this.index+' '+this.name);
+            this._value = func(this.calc, this._values.length,this.index,this.name);
+            console.log(1111+' '+this._value);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -136,10 +142,10 @@
             if (len !== this.argc) {
                 throw 'the following number of length of argv is required:' + this.argc + ' ' + len;
             }
-            let ret = new Instance(this, argv);
             if (!(this._name in config.instances)) {
                 config.instances[this._name] = [];
             }
+            let ret = new Instance(this, argv);
             config.instances[this._name].push(ret);
             return ret;
         }
@@ -276,7 +282,10 @@
                     }
                     formula.push('config.instances["' + vari + '"][0]');
                 }
-                return formula.join('');
+                let ret = formula.join('');
+                console.log(str);
+                console.log(ret);
+                return ret;
             }
             function varyFormula(str, name, side, init) {
                 var vary = -1;
@@ -514,7 +523,7 @@
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = `$1.prev(((""==="$4")?"$2".length:1)+($1.name===${opt.itemName}.name?-1:0))`;
+                        rep = `($1.name===name?argv[argv.length-(""==="$4"?"$2".length:1)]:$1.prev((""==="$4")?"$2".length:0))`;
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -621,7 +630,7 @@
             let and = base.and;
             let or = base.or;
             //console.log(this._name+':'+post);
-            eval('this._func = function (argv,idx) { return (' + post + '); }');
+            eval('this._func = function (argv,idx,id,name) { return (' + post + '); }');
             return;
         }
         convertZenToHan(str) {
@@ -992,6 +1001,8 @@
                             //console.log(minSides+':'+decl);
                             for (let ai = 0; ai < argv.length; ai++) {
                                 //console.log(argv[ai]);
+                                let name = decl;
+                                let id = 0;
                                 let tmp = eval(argv[ai]);
                                 //console.log('>>'+argv[ai]);
                                 //console.log(tmp+' '+decl+' '+argv[ai]);
@@ -1364,7 +1375,7 @@ $3+($1-$3)/($0-$2)*(自然数-$2-1+mod($2+1,1))+1-mod($3+($1-$3)/($0-$2)*(自然
         let test = `
 あ @ あ' + あ'' [0][1]
 い @ あ'
-う @ う' [あ]
+う @ う'+1 [あ]
 `;
 /*
 う @ あ | あ < 4 [あ'] 
