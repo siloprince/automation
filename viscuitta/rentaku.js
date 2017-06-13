@@ -2,7 +2,7 @@
 (function (document, console) {
     let config = {
         constval: 4,
-        max: 100,
+        max: 4,
         // TODO : config to be migrated to class Rentaku
         iteraita: {},
         instances: {},
@@ -210,12 +210,7 @@
             let varied = varyFormula(str, name, side);
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
-            let again;
-            if (!(name in config.rentaku.init)) {
-                again = varyAgain(transformed, name);
-            } else {
-                again = transformed;
-            }
+            let again = varyAgain(transformed, name);
             return again.replace(/\(\./g,'\(self.');
 
             function varyAgain(str, name) {
