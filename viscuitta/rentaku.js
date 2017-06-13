@@ -1,6 +1,10 @@
 'use strict';
 (function (document, console) {
     let config = {
+        limit: {
+            count: 0,
+            value: 10000,
+        },
         constval: 4,
         max: 4,
         // TODO : config to be migrated to class Rentaku
@@ -55,8 +59,11 @@
             }
         }
         next() {
+            if (config.limit.count++ >= config.limit.value) {
+                throw ('terminated: iteratation limit: ' + config.limit.value);
+            }
             let func = this.iteraita.func;
-            this._value = func(this,this.calc, this._values.length, this.index, this.name);
+            this._value = func(this, this.calc, this._values.length, this.index, this.name);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -211,7 +218,7 @@
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
             let again = varyAgain(transformed, name);
-            return again.replace(/\(\./g,'\(self.');
+            return again.replace(/\(\./g, '\(self.');
 
             function varyAgain(str, name) {
                 var vary = -1;
@@ -609,7 +616,7 @@
                 updated.push(str);
             }
             this.argv = updated;
-            
+
         }
         set rule(str) {
             let conved = this.convertZenToHan(str);
@@ -958,7 +965,11 @@
                 return true;
             }
         }
-        run(_max) {
+        run(_max, _limit) {
+            if (_limit) {
+                config.limit.value = _limit;
+            }
+            config.limit.count = 0;
             if (_max) {
                 config.depend = {};
                 config.max = _max;
@@ -1037,7 +1048,7 @@
                     starts[decl] = 0;
                 }
             }
-            let tmp={};
+            let tmp = {};
             for (let di = 0; di < decls.length; di++) {
                 let outs = [];
                 let decl = decls[di];
@@ -1046,10 +1057,10 @@
                 for (let oi = 0; oi < outs.length; oi++) {
                     maxout = Math.max(maxout, outs[oi]);
                 }
-                tmp[decl]=maxout;
+                tmp[decl] = maxout;
             }
-            for (let decl in tmp){
-                starts[decl]=tmp[decl];
+            for (let decl in tmp) {
+                starts[decl] = tmp[decl];
             }
             return;
 
@@ -1058,7 +1069,7 @@
                     return;
                 }
                 if (depth > maxdepth) {
-                    throw 'loop detected:'+depth;
+                    throw 'loop detected:' + depth;
                 }
                 for (let di = 0; di < decls.length; di++) {
                     let nextins = [];
@@ -1072,7 +1083,7 @@
                             nextins.push(ins[di] + config.depend[decl][dk]);
                         }
                     }
-                    setStartRepeat(depth + 1,maxdepth, array, starts, nextins, outs);
+                    setStartRepeat(depth + 1, maxdepth, array, starts, nextins, outs);
                 }
             }
 
@@ -1109,8 +1120,8 @@ XX @ XX' + 1 [サインN倍角]
         let nowtime = new Date().getTime();
         script.insertAdjacentHTML('afterend', `<textarea id="ta${nowtime}"></textarea>`);
         let textarea = document.querySelector(`textarea#ta${nowtime}`);
-        let limit = config.max;
-        textarea.insertAdjacentHTML('afterend', `<span style="font-size:9pt;"> iteration limit: <input id="ip${nowtime}"input type="number" min="1" max="1000" step="1" style="width:40px;" value="${limit}"/></span>`);
+        let max = config.max;
+        textarea.insertAdjacentHTML('afterend', `<span style="font-size:9pt;"> iteration max: <input id="ip${nowtime}"input type="number" min="1" max="1000" step="1" style="width:40px;" value="${max}"/></span>`);
         let input = document.querySelector(`input#ip${nowtime}`);
         input.insertAdjacentHTML('afterend', `<table id="tb${nowtime}" border="1"></table>`);
         let table = document.querySelector(`table#tb${nowtime}`);
@@ -1367,39 +1378,48 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
+あ @ あ' + 1 [0]
+い @ あ+1 [あ]
+う @ い+1 [い]
+え @ う+1 [う]
+`;
+        /*
 
         あ @ 1 [1]
 お @ $0+あ$0 [2]
-`;
-        /*あ @ あ' + 1 [0]
-い @ あ+1 [あ]
-う @ い+1 [い]
         う @ あ | あ < 4 [あ'] 
         う @ あ [あ+1]
         う @ あ [あ']
         */
-        //try 
-        {
-            let ren = new Rentaku(test);
-            ren.run();
+        let ren;
+        try {
+            ren = new Rentaku(test);
+            ren.run(2,5);
             // bug
             // ren.run(3);
-            for (let di = 0; di < ren.decls.length; di++) {
-                let decl = ren.decls[di];
-                let inst = config.instances[decl];
+            dump(ren);
+        }
+        catch
+        //let _ = function
+        (e) {
+            dump(ren);
+            console.log(e);
+        }
+ 
+        // TODO: benchmark
+        // [last]
+        // side support
+        // pack, subseq
+    }
+    function dump (ren) {
+       for (let di = 0; di < ren.decls.length; di++) {
+            let decl = ren.decls[di];
+            let inst = config.instances[decl];
+            if (inst) {
                 for (let ii = 0; ii < inst.length; ii++) {
                     console.log(decl + ': ' + inst[ii].values);
                 }
             }
         }
-        //catch
-        let _ = function
-        (e) {
-            console.log(e);
-        }
-        // TODO: benchmark
-        // [last]
-        // side support
-        // pack, subseq
     }
 })(typeof (document) !== 'undefined' ? document : null, console);
