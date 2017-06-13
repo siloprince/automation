@@ -57,7 +57,7 @@
         }
         next() {
             let func = this.iteraita.func;
-            this._value = func(this.calc, this._values.length, this.index, this.name);
+            this._value = func(this,this.calc, this._values.length, this.index, this.name);
             this.calc.shift();
             this.calc.push(this._value);
             this._values.push(this._value);
@@ -216,7 +216,7 @@
             } else {
                 again = transformed;
             }
-            return again;
+            return again.replace(/\(\./g,'\(self.');
 
             function varyAgain(str, name) {
                 var vary = -1;
@@ -546,7 +546,7 @@
                 if (f.indexOf('$') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = '$1.$($3)';
+                        rep = '($1.$($3))';
                     } else {
                         var collabel = getColumnLabel(opt.column + 1);
                         var itemLabel = collabel + ':' + collabel;
@@ -635,7 +635,7 @@
             let mod = base.mod;
             let and = base.and;
             let or = base.or;
-            eval('this._func = function (argv,idx,id,name) { return (' + post + '); }');
+            eval('this._func = function (self,argv,idx,id,name) { return (' + post + '); }');
             return;
         }
         convertZenToHan(str) {
@@ -1377,10 +1377,8 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ あ' + あ'' [0][1]
-い @ あ'| { あ < 4 }
-う @ う'+1  [あ'+い]
-え @ え' | あ < 4 [う']
+あ @ 1 [1]
+お @ $0+あ$0 [2]
 `;
         /*
         う @ あ | あ < 4 [あ'] 
