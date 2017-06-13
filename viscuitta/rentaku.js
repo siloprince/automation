@@ -1161,13 +1161,14 @@ XX @ XX' + 1 [サインN倍角]
             table.innerHTML = '<thead><tr></tr></thead><tbody></tbody>';
             let theadTr = table.querySelector('thead tr');
             let tbody = table.querySelector('tbody');
+            let ed = ' contenteditable="true" ';
             let theadThStyle = 'style="background-color:#444499;color:#ffffff;"';
             for (let di = 0; di < decls.length; di++) {
                 let decl = decls[di];
                 let instances = config.instances[decl];
 
                 for (let ii = 0; ii < instances.length; ii++) {
-                    theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle}>${decl}</th>`);
+                    theadTr.insertAdjacentHTML('beforeend', `<th ${theadThStyle} ${ed}>${decl}</th>`);
                 }
             }
             let ruleTdStyle = 'style="background-color:#ffffcc;height:16pt;vertical-align:top;text-align: left;word-wrap:break-word;max-width:100pt;"';
@@ -1183,7 +1184,7 @@ XX @ XX' + 1 [サインN倍角]
                     }
                     let instances = config.instances[decl];
                     for (let ii = 0; ii < instances.length; ii++) {
-                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle}>${cell}</td>`);
+                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${ruleTdStyle} ${ed}>${cell}</td>`);
                     }
                 }
             }
@@ -1212,7 +1213,7 @@ XX @ XX' + 1 [サインN倍角]
                         if (instance.argv && ci < instance.argv.length && typeof (instance.argv[ci]) !== 'undefined') {
                             cell = instance.argv[ci];
                         }
-                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle}>${cell}</td>`);
+                        tbodyTr.insertAdjacentHTML('beforeend', `<td ${argvTdStyle} ${ed}>${cell}</td>`);
                     }
                 }
             }
@@ -1391,7 +1392,7 @@ XX @ XX' + 1 [サインN倍角]
         */
         //try 
         {
-            let ren = new Rentaku(rentakuXX);
+            let ren = new Rentaku(test);
             ren.run();
             // bug
             // ren.run(3);
