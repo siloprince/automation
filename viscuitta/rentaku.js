@@ -12,7 +12,6 @@
             argvs: [],
             tmp: 0,
             hash: {},
-            init: {}
         },
         depend: {},
     };
@@ -68,6 +67,7 @@
         }
         set argv(_argv) {
             this._argv = _argv;
+            this.calc = [];
             for (let ai = 0; ai < this._argv.length; ai++) {
                 this.calc.push(this._argv[ai]);
             }
@@ -365,11 +365,7 @@
                                     formula.push(vari);
                                     pushed = true;
                                 } else {
-                                    if (!(name in config.rentaku.init)) {
-                                        formula.push(vari + '.values[idx]');
-                                    } else {
-                                        formula.push(vari);
-                                    }
+                                    formula.push(vari + '.values[idx]');
                                 }
                             }
                             formula.push(char);
@@ -406,11 +402,7 @@
                     if (!(vari in config.iteraita)) {
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
-                    if (!(name in config.rentaku.init)) {
-                        formula.push(vari + '.values[idx]');
-                    } else {
-                        formula.push(vari);
-                    }
+                    formula.push(vari + '.values[idx]');
                     if (name !== vari) {
                         if (!(name in config.depend)) {
 
@@ -616,10 +608,8 @@
 
                 updated.push(str);
             }
-            if (!(decl in config.rentaku.init)) {
-                config.rentaku.init[decl] = true;
-                this.argv = updated;
-            }
+            this.argv = updated;
+            
         }
         set rule(str) {
             let conved = this.convertZenToHan(str);
@@ -1377,10 +1367,13 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ 1 [1]
+
+        あ @ 1 [1]
 お @ $0+あ$0 [2]
 `;
-        /*
+        /*あ @ あ' + 1 [0]
+い @ あ+1 [あ]
+う @ い+1 [い]
         う @ あ | あ < 4 [あ'] 
         う @ あ [あ+1]
         う @ あ [あ']
