@@ -1413,6 +1413,9 @@ XX @ XX' + 1 [サインN倍角]
             ;
         let test = `
 あ @ ' + 1 [0]
+い @ ' + '' [0][1]
+う @ ' + '' + ''' [0][0][1]
+え @ ' + '' + ''' + '''' [0][0][0][1]
 `;
         /*
     
@@ -1429,7 +1432,7 @@ XX @ XX' + 1 [サインN倍角]
         //try {
         //console.log(test);
         ren = new Rentaku(test);
-        ren.run();
+        ren.run(10);
         // bug
         // ren.run(3);
         dump(ren);
