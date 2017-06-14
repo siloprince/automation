@@ -16,6 +16,8 @@
             argvs: [],
             tmp: 0,
             hash: {},
+            sub: {},
+            vari: {},
         },
         depend: {},
     };
@@ -213,14 +215,14 @@
                 or: or
             };
         }
-        convertPostProcess(str, name, side) {
+        convertPostProcess(str, name, side, out) {
             let varied = varyFormula(str, name, side);
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
-            let again = varyAgain(transformed, name);
+            let again = varyAgain(transformed, name, out);
             return again.replace(/\(\./g, '\(self.');
 
-            function varyAgain(str, name) {
+            function varyAgain(str, name, out) {
                 var vary = -1;
                 var skipHash = {};
                 var variable = [];
@@ -255,6 +257,7 @@
                             }
                             // TODO: [0] varyAgain
                             formula.push('config.instances["' + vari + '"][0]');
+                            out.push(vari);
                             formula.push(char);
                             vary = -1;
                         }
@@ -291,6 +294,7 @@
                     }
                     // TODO: [0] varyAgain
                     formula.push('config.instances["' + vari + '"][0]');
+                    out.push(vari);
                 }
                 let ret = formula.join('');
                 return ret;
@@ -598,21 +602,25 @@
                     continue;
                 }
                 let conved = this.convertZenToHan(argv[ai]);
-                let str = this.convertPostProcess(conved, decl, true);
-                if (str.indexOf('config.instances') > -1) {
+                let out = [];
+                let str = this.convertPostProcess(conved, decl, true, out);
+                if (out.length > 0) {
+
+                    if (!(decl in config.rentaku.sub)) {
+                        config.rentaku.sub[decl] = {};
+                        config.rentaku.vari[decl] = {};
+                    }
                     let _decl = '_' + config.rentaku.tmp;
                     let _iter = new Iteraita(_decl, 0);
                     config.rentaku.tmp++;
                     config.rentaku.decls.push(_decl);
-                    if (!(decl in config.rentaku.hash)) {
-                        config.rentaku.hash[decl] = {};
-                    }
-                    config.rentaku.hash[decl][ai] = _decl;
                     config.rentaku.rules.push(argv[ai]);
                     config.rentaku.argvs.push([]);
                     config.depend[decl][_decl] = config.max;
-                }
 
+                    config.rentaku.sub[decl][ai] = _decl;
+                    config.rentaku.vari[decl][ai] = out;
+                }
                 updated.push(str);
             }
             this.argv = updated;
@@ -622,7 +630,7 @@
             let conved = this.convertZenToHan(str);
             this._rule = conved;
             let side = false;
-            let post = this.convertPostProcess(conved, this._name, side);
+            let post = this.convertPostProcess(conved, this._name, side, []);
             let base = this.getBaseFunctions();
             let mod = base.mod;
             let and = base.and;
@@ -909,7 +917,7 @@
             for (let di = 0; di < config.rentaku.decls.length; di++) {
                 let decl = config.rentaku.decls[di];
                 let iter = config.iteraita[decl];
-                iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl, true);
+                iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl);
             }
             this.starts = {};
             this.checked = {};
@@ -976,10 +984,12 @@
                 for (let di = 0; di < config.rentaku.decls.length; di++) {
                     let decl = config.rentaku.decls[di];
                     let iter = config.iteraita[decl];
-                    iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl, false);
+                    iter.update(config.rentaku.rules[di], config.rentaku.argvs[di], decl);
                 }
                 this.setStart(config.rentaku.decls, this.starts, this.checked);
             }
+            console.log(config.depend);
+            console.log(this.starts);
             let max = 0;
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
@@ -994,33 +1004,46 @@
                     if (this.starts[decl] <= i && i <= this.starts[decl] + config.max - 1) {
                         if (this.starts[decl] === i) {
                             let sideArray = [];
-                            let minSides = config.max + 1;
+                            let minSides = 0;
+                            let constarg = true;
                             for (let ai = 0; ai < argv.length; ai++) {
-                                if (decl in config.rentaku.hash && ai in config.rentaku.hash[decl]) {
-                                    let _decl = config.rentaku.hash[decl][ai];
-                                    // TODO: [0] run
-                                    //console.log(config.instances);
-                                    //console.log(_decl + ' @ ' + decl);
-                                    let tmp = config.instances[_decl][0].values;
-                                    minSides = Math.min(minSides, tmp.length);
+                                if (decl in config.rentaku.sub && ai in config.rentaku.sub[decl]) {
+                                    constarg = false;
+                                    let _decl = config.rentaku.sub[decl][ai];
+                                    let tmp = [];
+                                    for (let ii = 0; ii < config.instances[_decl].length; ii++) {
+                                        tmp = tmp.concat(config.instances[_decl][ii].values);
+                                    }
+                                    console.log('>>>' + _decl + ' ');
+                                    if (minSides) {
+                                        minSides = Math.min(minSides, tmp.length);
+                                    } else {
+                                        minSides = tmp.length;
+                                    }
                                     sideArray.push(tmp);
                                 } else {
                                     sideArray.push([eval(argv[ai])]);
                                 }
                             }
-                            if (minSides === config.max + 1) {
+                            if (constarg) {
                                 minSides = 1;
                             }
+                            console.log(decl + ':' + minSides);
                             for (let mi = 0; mi < minSides; mi++) {
+                                /*
+
+                                    let varis = config.rentaku.vari[decl][ai];
+                                    for (let vi = 0; vi < varis.length; vi++) {
+                                        let vari = varis[vi];
+                                        varimax = Math.max(varimax, config.instances[vari].length);
+                                    }
+                                */
                                 let tmpargv = [];
                                 for (let ai = 0; ai < argv.length; ai++) {
-                                    if (sideArray[ai].length === 1) {
-                                        tmpargv.push((sideArray[ai][0]));
-                                    } else {
-                                        tmpargv.push((sideArray[ai][mi]));
-                                    }
+                                    let mod = mi % sideArray[ai].length;
+                                    tmpargv.push((sideArray[ai][mod]));
                                 }
-                                let inst = iter.new(tmpargv);
+                                iter.new(tmpargv);
                             }
                         }
                         for (let ii = 0; ii < config.instances[decl].length; ii++) {
@@ -1030,6 +1053,7 @@
                     }
                 }
             }
+            return;
         }
         setStart(decls, starts, checked) {
             // clear
@@ -1378,41 +1402,42 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ あ' + 1 [0]
-い @ あ+1 [あ]
-う @ い+1 [い]
-え @ う+1 [う]
+あ @ 1 [0]
+い @ 1 [あ]
+う @ 1 [い]
+え @ 1 [う]
 `;
         /*
-
+    
         あ @ 1 [1]
-お @ $0+あ$0 [2]
+    お @ $0+あ$0 [2]
         う @ あ | あ < 4 [あ'] 
         う @ あ [あ+1]
         う @ あ [あ']
         */
         let ren;
-        try {
-            ren = new Rentaku(test);
-            ren.run(2,5);
-            // bug
-            // ren.run(3);
-            dump(ren);
-        }
-        catch
-        //let _ = function
+        //try {
+        console.log(test);
+        ren = new Rentaku(test);
+        ren.run();
+        // bug
+        // ren.run(3);
+        dump(ren);
+        //}
+        //catch
+        let _ = function
         (e) {
             dump(ren);
             console.log(e);
         }
- 
+
         // TODO: benchmark
         // [last]
         // side support
         // pack, subseq
     }
-    function dump (ren) {
-       for (let di = 0; di < ren.decls.length; di++) {
+    function dump(ren) {
+        for (let di = 0; di < ren.decls.length; di++) {
             let decl = ren.decls[di];
             let inst = config.instances[decl];
             if (inst) {
