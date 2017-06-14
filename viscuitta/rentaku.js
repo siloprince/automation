@@ -1030,7 +1030,10 @@
                             }
                             console.log(decl + ':' + minSides);
                             for (let mi = 0; mi < minSides; mi++) {
-                                /*
+                                
+                                let tmpargv = [];
+                                for (let ai = 0; ai < argv.length; ai++) {
+                                    /*
 
                                     let varis = config.rentaku.vari[decl][ai];
                                     for (let vi = 0; vi < varis.length; vi++) {
@@ -1038,8 +1041,6 @@
                                         varimax = Math.max(varimax, config.instances[vari].length);
                                     }
                                 */
-                                let tmpargv = [];
-                                for (let ai = 0; ai < argv.length; ai++) {
                                     let mod = mi % sideArray[ai].length;
                                     tmpargv.push((sideArray[ai][mod]));
                                 }
