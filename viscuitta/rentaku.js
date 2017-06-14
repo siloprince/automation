@@ -506,7 +506,8 @@
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = `($1.name===name?argv[argv.length-(""==="$4"?"$2".length:1)]:($1.prev((""==="$4")?"$2".length:0)))`;
+                        rep = `($1.name===name?argv[argv.length-(""==="$4"?"$2".length:$4+1)]:($1.prev((""==="$4")?"$2".length:$4+0)))`;
+                        console.log(rep);
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -516,6 +517,7 @@
                         rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$4.0+N("__prev__")-(' + prev + ')+row()+N("__formula__")),1/0)';
                     }
                     f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)('+)({([0-9]+)}|([0-9]*))/g, rep);
+                    console.log(f);
                 }
                 if (f.indexOf('pack') > -1) {
                     var rep;
@@ -1412,13 +1414,13 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ ' + 1 [0]
-い @ ' + '' [0][1]
-う @ ' + '' + ''' [0][0][1]
-え @ ' + '' + ''' + '''' [0][0][0][1]
+い @ '{0}+'{1}  [0][1]
 `;
         /*
-    
+
+い @ '{0} + '' [0][1]
+う @ ' + '' + ''' [0][0][1]
+え @ ' + '' + ''' + '''' [0][0][0][1]
 あ @ あ' + 1 [0]
 い @ 5 + い' [あ]
 う @ $0 |  $0 < 20 [い+あ]
