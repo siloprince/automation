@@ -52,12 +52,25 @@
         last() {
             return this._values[this._values.length - 1];
         }
-        prev(index) {
-            let idx = this._values.length - 1 - index;
-            if (idx >= 0) {
-                return this._values[idx];
+        prev(index, left) {
+            if (!left) {
+                let idx = this._values.length - 1 - index;
+                if (idx >= 0) {
+                    return this._values[idx];
+                } else {
+                    return this.$(-idx - 1);
+                }
             } else {
-                return this.$(-idx - 1);
+                let insts = config.instances[this.name];
+                let inst = insts[(insts.length+left)%insts.length];
+
+                let idx = inst.values.length - 1 - index;
+                console.log(idx);
+                if (idx >= 0) {
+                    return inst.values[idx];
+                } else {
+                    return inst.$(-idx - 1);
+                }
             }
         }
         next() {
@@ -492,8 +505,7 @@
                 if (f.indexOf('`') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        // TODO
-                        rep = '';
+                        rep = `($1.name===name?self:$1).prev(0,(""==="$4")?"$2".length:$4+0)`;
                     } else {
                         opt.sideBad = 1;
                         var left = '$4.0+if(""="$4",N("__param___")+len("$2"),0)';
@@ -502,12 +514,12 @@
                         rep = 'iferror(index(if("$1"="$1",' + itemLabel + ',$1),$4.0+N("__left__")-len("$2")+N("__prev__")-1-($4.0)+len("$2")+row()+N("__formula__")),1/0)';
                     }
                     f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)(`+)({([0-9--]+)}|([0-9--]*))/g, rep);
+                    console.log(f);
                 }
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
                         rep = `($1.name===name?argv[argv.length-(""==="$4"?"$2".length:$4+1)]:($1.prev((""==="$4")?"$2".length:$4+0)))`;
-                        console.log(rep);
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -517,7 +529,6 @@
                         rep = 'iferror(index(if("$1"="",' + itemLabel + ',$1),-$4.0+N("__prev__")-(' + prev + ')+row()+N("__formula__")),1/0)';
                     }
                     f = f.replace(/([^=<>\|`'"\$;,{&\s\+\-\*\/\(]*)('+)({([0-9]+)}|([0-9]*))/g, rep);
-                    console.log(f);
                 }
                 if (f.indexOf('pack') > -1) {
                     var rep;
@@ -632,7 +643,7 @@
             this._rule = conved;
             let side = false;
             let out = [];
-            let post = this.convertPostProcess(conved, this._name, side,out);
+            let post = this.convertPostProcess(conved, this._name, side, out);
             config.rentaku.vari[this.name] = out;
             let base = this.getBaseFunctions();
             let mod = base.mod;
@@ -1038,21 +1049,21 @@
                                     let mod = mi % sideArray[ai].length;
                                     tmpargv.push((sideArray[ai][mod]));
                                 }
-                                
+
                                 if (decl.indexOf('_') !== 0) {
                                     iter.new(tmpargv);
                                 } else {
 
-                                let varimax = 1;
-                                
-                                    if (decl in config.rentaku.vari ) {
+                                    let varimax = 1;
+
+                                    if (decl in config.rentaku.vari) {
                                         let varis = config.rentaku.vari[decl];
                                         for (let vi = 0; vi < varis.length; vi++) {
                                             let vari = varis[vi];
                                             varimax = Math.max(varimax, config.instances[vari].length);
                                         }
                                     }
-                                   for (let vi = 0; vi < varimax; vi++) {
+                                    for (let vi = 0; vi < varimax; vi++) {
                                         iter.new(tmpargv);
                                     }
                                 }
@@ -1414,10 +1425,12 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-い @ '{0}+'{1}  [0][1]
+あ @ mod(' + '',2) [0][1]
+い @ 1 | 1 = い\`{-1}+い\`{1} [0][あ]
 `;
         /*
 
+い @ '{0}+'{1}  [0][1]
 い @ '{0} + '' [0][1]
 う @ ' + '' + ''' [0][0][1]
 え @ ' + '' + ''' + '''' [0][0][0][1]
@@ -1434,7 +1447,7 @@ XX @ XX' + 1 [サインN倍角]
         //try {
         //console.log(test);
         ren = new Rentaku(test);
-        ren.run(10);
+        ren.run(3);
         // bug
         // ren.run(3);
         dump(ren);
