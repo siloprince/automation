@@ -506,7 +506,7 @@
                 if (f.indexOf('\'') > -1) {
                     var rep;
                     if (opt.lang === 'es6') {
-                        rep = `($1.name===name?argv[argv.length-(""==="$4"?"$2".length:1)]:$1.prev((""==="$4")?"$2".length:0))`;
+                        rep = `($1.name===name?argv[argv.length-(""==="$4"?"$2".length:1)]:($1.prev((""==="$4")?"$2".length:0)))`;
                     } else {
                         var prev = 'if(""="$4",N("__param___")+len("$2"),1)';
                         var collabel = getColumnLabel(opt.column + 1);
@@ -1412,12 +1412,13 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ あ' + 1 [0]
-い @ 5 + い' [あ]
-う @ $0 |  $0 < 20 [い+あ]
+あ @ ' + 1 [0]
 `;
         /*
     
+あ @ あ' + 1 [0]
+い @ 5 + い' [あ]
+う @ $0 |  $0 < 20 [い+あ]
         あ @ 1 [1]
     お @ $0+あ$0 [2]
         う @ あ | あ < 4 [あ'] 
