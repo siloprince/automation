@@ -256,7 +256,7 @@
                                 throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                             }
                             // TODO: [0] varyAgain
-                            formula.push('config.instances["' + vari + '"][0]');
+                            formula.push('config.instances["' + vari + '"][id%(config.instances["' + vari + '"].length)]');
                             out.push(vari);
                             formula.push(char);
                             vary = -1;
@@ -293,7 +293,7 @@
                         throw ('unknown variable:' + vari + ' in ' + name + '  @ ' + str);
                     }
                     // TODO: [0] varyAgain
-                    formula.push('config.instances["' + vari + '"][0]');
+                    formula.push('config.instances["' + vari + '"][id%(config.instances["' + vari + '"].length)]');
                     out.push(vari);
                 }
                 let ret = formula.join('');
@@ -619,7 +619,6 @@
                     config.depend[decl][_decl] = config.max;
 
                     config.rentaku.sub[decl][ai] = _decl;
-                    config.rentaku.vari[decl][ai] = out;
                 }
                 updated.push(str);
             }
@@ -630,7 +629,9 @@
             let conved = this.convertZenToHan(str);
             this._rule = conved;
             let side = false;
-            let post = this.convertPostProcess(conved, this._name, side, []);
+            let out = [];
+            let post = this.convertPostProcess(conved, this._name, side,out);
+            config.rentaku.vari[this.name] = out;
             let base = this.getBaseFunctions();
             let mod = base.mod;
             let and = base.and;
@@ -988,8 +989,8 @@
                 }
                 this.setStart(config.rentaku.decls, this.starts, this.checked);
             }
-            console.log(config.depend);
-            console.log(this.starts);
+            //console.log(config.depend);
+            //console.log(this.starts);
             let max = 0;
             for (let sk in this.starts) {
                 max = Math.max(max, this.starts[sk]);
@@ -1014,7 +1015,6 @@
                                     for (let ii = 0; ii < config.instances[_decl].length; ii++) {
                                         tmp = tmp.concat(config.instances[_decl][ii].values);
                                     }
-                                    console.log('>>>' + _decl + ' ');
                                     if (minSides) {
                                         minSides = Math.min(minSides, tmp.length);
                                     } else {
@@ -1028,23 +1028,32 @@
                             if (constarg) {
                                 minSides = 1;
                             }
-                            console.log(decl + ':' + minSides);
+                            //console.log(decl + ':' + minSides);
                             for (let mi = 0; mi < minSides; mi++) {
-                                
+
                                 let tmpargv = [];
                                 for (let ai = 0; ai < argv.length; ai++) {
-                                    /*
-
-                                    let varis = config.rentaku.vari[decl][ai];
-                                    for (let vi = 0; vi < varis.length; vi++) {
-                                        let vari = varis[vi];
-                                        varimax = Math.max(varimax, config.instances[vari].length);
-                                    }
-                                */
                                     let mod = mi % sideArray[ai].length;
                                     tmpargv.push((sideArray[ai][mod]));
                                 }
-                                iter.new(tmpargv);
+                                
+                                if (decl.indexOf('_') !== 0) {
+                                    iter.new(tmpargv);
+                                } else {
+
+                                let varimax = 1;
+                                
+                                    if (decl in config.rentaku.vari ) {
+                                        let varis = config.rentaku.vari[decl];
+                                        for (let vi = 0; vi < varis.length; vi++) {
+                                            let vari = varis[vi];
+                                            varimax = Math.max(varimax, config.instances[vari].length);
+                                        }
+                                    }
+                                   for (let vi = 0; vi < varimax; vi++) {
+                                        iter.new(tmpargv);
+                                    }
+                                }
                             }
                         }
                         for (let ii = 0; ii < config.instances[decl].length; ii++) {
@@ -1403,10 +1412,9 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ 1 [0]
-い @ 1 [あ]
-う @ 1 [い]
-え @ 1 [う]
+あ @ あ' + 1 [0]
+い @ 5 + い' [あ]
+う @ $0 [い+あ]
 `;
         /*
     
@@ -1418,7 +1426,7 @@ XX @ XX' + 1 [サインN倍角]
         */
         let ren;
         //try {
-        console.log(test);
+        //console.log(test);
         ren = new Rentaku(test);
         ren.run();
         // bug
