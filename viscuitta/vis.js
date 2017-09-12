@@ -43,8 +43,8 @@
     let terminateHash = {};
     let stageHash = {};
     init();
-    function polygonSVG(polygon,x, y, r, s, t, args) {
-        let key = `${polygon}:${x}:${y}:${r}:${s}`;
+    function polygonSVG(polygon,x, y, r, sx, sy, t, args) {
+        let key = `${polygon}:${x}:${y}:${r}:${sx}:${sy}`;
         if (key in terminateHash) {
             return;
         }
@@ -60,7 +60,7 @@
             stageHash[key]=true;
         }
         let polygonStr = config.polygons[polygon];
-        g.insertAdjacentHTML('beforeend',`<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${s},${s})">${polygonStr}</g>`);
+        g.insertAdjacentHTML('beforeend',`<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
     }   
     function clear(args) {
         let stage = args.stage;
@@ -103,8 +103,12 @@
                         if (!('ds' in next)) {
                             next.ds = 1;
                         }
-                        
-                        let s = shape.s * next.ds;
+                        console.error(next.ds);
+                        next.dx *= next.ds;
+                        next.dy *= next.ds;
+
+                        let sx = shape.sx * next.ds;
+                        let sy = shape.sy * next.ds;
                         let t = 0;
                         if (!('terminate' in next)) {
                             t = 0;
@@ -112,14 +116,23 @@
                             t = next.terminate;
                         }
                         {
-                            if (s > 1) {
+                            if (sx > 1) {
                                 t = 1;
                             }
-                            if (s < -1) {
+                            if (sx < -1) {
+                                t = 1;
+                            }
+                            if (sy > 1) {
+                                t = 1;
+                            }
+                            if (sy < -1) {
                                 t = 1;
                             }
                             if ('scaleLimit' in config.iteration) {
-                                if (Math.abs(s) < Math.abs(config.iteration.scaleLimit) ) {
+                                if (Math.abs(sx) < Math.abs(config.iteration.scaleLimit) ) {
+                                    t = 1;
+                                }
+                                if (Math.abs(sy) < Math.abs(config.iteration.scaleLimit) ) {
                                     t = 1;
                                 }
                             }
@@ -130,11 +143,12 @@
                         let st = Math.sin(theta);
                         let nx = next.dx*ct - next.dy*st;
                         let ny = next.dx*st + next.dy*ct;
-                        let x = shape.s*(nx) + shape.x;
+                        // TODO: sx,sy
+                        let x = shape.sx*(nx) + shape.x;
                         x = (x+config.stage.width)%config.stage.width;
-                        let y = shape.s*(ny) + shape.y;
+                        let y = shape.sy*(ny) + shape.y;
                         y = (y+config.stage.height)%config.stage.height; 
-                        polygonSVG(next.polygon, x, y, r, s, t, args);
+                        polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
                         if (t===0) {
                             count++;
                         }
@@ -168,7 +182,7 @@
                     , terminate: document.querySelector('#terminate')
                 };
                 // TODO: move to config
-                polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,0,args);
+                polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
                 main(count, args);
             }, false);
     }
@@ -212,7 +226,8 @@
                 x: mat.translate[0]
                 , y: mat.translate[1]
                 , r: mat.rotate
-                , s: mat.scale[0]
+                , sx: mat.scale[0]
+                , sy: mat.scale[1]
                 , p: p
             });
         }
