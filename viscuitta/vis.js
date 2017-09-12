@@ -103,7 +103,6 @@
                         if (!('ds' in next)) {
                             next.ds = 1;
                         }
-                        console.error(next.ds);
                         next.dx *= next.ds;
                         next.dy *= next.ds;
 
@@ -190,7 +189,8 @@
         let userConfigStr = document.currentScript.textContent.trim();
         try {
             if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
-                let userConfig = JSON.parse(userConfigStr); 
+                //let userConfig = JSON.parse(userConfigStr); 
+                let userConfig = eval('(function() { return ' + userConfigStr + '})()');
                 for (let ck in config) {
                     if ( ck in userConfig) {
                         config[ck] = JSON.parse(JSON.stringify(userConfig[ck]));
