@@ -3,6 +3,8 @@
 var a_angle = Math.PI/3;
 var ac = Math.cos(a_angle);
 var as = Math.sin(a_angle);
+var AC = Math.cos(a_angle/2);
+var AS = Math.sin(a_angle/2);
 var len = 320;
 </script>
 <script type="text/javascript" src="./vis.js">{
@@ -13,13 +15,13 @@ var len = 320;
         },
         "iteration": {
             "dt": 1000,
-            "scaleLimit": 0.05,
-            "stepLimit": 1,
+            "scaleLimit": 0.01,
+            "stepLimit": 100,
             "objectLimit": 40000,            
             "shapeCount": true
         },
         "polygons": [
-            `<polygon class='square' points='0 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' fill='#aaaaaa' stroke='#0000ff'/>`
+            `<polygon class='square' points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' fill='#aaaaaa' stroke='#0000ff'/>`
         ],
         "rules": [
             { 
@@ -31,15 +33,22 @@ var len = 320;
                         "polygon": 0,
                         "dx": 0,
                         "dy": 0,
-                        "dr": -45,
-                        "ds": 1/Math.sqrt(2)        
+                        "dr": -30,
+                        "ds": 1/(2*AC)       
                     },
                     {
                         "polygon": 0,
-                        "dx": 320,
-                        "dy": 0,                        
-                        "dr": -45,
-                        "ds": 1/Math.sqrt(2)             
+                        "dx": (1*len*ac -2*len)*1/(2*AC),
+                        "dy": (1*len*as)*1/(2*AC),                        
+                        "dr": 90,
+                        "ds": 1/(2*AC)           
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": (-len*ac +2*len)*1/(2*AC),
+                        "dy": (-len*as)*1/(2*AC),                        
+                        "dr": -30,
+                        "ds": 1/(2*AC)           
                     }
                 ]  
             }

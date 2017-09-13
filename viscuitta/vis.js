@@ -103,9 +103,10 @@
                         if (!('ds' in next)) {
                             next.ds = 1;
                         }
+                        /*
                         next.dx *= next.ds;
                         next.dy *= next.ds;
-
+                        */
                         let sx = shape.sx * next.ds;
                         let sy = shape.sy * next.ds;
                         let t = 0;
