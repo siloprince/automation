@@ -233,7 +233,7 @@
             let opt = { lang: 'es6', itemName: name };
             let transformed = transformFormula(varied, opt);
             let again = varyAgain(transformed, name, out);
-            return again.replace(/\(\./g, '\(self.');
+            return again.replace(/\(\./g, '(self.').replace(/\)\./g, 'self).');
 
             function varyAgain(str, name, out) {
                 var vary = -1;
@@ -1425,11 +1425,15 @@ XX @ XX' + 1 [サインN倍角]
             */
             ;
         let test = `
-あ @ mod(' + '',2) [0][1]
-い @ 1 | 1 = い\`{-1}+い\`{1} [0][あ]
+自然数 @ '+1 [0]
+ い @ '' | 自然数 <=2 [0][1]
+ う @ ''' | 自然数 <=3 [10][20][30]
+ え @ い+う
 `;
         /*
 
+あ @ mod(' + '',2) [0][1]
+い @ 1 | 1 = \`{-1}+\`{1} [0][あ]
 い @ '{0}+'{1}  [0][1]
 い @ '{0} + '' [0][1]
 う @ ' + '' + ''' [0][0][1]
@@ -1447,7 +1451,7 @@ XX @ XX' + 1 [サインN倍角]
         //try {
         //console.log(test);
         ren = new Rentaku(test);
-        ren.run(3);
+        ren.run(4);
         // bug
         // ren.run(3);
         dump(ren);
