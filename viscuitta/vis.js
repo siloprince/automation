@@ -60,7 +60,16 @@
             stageHash[key]=true;
         }
         let polygonStr = config.polygons[polygon];
-        g.insertAdjacentHTML('beforeend',`<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
+        let fill = '#ff0000';
+        let rr = (2*360+r+30)%120;
+        if ( Math.abs(rr-0)<0.1 ) {
+           fill = '#00ff00'; 
+        }
+        let rrr = (2*360+r+0)%120;
+        if ( Math.abs(rrr-0)<0.1 ) {
+           fill = '#00ff00'; 
+        }
+        g.insertAdjacentHTML('beforeend',`<g fill="${fill}" x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
     }   
     function clear(args) {
         let stage = args.stage;
