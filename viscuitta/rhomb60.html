@@ -6,6 +6,7 @@ var as = Math.sin(a_angle);
 var AC = Math.cos(a_angle/2);
 var AS = Math.sin(a_angle/2);
 var len = 320;
+var sc = 0.5;
 </script>
 <script type="text/javascript" src="./vis.js">{
         "id": "xxx",
@@ -21,8 +22,8 @@ var len = 320;
             "shapeCount": true
         },
         "polygons": [
-            //${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0, 
-            `<polygon class='square' points='0 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' stroke='#0000ff'/>`
+            // 
+            `<polygon class='square' points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0,${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' stroke='#0000ff'/>`
         ],
         "rules": [
             { 
@@ -32,25 +33,32 @@ var len = 320;
                 "next":[ 
                     {
                         "polygon": 0,
-                        "dx": (-len*ac +1*len)*1/(2*AC),
-                        "dy": (-len*as)*1/(2*AC),  
-                        "dr": -30,
-                        "ds": 1/(2*AC)       
+                        "dx": len*sc*(0.5*ac+0.5),
+                        "dy": len*sc*(0.5*as),
+                        "dr": 0,
+                        "ds": sc      
                     },
                     {
                         "polygon": 0,
-                        "dx": (-3*len*ac +2*len)*1/(2*AC),
-                        "dy": (-3*len*as)*1/(2*AC),                        
-                        "dr": -90,
-                        "ds": 1/(2*AC)           
+                        "dx": len*sc*(0.5*ac-0.5),
+                        "dy": len*sc*(0.5*as),
+                        "dr": 0,
+                        "ds": sc      
                     },
                     {
                         "polygon": 0,
-                        "dx": (-2*len*ac +0*len)*1/(2*AC),
-                        "dy": (-2*len*as)*1/(2*AC),                        
-                        "dr": 210,
-                        "ds": 1/(2*AC)           
-                    }
+                        "dx": len*sc*(-1.5*ac-0.5),
+                        "dy": len*sc*(-1.5*as),
+                        "dr": 240,
+                        "ds": sc      
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": len*sc*(2*ac-2.5),
+                        "dy": len*sc*(2*as),
+                        "dr": 60,
+                        "ds": sc      
+                    },
                 ]  
             }
         ]
