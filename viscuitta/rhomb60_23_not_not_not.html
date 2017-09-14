@@ -7,7 +7,7 @@ var AC = Math.cos(a_angle/2);
 var AS = Math.sin(a_angle/2);
 var len = 320;
 </script>
-<script type="text/javascript" src="./viscol.js">{
+<script type="text/javascript" src="./vis.js">{
         "id": "xxx",
         "stage": {
             "width": 1200,
@@ -21,7 +21,7 @@ var len = 320;
             "shapeCount": true
         },
         "polygons": [
-            `<polygon class='square' opacity="0.2"  points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' stroke='#0000ff'/>`
+            `<polygon class='square' points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' fill='#aaaaaa' stroke='#0000ff'/>`
         ],
         "rules": [
             { 
@@ -31,9 +31,9 @@ var len = 320;
                 "next":[
                     {
                         "polygon": 0,
-                        "dx": (-1*len*ac -1*len)*1/(2*AC),
-                        "dy": (-1*len*as)*1/(2*AC), 
-                        "dr": 150,
+                        "dx": 0,
+                        "dy": 0,
+                        "dr": -30,
                         "ds": 1/(2*AC)       
                     },
                     {
