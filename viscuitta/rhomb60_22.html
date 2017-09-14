@@ -16,7 +16,7 @@ var len = 320;
         "iteration": {
             "dt": 1000,
             "scaleLimit": 0.01,
-            "stepLimit": 2,
+            "stepLimit": 1,
             "objectLimit": 40000,            
             "shapeCount": true
         },
@@ -38,15 +38,15 @@ var len = 320;
                     },
                     {
                         "polygon": 0,
-                        "dx": (-2*len*ac +1*len)*1/(2*AC),
-                        "dy": (-2*len*as)*1/(2*AC),                        
-                        "dr": 270,
+                        "dx": (1*len*ac -2*len)*1/(2*AC),
+                        "dy": (1*len*as)*1/(2*AC),                        
+                        "dr": 90,
                         "ds": 1/(2*AC)           
                     },
                     {
                         "polygon": 0,
-                        "dx": (-3*len*ac +0*len)*1/(2*AC),
-                        "dy": (-3*len*as)*1/(2*AC),                        
+                        "dx": (-len*ac -1*len)*1/(2*AC),
+                        "dy": (-len*as)*1/(2*AC),                        
                         "dr": 210,
                         "ds": 1/(2*AC)           
                     }
