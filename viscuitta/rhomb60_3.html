@@ -6,17 +6,21 @@ var as = Math.sin(a_angle);
 var AC = Math.cos(a_angle/2);
 var AS = Math.sin(a_angle/2);
 var len = 320;
+var _a = [ 1,-1, -30];
+var _b = [-1, 0,  90];
+var _c = [ 0,-2, 210];
+var _z = [0,1];
 </script>
 <script type="text/javascript" src="./vis.js">{
         "id": "xxx",
         "stage": {
-            "width": 1200,
-            "height":1200
+            "width": 1500,
+            "height":1500
         },
         "iteration": {
             "dt": 1000,
             "scaleLimit": 0.01,
-            "stepLimit": 10,
+            "stepLimit": 5,
             "objectLimit": 40000,            
             "shapeCount": true
         },
@@ -29,25 +33,26 @@ var len = 320;
                     ".square"
                 ],
                 "next":[
+                    //{ "polygon":0 },
                     {
                         "polygon": 0,
-                        "dx": (-len*ac +1*len)*1/(2*AC),
-                        "dy": (-len*as)*1/(2*AC),  
-                        "dr": -30,
+                        "dx": (_z[0]*Math.cos(_a[2]*Math.PI/180)+_z[1]*Math.cos(_a[2]*Math.PI/180+a_angle))*len + (_a[1] *ac +_a[0])*len/(2*AC),
+                        "dy": (_z[0]*Math.sin(_a[2]*Math.PI/180)+_z[1]*Math.sin(_a[2]*Math.PI/180+a_angle))*len + (_a[1] *as)*len/(2*AC),  
+                        "dr": _a[2],
                         "ds": 1/(2*AC)       
                     },
                     {
                         "polygon": 0,
-                        "dx": (0*len*ac -1*len)*1/(2*AC),
-                        "dy": (0*len*as)*1/(2*AC),                        
-                        "dr": 90,
+                        "dx": (_z[0]*Math.cos(_b[2]*Math.PI/180)+_z[1]*Math.cos(_b[2]*Math.PI/180+a_angle))*len + (_b[1] *ac +_b[0] )*len/(2*AC),
+                        "dy": (_z[0]*Math.sin(_b[2]*Math.PI/180)+_z[1]*Math.sin(_b[2]*Math.PI/180+a_angle))*len + (_b[1] *as)*len/(2*AC),                        
+                        "dr": _b[2],
                         "ds": 1/(2*AC)           
                     },
                     {
                         "polygon": 0,
-                        "dx": (-2*len*ac +0*len)*1/(2*AC),
-                        "dy": (-2*len*as)*1/(2*AC),                        
-                        "dr": 210,
+                        "dx": (_z[0]*Math.cos(_c[2]*Math.PI/180)+_z[1]*Math.cos(_c[2]*Math.PI/180+a_angle))*len + (_c[1] *ac +_c[0] )*len/(2*AC),
+                        "dy": (_z[0]*Math.sin(_c[2]*Math.PI/180)+_z[1]*Math.sin(_c[2]*Math.PI/180+a_angle))*len + (_c[1] *as)*len/(2*AC),                        
+                        "dr": _c[2],
                         "ds": 1/(2*AC)           
                     }
                 ]  

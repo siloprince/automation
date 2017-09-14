@@ -69,7 +69,7 @@
         stageHash = {};
         stage.innerHTML = '';
     }
-    function rules(args) {
+    function rules(step, args) {
         let patternShapes = {};
         for (let ri=0;ri<config.rules.length;ri++) {
             let rule = config.rules[ri];
@@ -105,10 +105,7 @@
                         if (!('ds' in next)) {
                             next.ds = 1;
                         }
-                        /*
-                        next.dx *= next.ds;
-                        next.dy *= next.ds;
-                        */
+                        
                         let sx = shape.sx * next.ds;
                         let sy = shape.sy * next.ds;
                         let t = 0;
@@ -205,15 +202,15 @@
             console.log(ex);
         }
     }
-    function main(count, args) {
-        if (count=== config.iteration.stepLimit) {
+    function main(step, args) {
+        if (step=== config.iteration.stepLimit) {
             console.warn('exceed: config.iteration.stepLimit: '+config.iteration.stepLimit);
             return;
         }
-        rules(args);
+        rules(step, args);
         let nextMain = (function (c, a) {
             return function () { main(c + 1, a);};
-        })(count, args);
+        })(step, args);
  
         window.setTimeout(nextMain, args.dt);
     }
