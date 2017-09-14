@@ -6,9 +6,9 @@ var as = Math.sin(a_angle);
 var AC = Math.cos(a_angle/2);
 var AS = Math.sin(a_angle/2);
 var len = 320;
-var _a = [ 0, 0, -30];
-var _b = [-2, 1,  90];
-var _c = [ 2,-1, -30];
+var _a = [ 1,-1, -30];
+var _b = [ 2,-3, -90];
+var _c = [ 0,-2, 210];
 var _z = [0,0];
 </script>
 <script type="text/javascript" src="./vis.js">{
@@ -25,7 +25,7 @@ var _z = [0,0];
             "shapeCount": true
         },
         "polygons": [
-            `<polygon class='square' opacity="0.3" fill='#aaaaaa' points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' stroke='#0000ff'/>`
+            `<polygon class='square' opacity="0.3" fill='#aaaaaa'  points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0, ${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' stroke='#0000ff'/>`
         ],
         "rules": [
             { 
