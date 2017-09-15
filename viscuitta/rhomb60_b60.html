@@ -9,7 +9,8 @@ var len = 320;
 var _a = [ 0, 0, -30];
 var _b = [-2, 1,  90];
 var _c = [ 2,-1, -30];
-var _z = [-1, 0, 0];
+var _z = [-1, 0, 60];
+var step = 10;
 var A = getPos(_z,_a,a_angle,len,AC);
 var B = getPos(_z,_b,a_angle,len,AC);
 var C = getPos(_z,_c,a_angle,len,AC);
@@ -36,7 +37,7 @@ return [
         "iteration": {
             "dt": 1000,
             "scaleLimit": 0.01,
-            "stepLimit": 6,
+            "stepLimit": step,
             "objectLimit": 40000,            
             "shapeCount": true
         },
@@ -49,7 +50,7 @@ return [
                     ".square"
                 ],
                 "next":[
-                   // { "polygon":0 },
+                 //  { "polygon":0 },
                     {
                         "polygon": 0,
                         "dx": A[0],
