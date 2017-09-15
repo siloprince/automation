@@ -169,6 +169,10 @@
         updateConfig();
         document.addEventListener('DOMContentLoaded',
             function () {
+                document.body.insertAdjacentHTML('beforeend','<button id="start">start</button>');
+                let startButton = document.querySelector('button#start');
+                document.body.insertAdjacentHTML('beforeend','<button id="org">org</button>');
+                let orgButton = document.querySelector('button#org');
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg></svg></td></tr></table>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
@@ -182,7 +186,24 @@
                 };
                 // TODO: move to config
                 polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+                let stepLimit = config.iteration.stepLimit;
+                config.iteration.stepLimit = 1;
                 main(count, args);
+                polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+
+                startButton.addEventListener('click',function(){
+                    clear(args);
+                    polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+                    config.iteration.stepLimit = stepLimit;
+                    main(count,args);
+                }); 
+                orgButton.addEventListener('click',function(){
+                    clear(args);
+                    config.iteration.stepLimit = 1;
+                    polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+                    main(count, args);
+                    polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+                });
             }, false);
     }
     function updateConfig () {
