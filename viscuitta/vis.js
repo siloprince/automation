@@ -198,8 +198,7 @@
                 }                     
             }
         } catch (ex) {
-            // NOP
-            console.log(ex);
+            console.error(ex);
         }
     }
     function main(step, args) {
