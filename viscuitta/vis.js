@@ -1,11 +1,11 @@
 
 'use strict';
-(function(document,window,console){
+(function (document, window, console) {
     let config = {
         "id": "xxx",
         "stage": {
             "width": 300,
-            "height":300
+            "height": 300
         },
         "iteration": {
             "dt": 1000,
@@ -17,53 +17,53 @@
             "<polygon class='square' points='0 0, 30 0, 30 30, 0 30' fill='#aaaaaa' stroke='#0000ff'/>"
         ],
         "rules": [
-            { 
-                "pattern":[
+            {
+                "pattern": [
                     ".square"
                 ],
-                "next":[
+                "next": [
                     {
                         "polygon": 0,
-                        "terminate": 1                 
+                        "terminate": 1
                     },
                     {
                         "polygon": 0,
                         "dx": 30,
-                        "dy": 0                   
+                        "dy": 0
                     },
                     {
                         "polygon": 0,
                         "dx": 0,
-                        "dy": 30                       
+                        "dy": 30
                     }
-                ]  
+                ]
             }
         ]
     };
     let terminateHash = {};
     let stageHash = {};
     init();
-    function polygonSVG(polygon,x, y, r, sx, sy, t, args) {
+    function polygonSVG(polygon, x, y, r, sx, sy, t, args) {
         let key = `${polygon}:${x}:${y}:${r}:${sx}:${sy}`;
         if (key in terminateHash) {
             return;
         }
         if (key in stageHash) {
             return;
-        }        
-        let g;     
+        }
+        let g;
         if (t) {
             g = args.terminate;
-            terminateHash[key]=true;
+            terminateHash[key] = true;
         } else {
             g = args.stage;
-            stageHash[key]=true;
+            stageHash[key] = true;
         }
         let polygonStr = config.polygons[polygon];
         let fill = '#ff0000';
-        
-        g.insertAdjacentHTML('beforeend',`<g fill="${fill}" x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
-    }   
+
+        g.insertAdjacentHTML('beforeend', `<g fill="${fill}" x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
+    }
     function clear(args) {
         let stage = args.stage;
         stageHash = {};
@@ -71,27 +71,27 @@
     }
     function rules(step, args) {
         let patternShapes = {};
-        for (let ri=0;ri<config.rules.length;ri++) {
+        for (let ri = 0; ri < config.rules.length; ri++) {
             let rule = config.rules[ri];
             let pattern = rule.pattern;
-            for (let pi=0;pi<pattern.length;pi++) {
-                let shapes = getPolygons(pattern[pi],{ noDup: true });
+            for (let pi = 0; pi < pattern.length; pi++) {
+                let shapes = getPolygons(pattern[pi], { noDup: true });
                 if (!(pattern[pi] in patternShapes)) {
                     patternShapes[pattern[pi]] = shapes;
                 }
             }
         }
         clear(args);
-        let count=0;
-        for (let ri=0;ri<config.rules.length;ri++) {
+        let count = 0;
+        for (let ri = 0; ri < config.rules.length; ri++) {
             let rule = config.rules[ri];
             let pattern = rule.pattern;
-            for (let pi=0;pi<pattern.length;pi++) { 
-                let shapes = patternShapes[pattern[pi]];       
+            for (let pi = 0; pi < pattern.length; pi++) {
+                let shapes = patternShapes[pattern[pi]];
                 for (let si = 0; si < shapes.length; si++) {
                     let shape = shapes[si];
                     let nexts = rule.next;
-                    for (let ni=0;ni<nexts.length;ni++) {
+                    for (let ni = 0; ni < nexts.length; ni++) {
                         let next = nexts[ni];
                         if (!('dx' in next)) {
                             next.dx = 0;
@@ -105,7 +105,7 @@
                         if (!('ds' in next)) {
                             next.ds = 1;
                         }
-                        
+
                         let sx = shape.sx * next.ds;
                         let sy = shape.sy * next.ds;
                         let t = 0;
@@ -128,113 +128,148 @@
                                 t = 1;
                             }
                             if ('scaleLimit' in config.iteration) {
-                                if (Math.abs(sx) < Math.abs(config.iteration.scaleLimit) ) {
+                                if (Math.abs(sx) < Math.abs(config.iteration.scaleLimit)) {
                                     t = 1;
                                 }
-                                if (Math.abs(sy) < Math.abs(config.iteration.scaleLimit) ) {
+                                if (Math.abs(sy) < Math.abs(config.iteration.scaleLimit)) {
                                     t = 1;
                                 }
                             }
                         }
-                        let r = (shape.r - next.dr)%360;
-                        let theta = r*Math.PI/180;
+                        let r = (shape.r - next.dr) % 360;
+                        let theta = r * Math.PI / 180;
                         let ct = Math.cos(theta);
                         let st = Math.sin(theta);
-                        let nx = next.dx*ct - next.dy*st;
-                        let ny = next.dx*st + next.dy*ct;
+                        let nx = next.dx * ct - next.dy * st;
+                        let ny = next.dx * st + next.dy * ct;
                         // TODO: sx,sy
-                        let x = shape.sx*(nx) + shape.x;
-                        x = (x+config.stage.width)%config.stage.width;
-                        let y = shape.sy*(ny) + shape.y;
-                        y = (y+config.stage.height)%config.stage.height; 
+                        let x = shape.sx * (nx) + shape.x;
+                        x = (x + config.stage.width) % config.stage.width;
+                        let y = shape.sy * (ny) + shape.y;
+                        y = (y + config.stage.height) % config.stage.height;
                         polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
-                        if (t===0) {
+                        if (t === 0) {
                             count++;
                         }
                         if ('objectLimit' in config.iteration) {
-                            if (count >= config.iteration.objectLimit ) {
-                                console.warn('exceed: config.iteration.objectLimit:'+config.iteration.objectLimit);
+                            if (count >= config.iteration.objectLimit) {
+                                console.warn('exceed: config.iteration.objectLimit:' + config.iteration.objectLimit);
                                 return;
                             }
-                        }                     
+                        }
                     }
                 }
             }
         }
         if ('shapeCount' in config.iteration && config.iteration.shapeCount) {
-            console.warn('shapeCount:'+count);
+            console.warn('shapeCount:' + count);
         }
     }
     function init() {
         updateConfig();
         document.addEventListener('DOMContentLoaded',
             function () {
-                document.body.insertAdjacentHTML('beforeend','<button id="start">start</button>');
+                document.body.insertAdjacentHTML('beforeend', '<button id="start">start</button>');
                 let startButton = document.querySelector('button#start');
-                document.body.insertAdjacentHTML('beforeend','<button id="org">org</button>');
+                document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="7">');
+                let stepLimit = document.querySelector('input#stepLimit').value;
+                document.body.insertAdjacentHTML('beforeend', '<button id="org">org</button>');
                 let orgButton = document.querySelector('button#org');
+                document.body.insertAdjacentHTML('beforeend', '<button id="less">less</button>');
+                let lessButton = document.querySelector('button#less');
+                document.body.insertAdjacentHTML('beforeend', '<input id="angle" size="5" value="0">');
+                let angleValue = document.querySelector('input#angle').value;
+                document.body.insertAdjacentHTML('beforeend', '<button id="more">more</button>');
+                let moreButton = document.querySelector('button#more');
+                document.body.insertAdjacentHTML('beforeend', '<button id="left">left</button>');
+                let leftButton = document.querySelector('button#left');
+                document.body.insertAdjacentHTML('beforeend', '<button id="right">right</button>');
+                let rightButton = document.querySelector('button#right');
+                document.body.insertAdjacentHTML('beforeend', '<button id="down">down</button>');
+                let downButton = document.querySelector('button#down');
+                document.body.insertAdjacentHTML('beforeend', '<button id="top">top</button>');
+                let topButton = document.querySelector('button#top');
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg></svg></td></tr></table>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
                 svg.setAttribute('height', config.stage.height);
                 svg.innerHTML = '<g id="terminate"></g><g id="stage"></g>';
-                let count = 0;
                 let args = {
                     dt: config.iteration.dt
                     , stage: document.querySelector('#stage')
                     , terminate: document.querySelector('#terminate')
                 };
                 // TODO: move to config
-                polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
-                let stepLimit = config.iteration.stepLimit;
+                polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
                 config.iteration.stepLimit = 1;
-                main(count, args);
-                polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+                main(0, args);
+                polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
 
-                startButton.addEventListener('click',function(){
+                startButton.addEventListener('click', function () {
                     clear(args);
-                    polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
-                    config.iteration.stepLimit = stepLimit;
-                    main(count,args);
-                }); 
-                orgButton.addEventListener('click',function(){
-                    clear(args);
-                    config.iteration.stepLimit = 1;
-                    polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
-                    main(count, args);
-                    polygonSVG(0,config.stage.width/4,config.stage.height/4,0,1,1,0,args);
+                    polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+                    config.iteration.stepLimit = parseInt(document.querySelector('input#stepLimit').value,10);
+                    main(0, args);
+                });
+                orgButton.addEventListener('click', function(){
+                    orgClick(args);
+                });
+                lessButton.addEventListener('click', function () {
+                    orgClick(args);
+                });
+                moreButton.addEventListener('click', function () {
+                    orgClick(args);
+                });
+                leftButton.addEventListener('click', function () {
+                    orgClick(args);
+                });
+                rightButton.addEventListener('click', function () {
+                    orgClick(args);
+                });
+                downButton.addEventListener('click', function () {
+                    orgClick(args);
+                });
+                topButton.addEventListener('click', function () {
+                    orgClick(args);
                 });
             }, false);
     }
-    function updateConfig () {
+    function orgClick(args) {
+        clear(args);
+        config.iteration.stepLimit = 1;
+        polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+        main(0, args);
+        polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+    }
+    function updateConfig() {
         let userConfigStr = document.currentScript.textContent.trim();
         try {
             if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
                 //let userConfig = JSON.parse(userConfigStr); 
                 let userConfig = eval('(function() { return ' + userConfigStr + '})()');
                 for (let ck in config) {
-                    if ( ck in userConfig) {
+                    if (ck in userConfig) {
                         config[ck] = JSON.parse(JSON.stringify(userConfig[ck]));
                     }
-                }                     
+                }
             }
         } catch (ex) {
             console.error(ex);
         }
     }
     function main(step, args) {
-        if (step=== config.iteration.stepLimit) {
-            console.warn('exceed: config.iteration.stepLimit: '+config.iteration.stepLimit);
+        if (step === config.iteration.stepLimit) {
+            console.warn('exceed: config.iteration.stepLimit: ' + config.iteration.stepLimit);
             return;
         }
         rules(step, args);
         let nextMain = (function (c, a) {
-            return function () { main(c + 1, a);};
+            return function () { main(c + 1, a); };
         })(step, args);
- 
+
         window.setTimeout(nextMain, args.dt);
     }
-    function getPolygons(match,opt) {
+    function getPolygons(match, opt) {
         let ret = [];
         let squares = document.querySelectorAll(`g#stage polygon${match}`);
         for (let si = 0; si < squares.length; si++) {
@@ -270,9 +305,9 @@
 
         cx = ((matrix.d - 1) * matrix.e - matrix.c * matrix.f) / base;
         cy = ((matrix.a - 1) * matrix.f - matrix.b * matrix.e) / base;
-        if (isNaN(cx)){
-            cx =0;
-            cy =0;
+        if (isNaN(cx)) {
+            cx = 0;
+            cy = 0;
         }
         return {
             translate: [
@@ -295,4 +330,4 @@
             return { x: dx, y: dy };
         }
     }
-})(document,window,console);
+})(document, window, console);
