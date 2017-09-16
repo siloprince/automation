@@ -258,7 +258,7 @@
         }
     }
     function main(step, args) {
-        if (step === config.iteration.stepLimit) {
+        if (step >= config.iteration.stepLimit) {
             console.warn('exceed: config.iteration.stepLimit: ' + config.iteration.stepLimit);
             return;
         }
