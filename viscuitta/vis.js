@@ -40,6 +40,12 @@
             }
         ]
     };
+    let param = {
+        xmove: 0,
+        ymove: 0,
+        rotate: 0,
+        userConfigStr: JSON.stringify(config)
+    };
     let terminateHash = {};
     let stageHash = {};
     init();
@@ -166,6 +172,7 @@
         }
     }
     function init() {
+        param.userConfigStr = document.currentScript.textContent.trim();
         updateConfig();
         document.addEventListener('DOMContentLoaded',
             function () {
@@ -175,6 +182,8 @@
                 let stepLimit = document.querySelector('input#stepLimit').value;
                 document.body.insertAdjacentHTML('beforeend', '<button id="org">org</button>');
                 let orgButton = document.querySelector('button#org');
+                document.body.insertAdjacentHTML('beforeend', '<button id="reset">reset</button>');
+                let resetButton = document.querySelector('button#reset');
                 document.body.insertAdjacentHTML('beforeend', '<button id="less">less</button>');
                 let lessButton = document.querySelector('button#less');
                 document.body.insertAdjacentHTML('beforeend', '<input id="angle" size="5" value="0">');
@@ -201,51 +210,78 @@
                 };
                 // TODO: move to config
                 polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
-                config.iteration.stepLimit = 1;
+                param.stepLimit = 1;
                 main(0, args);
                 polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
 
                 startButton.addEventListener('click', function () {
                     clear(args);
                     polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
-                    config.iteration.stepLimit = parseInt(document.querySelector('input#stepLimit').value,10);
+                    param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
                     main(0, args);
                 });
-                orgButton.addEventListener('click', function(){
+                orgButton.addEventListener('click', function () {
+                    orgClick(args);
+                });
+                resetButton.addEventListener('click', function () {
+                    param.rotate = 0;
+                    param.xmove = 0;
+                    param.ymove = 0;
                     orgClick(args);
                 });
                 lessButton.addEventListener('click', function () {
+                    param.rotate += parseInt(document.querySelector('input#angle').value, 10);
+                    param.xmove = 0;
+                    param.ymove = 0;
                     orgClick(args);
                 });
                 moreButton.addEventListener('click', function () {
+                    param.rotate -= parseInt(document.querySelector('input#angle').value, 10);
+                    param.xmove = 0;
+                    param.ymove = 0;
                     orgClick(args);
                 });
                 leftButton.addEventListener('click', function () {
+                    param.xmove -= 1;
                     orgClick(args);
                 });
                 rightButton.addEventListener('click', function () {
+                    param.xmove += 1;
                     orgClick(args);
                 });
                 downButton.addEventListener('click', function () {
+                    param.ymove -= 1;
                     orgClick(args);
                 });
                 topButton.addEventListener('click', function () {
+                    param.ymove += 1;
                     orgClick(args);
                 });
+
+                param.rotate = 0;
+                param.xmove = 0;
+                param.ymove = 0;
             }, false);
     }
     function orgClick(args) {
+        updateConfig();
         clear(args);
-        config.iteration.stepLimit = 1;
+        param.stepLimit = 1;
         polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
         main(0, args);
         polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
     }
     function updateConfig() {
-        let userConfigStr = document.currentScript.textContent.trim();
+        let userConfigStr = param.userConfigStr;
         try {
             if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
                 //let userConfig = JSON.parse(userConfigStr); 
+                //var g_z = [-0, -1, 180];
+                var g_z = [param.xmove,param.ymove, (param.rotate+720)%360];
+                console.error(param.xmove+' '+param.ymove+' '+param.rotate+' ');
+                var g_A = getPos(g_z, g_a, g_angle, g_len);
+                var g_B = getPos(g_z, g_b, g_angle, g_len);
+                var g_C = getPos(g_z, g_c, g_angle, g_len);
                 let userConfig = eval('(function() { return ' + userConfigStr + '})()');
                 for (let ck in config) {
                     if (ck in userConfig) {
@@ -257,11 +293,25 @@
             console.error(ex);
         }
     }
+    function getPos(_z, _abc, _angle, len) {
+        let AC = Math.cos(_angle / 2);
+        var c0 = Math.cos(0);
+        var s0 = Math.sin(0);
+        var c1 = Math.cos(_angle);
+        var s1 = Math.sin(_angle);
+        let theta = (_abc[2]) * Math.PI / 180;
+        let x = (_z[0] * Math.cos(theta) + _z[1] * Math.cos(theta + _angle)) * len + (_abc[1] * c1 + _abc[0] * c0) * len / (2 * AC);
+        let y = (_z[0] * Math.sin(theta) + _z[1] * Math.sin(theta + _angle)) * len + (_abc[1] * s1 + _abc[0] * s0) * len / (2 * AC);
+        return [
+            x, y
+        ];
+    }
     function main(step, args) {
-        if (step >= config.iteration.stepLimit) {
-            console.warn('exceed: config.iteration.stepLimit: ' + config.iteration.stepLimit);
+        if (step >= param.stepLimit) {
+            console.warn('exceed: param.stepLimit: ' + param.stepLimit);
             return;
         }
+        console.warn(step);
         rules(step, args);
         let nextMain = (function (c, a) {
             return function () { main(c + 1, a); };
