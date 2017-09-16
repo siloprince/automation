@@ -1,14 +1,13 @@
 
 <script type="text/javascript">
-var g_angle = Math.PI/3;
+var g_angle = Math.PI/2;
 var g_ac = Math.cos(g_angle);
 var g_as = Math.sin(g_angle);
 var g_scale = 1/(2*Math.cos(g_angle/2));
 var g_len = 320;
-var g_a = [ 0, 0, -30];
-var g_b = [-2, 1,  90];
-var g_c = [ 2,-1, -30];
-
+var g_a = [ 0, 0, -45];
+var g_b = [ 1, 0, -45];
+var g_c = [ 0, 0, 0];
 </script>
 <script type="text/javascript" src="./vis.js">{
         "id": "xxx",
@@ -24,7 +23,7 @@ var g_c = [ 2,-1, -30];
             "shapeCount": true
         },
         "polygons": [
-            `<polygon class='square' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'/>`
+            `<polygon class='square' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0,${g_len*(1+g_ac)} ${g_len*g_as}, ${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'/>`
         ],
         "rules": [
             { 
@@ -45,13 +44,6 @@ var g_c = [ 2,-1, -30];
                         "dy": g_B[1],                    
                         "dr": g_b[2]+g_z[2],
                         "ds": g_scale          
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": g_C[0],
-                        "dy": g_C[1],                      
-                        "dr": g_c[2]+g_z[2],
-                        "ds": g_scale        
                     }
                 ]  
             }

@@ -209,14 +209,14 @@
                     , terminate: document.querySelector('#terminate')
                 };
                 // TODO: move to config
-                polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+                polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
                 param.stepLimit = 1;
                 main(0, args);
-                polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+                polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
 
                 startButton.addEventListener('click', function () {
                     clear(args);
-                    polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+                    polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
                     param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
                     main(0, args);
                 });
@@ -267,9 +267,9 @@
         updateConfig();
         clear(args);
         param.stepLimit = 1;
-        polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+        polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
         main(0, args);
-        polygonSVG(0, config.stage.width / 4, config.stage.height / 4, 0, 1, 1, 0, args);
+        polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
     }
     function updateConfig() {
         let userConfigStr = param.userConfigStr;
