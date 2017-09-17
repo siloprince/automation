@@ -280,62 +280,62 @@
     }
     function updateConfig() {
         let userConfigStr = param.userConfigStr;
-        try {
+        //try {
             if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
                 //let userConfig = JSON.parse(userConfigStr); 
                 //var g_z = [-0, -1, 180];
                 var g_z = [param.xmove,param.ymove, (param.rotate+720)%360];
                 console.error(param.xmove+' '+param.ymove+' '+param.rotate+' ');
                 try {
-                    var g_A = getPos(g_z, g_a, g_angle, g_len,g_scale);
-                    var g_B = getPos(g_z, g_b, g_angle, g_len,g_scale);
-                    var g_C = getPos(g_z, g_c, g_angle, g_len,g_scale);
-                    var g_D = getPos(g_z, g_d, g_angle, g_len,g_scale);
-                    var g_E = getPos(g_z, g_e, g_angle, g_len,g_scale);
-                    var g_F = getPos(g_z, g_f, g_angle, g_len,g_scale);
-                    var g_G = getPos(g_z, g_g, g_angle, g_len,g_scale);
-                    var g_H = getPos(g_z, g_h, g_angle, g_len,g_scale);
-                    var g_I = getPos(g_z, g_i, g_angle, g_len,g_scale);
+                    var g_A = getPos( g_a);
+                    var g_B = getPos( g_b);
+                    var g_C = getPos( g_c);
+                    var g_D = getPos( g_d);
+                    var g_E = getPos( g_e);
+                    var g_F = getPos( g_f);
+                    var g_G = getPos( g_g);
+                    var g_H = getPos( g_h);
+                    var g_I = getPos( g_i);
                 } catch (ex) {
 
                 }
                 try {
-                    var g_A1 = getPos(g_z, g_a1, g_angle1, g_len,g_scale);
-                    var g_B1 = getPos(g_z, g_b1, g_angle1, g_len,g_scale);
-                    var g_C1 = getPos(g_z, g_c1, g_angle1, g_len,g_scale);
-                    var g_D1 = getPos(g_z, g_d1, g_angle1, g_len,g_scale);
-                    var g_E1 = getPos(g_z, g_e1, g_angle1, g_len,g_scale);
-                    var g_F1 = getPos(g_z, g_f1, g_angle1, g_len,g_scale);
-                    var g_G1 = getPos(g_z, g_g1, g_angle1, g_len,g_scale);
-                    var g_H1 = getPos(g_z, g_h1, g_angle1, g_len,g_scale);
-                    var g_I1 = getPos(g_z, g_i1, g_angle1, g_len,g_scale);
-                    var g_J1 = getPos(g_z, g_j1, g_angle1, g_len,g_scale);
-                    var g_K1 = getPos(g_z, g_k1, g_angle1, g_len,g_scale);
-                    var g_L1 = getPos(g_z, g_l1, g_angle1, g_len,g_scale);
-                    var g_M1 = getPos(g_z, g_m1, g_angle1, g_len,g_scale);
-                    var g_N1 = getPos(g_z, g_n1, g_angle1, g_len,g_scale);
-                    var g_O1 = getPos(g_z, g_o1, g_angle1, g_len,g_scale);
+                    var g_A1 = getPos( g_a1);
+                    var g_B1 = getPos( g_b1);
+                    var g_C1 = getPos( g_c1);
+                    var g_D1 = getPos( g_d1);
+                    var g_E1 = getPos( g_e1);
+                    var g_F1 = getPos( g_f1);
+                    var g_G1 = getPos( g_g1);
+                    var g_H1 = getPos( g_h1);
+                    var g_I1 = getPos( g_i1);
+                    var g_J1 = getPos( g_j1);
+                    var g_K1 = getPos( g_k1);
+                    var g_L1 = getPos( g_l1);
+                    var g_M1 = getPos( g_m1);
+                    var g_N1 = getPos( g_n1);
+                    var g_O1 = getPos( g_o1);
                 } catch (ex) {
 
                 }
                 try {
-                    var g_A2 = getPos(g_z, g_a2, g_angle2, g_len,g_scale);
-                    var g_B2 = getPos(g_z, g_b2, g_angle2, g_len,g_scale);
-                    var g_C2 = getPos(g_z, g_c2, g_angle2, g_len,g_scale);
-                    var g_D2 = getPos(g_z, g_d2, g_angle2, g_len,g_scale);
-                    var g_E2 = getPos(g_z, g_e2, g_angle2, g_len,g_scale);
-                    var g_F2 = getPos(g_z, g_f2, g_angle2, g_len,g_scale);
-                    var g_G2 = getPos(g_z, g_g2, g_angle2, g_len,g_scale);
-                    var g_H2 = getPos(g_z, g_h2, g_angle2, g_len,g_scale);
-                    var g_I2 = getPos(g_z, g_i2, g_angle2, g_len,g_scale);
-                    var g_J2 = getPos(g_z, g_j2, g_angle2, g_len,g_scale);
-                    var g_K2 = getPos(g_z, g_k2, g_angle2, g_len,g_scale);
-                    var g_L2 = getPos(g_z, g_l2, g_angle2, g_len,g_scale);
-                    var g_M2 = getPos(g_z, g_m2, g_angle2, g_len,g_scale);
-                    var g_N2 = getPos(g_z, g_n2, g_angle2, g_len,g_scale);
-                    var g_O2 = getPos(g_z, g_o2, g_angle2, g_len,g_scale);
-                    var g_P2 = getPos(g_z, g_p2, g_angle2, g_len,g_scale);
-                    var g_Q2 = getPos(g_z, g_q2, g_angle2, g_len,g_scale);
+                    var g_A2 = getPos( g_a2);
+                    var g_B2 = getPos( g_b2);
+                    var g_C2 = getPos( g_c2);
+                    var g_D2 = getPos( g_d2);
+                    var g_E2 = getPos( g_e2);
+                    var g_F2 = getPos( g_f2);
+                    var g_G2 = getPos( g_g2);
+                    var g_H2 = getPos( g_h2);
+                    var g_I2 = getPos( g_i2);
+                    var g_J2 = getPos( g_j2);
+                    var g_K2 = getPos( g_k2);
+                    var g_L2 = getPos( g_l2);
+                    var g_M2 = getPos( g_m2);
+                    var g_N2 = getPos( g_n2);
+                    var g_O2 = getPos( g_o2);
+                    var g_P2 = getPos( g_p2);
+                    var g_Q2 = getPos( g_q2);
                 } catch (ex) {
 
                 }
@@ -346,18 +346,32 @@
                     }
                 }
             }
-        } catch (ex) {
-            console.error(ex);
-        }
+        //} catch (ex) {
+        //    console.error(ex);
+        //}
     }
-    function getPos(_z, _abc, _angle, len, scale) {
-        var c0 = Math.cos(0);
-        var s0 = Math.sin(0);
-        var c1 = Math.cos(_angle);
-        var s1 = Math.sin(_angle);
-        let theta = (_abc[2]) * Math.PI / 180;
-        let x = (_z[0] * Math.cos(theta) + _z[1] * Math.cos(theta + _angle)) * len + (_abc[1] * c1 + _abc[0] * c0) * len * scale;
-        let y = (_z[0] * Math.sin(theta) + _z[1] * Math.sin(theta + _angle)) * len + (_abc[1] * s1 + _abc[0] * s0) * len * scale;
+    function getPos(_abc) {
+        var c0 = Math.cos(_abc[0]*g_angle);
+        var s0 = Math.sin(_abc[0]*g_angle);
+        var c1 = Math.cos(_abc[0]*g_angle-g_angle);
+        var s1 = Math.sin(_abc[0]*g_angle-g_angle);
+        var c2 = Math.cos(_abc[0]*g_angle-g_angle*2);
+        var s2 = Math.sin(_abc[0]*g_angle-g_angle*2);
+        var c3 = Math.cos(_abc[0]*g_angle-g_angle*3);
+        var s3 = Math.sin(_abc[0]*g_angle-g_angle*3);
+        var c4 = Math.cos(_abc[0]*g_angle-g_angle*4);
+        var s4 = Math.sin(_abc[0]*g_angle-g_angle*4);
+        var c5 = Math.cos(_abc[0]*g_angle-g_angle*5);
+        var s5 = Math.sin(_abc[0]*g_angle-g_angle*5);
+        let theta = (_abc[0]*-g_angle);
+
+        let x = (
+                ( _abc[1] * c0 + _abc[2] * c1 + _abc[3] * c2 + _abc[4] * c3 + _abc[5] * c4 + _abc[6] * c5)
+            ) * g_len * g_scale;
+            
+        let y = (
+                ( _abc[1] * s0 + _abc[2] * s1 + _abc[3] * s2 + _abc[4] * s3 + _abc[5] * s4 + _abc[6] * s5)
+            ) * g_len * g_scale;
         return [
             x, y
         ];
