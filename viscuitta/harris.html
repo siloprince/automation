@@ -11,7 +11,7 @@ var g_scale = Math.sin(g_angle/2)/Math.cos(g_angle/2);
 var g_unit = 180/6;
 var g_len = 320;
 
-var g_main = 2;
+var g_main = 0;
 var g_a = [0, 0, 1, 0, 0, -1, 0];
 var g_b = [0, 1, 1, 1, -1, -1, -1];
 var g_c = [3, 1, 1, 0, -1, -1, -1];
@@ -61,9 +61,9 @@ var g_k2 = [1, 1, 0, 0, 0, -1, -1];
 var g_l2 = [5, 1, 0, 0, -1, -1, -2];
 var g_m2 = [9, 1, 1, 0, 0, -1, -2];
 
-var g_n2 = [-2, 0, 0, 0, -1, -1, -1];
-var g_o2 = [2, 0, 0, -1, -1, -2, -1];
-var g_p2 = [6, 1, 0, 0, -1, -2, -1];
+var g_n2 = [-2, 1, 0, 0, -1, -1, -1];
+var g_o2 = [2, 0, 0, -1, -1, -1, -1];
+var g_p2 = [6, 1, 0, -1, -1, -2, -1];
 
 var g_q2 = [0, 0, 0, 0, 0, -1, -1];
 
@@ -79,16 +79,18 @@ var g_q2 = [0, 0, 0, 0, 0, -1, -1];
             "dt": 1000,
             "scaleLimit": 0.001,
             "stepLimit": 10,
-            "objectLimit": 40000,            
+            "objectLimit": 60000,            
             "shapeCount": true
         },
         "polygons": [
+
             `<polygon class='r0' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'/>`
             ,
             `<polygon class='r1' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff'/>`
             ,
             `<polygon class='r2' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff'/>`
             ,
+            
         ],
         "rules": [
             { 

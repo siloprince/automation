@@ -178,7 +178,7 @@
             function () {
                 document.body.insertAdjacentHTML('beforeend', '<button id="start">start</button>');
                 let startButton = document.querySelector('button#start');
-                document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="7">');
+                document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="2">');
                 let stepLimit = document.querySelector('input#stepLimit').value;
                 document.body.insertAdjacentHTML('beforeend', '<button id="org">org</button>');
                 let orgButton = document.querySelector('button#org');
@@ -272,10 +272,11 @@
         addSeed(args);   
     }
     function addSeed (args) {
+        let div=6;
         if (typeof g_main !== 'undefined') {
-            polygonSVG(g_main, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
+            polygonSVG(g_main, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);
         } else {
-            polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);            
+            polygonSVG(0, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);            
         }
     }
     function updateConfig() {
