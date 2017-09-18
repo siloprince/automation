@@ -11,7 +11,7 @@ var g_scale = Math.sin(g_angle/2)/Math.cos(g_angle/2);
 var g_unit = 180/6;
 var g_len = 320;
 
-var g_main = 0;
+var g_main = 2;
 var g_a = [0, 0, 1, 0, 0, -1, 0];
 var g_b = [0, 1, 1, 1, -1, -1, -1];
 var g_c = [3, 1, 1, 0, -1, -1, -1];
@@ -22,21 +22,34 @@ var g_f = [0, 0, 1, 0, 0, -1, -1];
 var g_g = [0, 1, 1, 1, 0, -1, -1];
 var g_h = [2, 1, 1, 0, 0, -1, 0];
 var g_i = [2, 1, 1, 0, -1, -1, -1];
+
+var g_j = [0, 1, 0, 1, 0, -1, -3];
+var g_k = [4, 1, 0, 0, 0, -2, -3];
+
+var g_l = [-1, 0, 1, 0, 0,  -1, 0];
+var g_m = [3, 0,  0, 0, -1,  -1, 0];
+
+var g_n = [5, 2, 1, 1, -1, -1, -2];
+var g_o = [9, 2, 2, 1, 0, -1, -2];
+
+var g_p = [-2, 1, 1, 1, 0, 0, 0];
+var g_q = [6, 1, 1, 0, 0, -1, 0];
+
 //
 var g_a1 = [-1, 0, 0, 0, 0, 0, 0];
 var g_b1 = [-2, 1, 0, 0, 0, -1, -1];
-var g_c1 = [2, 1, 0, 0, 0, -1, -1];
+var g_c1 = [6+2, 1, 1, 1, 0, -1, -1];
 var g_d1 = [-1, 1, 1, 0, 0, -1, -1];
 
-var g_e1 = [0, 0, 0, 1, 0, 0, -1];
-var g_f1 = [8, 1, 0, 1, 0, -1, -1];
-var g_g1 = [4, 0, 0, 0, 0, -1, -1];
+var g_e1 = [8, 1, 0, 1, 0, -1, -1];
+var g_f1 = [8, 2, 1, 1, 0, -2, -2];
+var g_g1 = [4, 1, 1, 0, 0, -2, -2];
 
 var g_h1 = [-1, 1, 1, 0, 0, -2, -1];//
 var g_i1 = [3, 1, 0, 0, -1, -2, -1];//
-var g_j1 = [7, 1, 1, 0, -1, -2, -2];//
+var g_j1 = [-1, 0, 0, 0, 0, -1, 0];//
 
-var g_k1 = [-2, 1, 0, 0, -1, -1, -1];
+var g_k1 = [2, 0, 0, -1, -1, -1, -1];
 
 var g_l1 = [0, 0, 0, 0, 0, -1, -1];
 var g_m1 = [1, 1, 0, 0, 0, -1, -1];
@@ -44,28 +57,22 @@ var g_n1 = [0, 1, 1, 0, 0, -2, -2];
 var g_o1 = [-1, 1, 1, 1, 0, -1, -1];
 
 // 
+
 var g_a2 = [-1, 0, 0, 0, 0, 0, 0];
-var g_b2 = [-1, 1, 0, 0, -1, -1, -1];
-var g_c2 = [-4, 0, 0, 0, -1, -1, -1];
+var g_b2 = [6-1, 1, 0, 0, -1, -2, -2];
+var g_c2 = [6-4, 0, -1, -1, -1, -1, -1];
 var g_d2 = [-4, 1, 1, 1, 0, -1, -1];
 
-var g_e2 = [0, 0, 0, 1, 0, 0, -1];
-var g_f2 = [4, 0, 0, 0, 0, -1, -1];
-var g_g2 = [8, 1, 0, 1, 0, -1, -1];
+var g_e2 = [8, 1, 0, 1, 0, -1, -1];
 
-var g_h2 = [-1, 0, 0, 0, 0,  -1, 0];
-var g_i2 = [3, 0, -1, 0, -1,  -1, 0];
-var g_j2 = [7, 0, 0, 0, -1,  -1, -1];
+var g_f2 = [-1, 0, 0, 0, 0,  -1, 0];
 
-var g_k2 = [1, 1, 0, 0, 0, -1, -1];
-var g_l2 = [5, 1, 0, 0, -1, -1, -2];
-var g_m2 = [9, 1, 1, 0, 0, -1, -2];
+var g_g2 = [5, 1, 0, 0, -1, -1, -2];
 
-var g_n2 = [-2, 1, 0, 0, -1, -1, -1];
-var g_o2 = [2, 0, 0, -1, -1, -1, -1];
-var g_p2 = [6, 1, 0, -1, -1, -2, -1];
+var g_h2 = [2, 0, 0, -1, -1, -1, -1];
 
-var g_q2 = [0, 0, 0, 0, 0, -1, -1];
+
+var g_i2 = [0, 0, 0, 0, 0, -1, -1];
 
 
 </script>
@@ -83,14 +90,24 @@ var g_q2 = [0, 0, 0, 0, 0, -1, -1];
             "shapeCount": true
         },
         "polygons": [
-
-            `<polygon class='r0' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'/>`
+            `<g class='r0'>
+            <polygon  opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'></polygon>
+            <polygon  opacity="0" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#00165f'></polygon>
+            <polygon opacity="0" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac))/2} ${(0+g_len*g_as)/2},${(g_len*(1+g_ac)+g_len*g_ac)/2} ${(g_len*g_as+g_len*g_as)/2},${(g_len*g_ac+0)/2} ${(g_len*g_as+0)/2}' stroke='#00165f'></polygon>
+            </g>`
             ,
-            `<polygon class='r1' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff'/>`
+            `<g class='r1'>
+            <polygon  opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff'></polygon>
+            <polygon  opacity="0" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#00165f'></polygon>
+            <polygon opacity="0" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac1))/2} ${(0+g_len*g_as1)/2},${(g_len*(1+g_ac1)+g_len*g_ac1)/2} ${(g_len*g_as1+g_len*g_as1)/2},${(g_len*g_ac1+0)/2} ${(g_len*g_as1+0)/2}' stroke='#00165f'></polygon>
+            </g>`
             ,
-            `<polygon class='r2' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff'/>`
+            `<g class='r2'>
+            <polygon  opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff'></polygon>
+            <polygon opacity="0"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#00165f'></polygon>
+            <polygon opacity="0" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac2))/2} ${(0+g_len*g_as2)/2},${(g_len*(1+g_ac2)+g_len*g_ac2)/2} ${(g_len*g_as2+g_len*g_as2)/2},${(g_len*g_ac2+0)/2} ${(g_len*g_as2+0)/2}' stroke='#00165f'></polygon>
+            </g>`
             ,
-            
         ],
         "rules": [
             { 
@@ -160,6 +177,63 @@ var g_q2 = [0, 0, 0, 0, 0, -1, -1];
                         "dy": g_I[1],                    
                         "dr": g_i[0]*g_unit,
                         "ds": g_scale          
+                    },
+
+                    {
+                        "polygon": 1,
+                        "dx": g_J[0],
+                        "dy": g_J[1],                    
+                        "dr": g_j[0]*g_unit,
+                        "ds": g_scale          
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_K[0],
+                        "dy": g_K[1],                      
+                        "dr": g_k[0]*g_unit,
+                        "ds": g_scale        
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_L[0],
+                        "dy": g_L[1],
+                        "dr": g_l[0]*g_unit,
+                        "ds": g_scale      
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_M[0],
+                        "dy": g_M[1],                    
+                        "dr": g_m[0]*g_unit,
+                        "ds": g_scale          
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_N[0],
+                        "dy": g_N[1],                      
+                        "dr": g_n[0]*g_unit,
+                        "ds": g_scale        
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_O[0],
+                        "dy": g_O[1],
+                        "dr": g_o[0]*g_unit,
+                        "ds": g_scale      
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_P[0],
+                        "dy": g_P[1],                    
+                        "dr": g_p[0]*g_unit,
+                        "ds": g_scale          
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_Q[0],
+                        "dy": g_Q[1],                      
+                        "dr": g_q[0]*g_unit,
+                        "ds": g_scale        
                     }
                 ]  
             },
@@ -280,6 +354,7 @@ var g_q2 = [0, 0, 0, 0, 0, -1, -1];
                     ".r2"
                 ],
                 "next":[
+
                     {
                         "polygon": 0,
                         "dx": g_A2[0],
@@ -337,67 +412,11 @@ var g_q2 = [0, 0, 0, 0, 0, -1, -1];
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 1,
+                        "polygon": 2,
                         "dx": g_I2[0],
                         "dy": g_I2[1],                      
                         "dr": g_i2[0]*g_unit,
                         "ds": g_scale        
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_J2[0],
-                        "dy": g_J2[1],                      
-                        "dr": g_j2[0]*g_unit,
-                        "ds": g_scale        
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_K2[0],
-                        "dy": g_K2[1],
-                        "dr": g_k2[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_L2[0],
-                        "dy": g_L2[1],                    
-                        "dr": g_l2[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_M2[0],
-                        "dy": g_M2[1],                      
-                        "dr": g_m2[0]*g_unit,
-                        "ds": g_scale        
-                    },               
-                    {
-                        "polygon": 1,
-                        "dx": g_N2[0],
-                        "dy": g_N2[1],                      
-                        "dr": g_n2[0]*g_unit,
-                        "ds": g_scale        
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_O2[0],
-                        "dy": g_O2[1],
-                        "dr": g_o2[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_P2[0],
-                        "dy": g_P2[1],                    
-                        "dr": g_p2[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 2,
-                        "dx": g_Q2[0],
-                        "dy": g_Q2[1],                    
-                        "dr": g_q2[0]*g_unit,
-                        "ds": g_scale          
                     }
                 ]  
             }

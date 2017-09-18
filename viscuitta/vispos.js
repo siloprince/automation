@@ -297,6 +297,23 @@
                     var g_G = getPos( g_g);
                     var g_H = getPos( g_h);
                     var g_I = getPos( g_i);
+
+                    var g_J = getPos( g_j);
+                    var g_K = getPos( g_k);
+                    var g_L = getPos( g_l);
+                    var g_M = getPos( g_m);
+                    var g_N = getPos( g_n);
+                    var g_O = getPos( g_o);
+                    var g_P = getPos( g_p);
+                    var g_Q = getPos( g_q);
+                    var g_R = getPos( g_r);
+                    var g_S = getPos( g_s);
+                    var g_T = getPos( g_t);
+                    var g_U = getPos( g_u);
+                    var g_V = getPos( g_v);
+                    var g_W = getPos( g_w);
+                    var g_X = getPos( g_x);
+                    var g_Y = getPos( g_y);
                 } catch (ex) {
 
                 }
@@ -392,7 +409,7 @@
     }
     function getPolygons(match, opt) {
         let ret = [];
-        let squares = document.querySelectorAll(`g#stage polygon${match}`);
+        let squares = document.querySelectorAll(`g#stage ${match}`);
         for (let si = 0; si < squares.length; si++) {
             let square = squares[si];
             let polygon = square.parentNode.getAttribute('x-polygon').trim();
