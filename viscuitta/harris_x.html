@@ -11,7 +11,15 @@ var g_scale = Math.sin(g_angle/2)/Math.cos(g_angle/2);
 var g_unit = 180/6;
 var g_len = 320;
 
-var g_main = 1;
+var g_main = 2;
+
+var g_opac = 0;
+var g_trans = 0;
+if (g_opac===0) {
+    g_trans = 1;
+} else {
+    g_trans = 0;
+}
 var g_a = [0, 0, 1, 0, 0, -1, 0];
 var g_b = [0, 1, 1, 1, -1, -1, -1];
 var g_c = [3, 1, 1, 0, -1, -1, -1];
@@ -91,21 +99,21 @@ var g_i2 = [0, 0, 0, 0, 0, -1, -1];
         },
         "polygons": [
             `<g class='r0'>
-            <polygon  opacity="0"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'></polygon>
-            <polygon  opacity="1" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#00165f'></polygon>
-            <polygon opacity="1" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac))/2} ${(0+g_len*g_as)/2},${(g_len*(1+g_ac)+g_len*g_ac)/2} ${(g_len*g_as+g_len*g_as)/2},${(g_len*g_ac+0)/2} ${(g_len*g_as+0)/2}' stroke='#00165f'></polygon>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'></polygon>
+            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#00165f'></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac))/2} ${(0+g_len*g_as)/2},${(g_len*(1+g_ac)+g_len*g_ac)/2} ${(g_len*g_as+g_len*g_as)/2},${(g_len*g_ac+0)/2} ${(g_len*g_as+0)/2}' stroke='#00165f'></polygon>
             </g>`
             ,
             `<g class='r1'>
-            <polygon  opacity="0"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff'></polygon>
-            <polygon  opacity="1" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#00165f'></polygon>
-            <polygon opacity="1" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac1))/2} ${(0+g_len*g_as1)/2},${(g_len*(1+g_ac1)+g_len*g_ac1)/2} ${(g_len*g_as1+g_len*g_as1)/2},${(g_len*g_ac1+0)/2} ${(g_len*g_as1+0)/2}' stroke='#00165f'></polygon>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff'></polygon>
+            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#00165f'></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac1))/2} ${(0+g_len*g_as1)/2},${(g_len*(1+g_ac1)+g_len*g_ac1)/2} ${(g_len*g_as1+g_len*g_as1)/2},${(g_len*g_ac1+0)/2} ${(g_len*g_as1+0)/2}' stroke='#00165f'></polygon>
             </g>`
             ,
             `<g class='r2'>
-            <polygon  opacity="0"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff'></polygon>
-            <polygon opacity="1"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#00165f'></polygon>
-            <polygon opacity="1" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac2))/2} ${(0+g_len*g_as2)/2},${(g_len*(1+g_ac2)+g_len*g_ac2)/2} ${(g_len*g_as2+g_len*g_as2)/2},${(g_len*g_ac2+0)/2} ${(g_len*g_as2+0)/2}' stroke='#00165f'></polygon>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff'></polygon>
+            <polygon opacity="${g_trans}"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#00165f'></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac2))/2} ${(0+g_len*g_as2)/2},${(g_len*(1+g_ac2)+g_len*g_ac2)/2} ${(g_len*g_as2+g_len*g_as2)/2},${(g_len*g_ac2+0)/2} ${(g_len*g_as2+0)/2}' stroke='#00165f'></polygon>
             </g>`
             ,
         ],
