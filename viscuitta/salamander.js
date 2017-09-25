@@ -145,9 +145,7 @@
                             let ny = next.dx * st + next.dy * ct;
                             // TODO: sx,sy
                             let x = shape.sx * (nx) + shape.x;
-                            x = (x + config.stage.width) % config.stage.width;
                             let y = shape.sy * (ny) + shape.y;
-                            y = (y + config.stage.height) % config.stage.height;
                             polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
                             if (t === 0) {
                                 count++;
@@ -213,12 +211,9 @@
         main(0, args);
     }
     function addSeed(args) {
-        let div = 6;
-        if (typeof g_main !== 'undefined') {
-            polygonSVG(g_main, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);
-        } else {
-            polygonSVG(0, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);
-        }
+        polygonSVG(0, 100, 500, 0, 1, 1, 0, args);
+        polygonSVG(1, 700, 500, 0, 1, 1, 0, args);
+        polygonSVG(2, 1400, 500, 0, 1, 1, 0, args);
     }
     function updateConfig() {
         let userConfigStr = param.userConfigStr;
