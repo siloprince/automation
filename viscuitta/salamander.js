@@ -54,27 +54,6 @@
             ,
         ],
         "rules": [
-            {
-                "pattern": [
-                    ".square"
-                ],
-                "next": [
-                    {
-                        "polygon": 0,
-                        "terminate": 1
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": 30,
-                        "dy": 0
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": 0,
-                        "dy": 30
-                    }
-                ]
-            }
         ]
     };
     let param = {
@@ -84,25 +63,11 @@
     let stageHash = {};
     init();
     function polygonSVG(polygon, x, y, r, sx, sy, t, args) {
-        let key = `${polygon}:${x}:${y}:${r}:${sx}:${sy}`;
-        if (key in terminateHash) {
-            return;
-        }
-        if (key in stageHash) {
-            return;
-        }
-        let g;
-        if (t) {
-            g = args.terminate;
-            terminateHash[key] = true;
-        } else {
-            g = args.stage;
-            stageHash[key] = true;
-        }
-        let polygonStr = config.polygons[polygon];
-        let fill = '#ff0000';
 
-        g.insertAdjacentHTML('beforeend', `<g fill="${fill}" x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
+        let g = args.stage;
+        let polygonStr = config.polygons[polygon];
+
+        g.insertAdjacentHTML('beforeend', `<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
     }
     function clear(args) {
         let stage = args.stage;
