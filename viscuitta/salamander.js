@@ -14,7 +14,24 @@
             "shapeCount": true
         },
         "polygons": [
-            "<polygon class='square' points='0 0, 30 0, 30 30, 0 30' fill='#aaaaaa' stroke='#0000ff'/>"
+            `<g class='r0'>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac))/2} ${(0+g_len*g_as)/2},${(g_len*(1+g_ac)+g_len*g_ac)/2} ${(g_len*g_as+g_len*g_as)/2},${(g_len*g_ac+0)/2} ${(g_len*g_as+0)/2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            </g>`
+            ,
+            `<g class='r1'>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac1))/2} ${(0+g_len*g_as1)/2},${(g_len*(1+g_ac1)+g_len*g_ac1)/2} ${(g_len*g_as1+g_len*g_as1)/2},${(g_len*g_ac1+0)/2} ${(g_len*g_as1+0)/2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            </g>`
+            ,
+            `<g class='r2'>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac2))/2} ${(0+g_len*g_as2)/2},${(g_len*(1+g_ac2)+g_len*g_ac2)/2} ${(g_len*g_as2+g_len*g_as2)/2},${(g_len*g_ac2+0)/2} ${(g_len*g_as2+0)/2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            </g>`
+            ,
         ],
         "rules": [
             {
