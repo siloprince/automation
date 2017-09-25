@@ -1,6 +1,26 @@
 
 'use strict';
 (function (document, window, console) {
+    let g_angle = Math.PI / 6;
+    let g_ac = Math.cos(g_angle);
+    let g_as = Math.sin(g_angle);
+    let g_ac1 = Math.cos(g_angle * 2);
+    let g_as1 = Math.sin(g_angle * 2);
+    let g_ac2 = Math.cos(g_angle * 3);
+    let g_as2 = Math.sin(g_angle * 3);
+    let g_scale = Math.sin(g_angle / 2) / Math.cos(g_angle / 2);
+    let g_unit = 180 / 6;
+    let g_len = 320;
+
+    let g_main = 1;
+
+    let g_opac = 0;
+    let g_trans = 0;
+    if (g_opac === 0) {
+        g_trans = 1;
+    } else {
+        g_trans = 0;
+    }   
     let config = {
         "id": "xxx",
         "stage": {
@@ -15,21 +35,21 @@
         },
         "polygons": [
             `<g class='r0'>
-            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff' stroke-linejoin="round"></polygon>
-            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac))/2} ${(0+g_len*g_as)/2},${(g_len*(1+g_ac)+g_len*g_ac)/2} ${(g_len*g_as+g_len*g_as)/2},${(g_len*g_ac+0)/2} ${(g_len*g_as+0)/2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#0000ff' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' stroke='#00165f' stroke-linejoin="round"></polygon>
             </g>`
             ,
             `<g class='r1'>
-            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff' stroke-linejoin="round"></polygon>
-            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac1))/2} ${(0+g_len*g_as1)/2},${(g_len*(1+g_ac1)+g_len*g_ac1)/2} ${(g_len*g_as1+g_len*g_as1)/2},${(g_len*g_ac1+0)/2} ${(g_len*g_as1+0)/2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#0000ff' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' stroke='#00165f' stroke-linejoin="round"></polygon>
             </g>`
             ,
             `<g class='r2'>
-            <polygon  opacity="${g_opac}"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#0000ff' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len*(1+g_ac2)} ${g_len*g_as2},${g_len*g_ac2} ${g_len*g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0+g_len)/2} ${(0+0)/2},${(g_len+g_len*(1+g_ac2))/2} ${(0+g_len*g_as2)/2},${(g_len*(1+g_ac2)+g_len*g_ac2)/2} ${(g_len*g_as2+g_len*g_as2)/2},${(g_len*g_ac2+0)/2} ${(g_len*g_as2+0)/2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#0000ff' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' stroke='#00165f' stroke-linejoin="round"></polygon>
             </g>`
             ,
         ],
@@ -112,69 +132,66 @@
                     let shape = shapes[si];
                     let nexts = rule.next;
                     for (let ni = 0; ni < nexts.length; ni++) {
-                        let next = nexts[ni];
-                        if (!('dx' in next)) {
-                            next.dx = 0;
-                        }
-                        if (!('dy' in next)) {
-                            next.dy = 0;
-                        }
-                        if (!('dr' in next)) {
-                            next.dr = 0;
-                        }
-                        if (!('ds' in next)) {
-                            next.ds = 1;
-                        }
-
-                        let sx = shape.sx * next.ds;
-                        let sy = shape.sy * next.ds;
-                        let t = 0;
-                        if (!('terminate' in next)) {
-                            t = 0;
-                        } else {
-                            t = next.terminate;
-                        }
-                        {
-                            if (sx > 1) {
-                                t = 1;
+                        for (let nj = 0; nj < nexts[ni].length; nj++) {
+                            let dxy = getPos(nexts[ni][nj]);
+                            let next = {
+                                'polygon': ni,
+                                'dx': dxy[0],
+                                'dy': dxy[1],
+                                'dr': nexts[ni][nj][0] * g_unit,
+                                'ds' : g_scale
+                            };
+                            console.error(next);
+                            let sx = shape.sx * next.ds;
+                            let sy = shape.sy * next.ds;
+                            let t = 0;
+                            if (!('terminate' in next)) {
+                                t = 0;
+                            } else {
+                                t = next.terminate;
                             }
-                            if (sx < -1) {
-                                t = 1;
-                            }
-                            if (sy > 1) {
-                                t = 1;
-                            }
-                            if (sy < -1) {
-                                t = 1;
-                            }
-                            if ('scaleLimit' in config.iteration) {
-                                if (Math.abs(sx) < Math.abs(config.iteration.scaleLimit)) {
+                            {
+                                if (sx > 1) {
                                     t = 1;
                                 }
-                                if (Math.abs(sy) < Math.abs(config.iteration.scaleLimit)) {
+                                if (sx < -1) {
                                     t = 1;
                                 }
+                                if (sy > 1) {
+                                    t = 1;
+                                }
+                                if (sy < -1) {
+                                    t = 1;
+                                }
+                                if ('scaleLimit' in config.iteration) {
+                                    if (Math.abs(sx) < Math.abs(config.iteration.scaleLimit)) {
+                                        t = 1;
+                                    }
+                                    if (Math.abs(sy) < Math.abs(config.iteration.scaleLimit)) {
+                                        t = 1;
+                                    }
+                                }
                             }
-                        }
-                        let r = (shape.r - next.dr) % 360;
-                        let theta = r * Math.PI / 180;
-                        let ct = Math.cos(theta);
-                        let st = Math.sin(theta);
-                        let nx = next.dx * ct - next.dy * st;
-                        let ny = next.dx * st + next.dy * ct;
-                        // TODO: sx,sy
-                        let x = shape.sx * (nx) + shape.x;
-                        x = (x + config.stage.width) % config.stage.width;
-                        let y = shape.sy * (ny) + shape.y;
-                        y = (y + config.stage.height) % config.stage.height;
-                        polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
-                        if (t === 0) {
-                            count++;
-                        }
-                        if ('objectLimit' in config.iteration) {
-                            if (count >= config.iteration.objectLimit) {
-                                console.warn('exceed: config.iteration.objectLimit:' + config.iteration.objectLimit);
-                                return;
+                            let r = (shape.r - next.dr) % 360;
+                            let theta = r * Math.PI / 180;
+                            let ct = Math.cos(theta);
+                            let st = Math.sin(theta);
+                            let nx = next.dx * ct - next.dy * st;
+                            let ny = next.dx * st + next.dy * ct;
+                            // TODO: sx,sy
+                            let x = shape.sx * (nx) + shape.x;
+                            x = (x + config.stage.width) % config.stage.width;
+                            let y = shape.sy * (ny) + shape.y;
+                            y = (y + config.stage.height) % config.stage.height;
+                            polygonSVG(next.polygon, x, y, r, sx, sy, t, args);
+                            if (t === 0) {
+                                count++;
+                            }
+                            if ('objectLimit' in config.iteration) {
+                                if (count >= config.iteration.objectLimit) {
+                                    console.warn('exceed: config.iteration.objectLimit:' + config.iteration.objectLimit);
+                                    return;
+                                }
                             }
                         }
                     }
@@ -214,7 +231,7 @@
 
                 startButton.addEventListener('click', function () {
                     clear(args);
-                    addSeed(args);   
+                    addSeed(args);
                     param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
                     main(0, args);
                 });
@@ -227,124 +244,48 @@
         updateConfig();
         clear(args);
         param.stepLimit = 1;
-        addSeed(args);   
+        addSeed(args);
         main(0, args);
     }
-    function addSeed (args) {
-        let div=6;
+    function addSeed(args) {
+        let div = 6;
         if (typeof g_main !== 'undefined') {
             polygonSVG(g_main, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);
         } else {
-            polygonSVG(0, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);            
+            polygonSVG(0, config.stage.width / div, config.stage.height / div, 0, 1, 1, 0, args);
         }
     }
     function updateConfig() {
         let userConfigStr = param.userConfigStr;
-        //try {
-            if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
-                try {
-                    var g_A = getPos( g_a);
-                    var g_B = getPos( g_b);
-                    var g_C = getPos( g_c);
-                    var g_D = getPos( g_d);
-                    var g_E = getPos( g_e);
-                    var g_F = getPos( g_f);
-                    var g_G = getPos( g_g);
-                    var g_H = getPos( g_h);
-                    var g_I = getPos( g_i);
-
-                    var g_J = getPos( g_j);
-                    var g_K = getPos( g_k);
-                    var g_L = getPos( g_l);
-                    var g_M = getPos( g_m);
-                    var g_N = getPos( g_n);
-                    var g_O = getPos( g_o);
-                    var g_P = getPos( g_p);
-                    var g_Q = getPos( g_q);
-                    var g_R = getPos( g_r);
-                    var g_S = getPos( g_s);
-                    var g_T = getPos( g_t);
-                    var g_U = getPos( g_u);
-                    var g_V = getPos( g_v);
-                    var g_W = getPos( g_w);
-                    var g_X = getPos( g_x);
-                    var g_Y = getPos( g_y);
-                } catch (ex) {
-
-                }
-                try {
-                    var g_A1 = getPos( g_a1);
-                    var g_B1 = getPos( g_b1);
-                    var g_C1 = getPos( g_c1);
-                    var g_D1 = getPos( g_d1);
-                    var g_E1 = getPos( g_e1);
-                    var g_F1 = getPos( g_f1);
-                    var g_G1 = getPos( g_g1);
-                    var g_H1 = getPos( g_h1);
-                    var g_I1 = getPos( g_i1);
-                    var g_J1 = getPos( g_j1);
-                    var g_K1 = getPos( g_k1);
-                    var g_L1 = getPos( g_l1);
-                    var g_M1 = getPos( g_m1);
-                    var g_N1 = getPos( g_n1);
-                    var g_O1 = getPos( g_o1);
-                } catch (ex) {
-
-                }
-                try {
-                    var g_A2 = getPos( g_a2);
-                    var g_B2 = getPos( g_b2);
-                    var g_C2 = getPos( g_c2);
-                    var g_D2 = getPos( g_d2);
-                    var g_E2 = getPos( g_e2);
-                    var g_F2 = getPos( g_f2);
-                    var g_G2 = getPos( g_g2);
-                    var g_H2 = getPos( g_h2);
-                    var g_I2 = getPos( g_i2);
-                    var g_J2 = getPos( g_j2);
-                    var g_K2 = getPos( g_k2);
-                    var g_L2 = getPos( g_l2);
-                    var g_M2 = getPos( g_m2);
-                    var g_N2 = getPos( g_n2);
-                    var g_O2 = getPos( g_o2);
-                    var g_P2 = getPos( g_p2);
-                    var g_Q2 = getPos( g_q2);
-                } catch (ex) {
-
-                }
-                let userConfig = eval('(function() { return ' + userConfigStr + '})()');
-                for (let ck in config) {
-                    if (ck in userConfig) {
-                        config[ck] = JSON.parse(JSON.stringify(userConfig[ck]));
-                    }
-                }
+        let userConfig = eval('(function() { return ' + userConfigStr + '})()');
+        for (let ck in config) {
+            if (ck in userConfig) {
+                config[ck] = JSON.parse(JSON.stringify(userConfig[ck]));
             }
-        //} catch (ex) {
-        //    console.error(ex);
-        //}
+        }
     }
     function getPos(_abc) {
-        var c0 = Math.cos(_abc[0]*g_angle);
-        var s0 = Math.sin(_abc[0]*g_angle);
-        var c1 = Math.cos(_abc[0]*g_angle-g_angle);
-        var s1 = Math.sin(_abc[0]*g_angle-g_angle);
-        var c2 = Math.cos(_abc[0]*g_angle-g_angle*2);
-        var s2 = Math.sin(_abc[0]*g_angle-g_angle*2);
-        var c3 = Math.cos(_abc[0]*g_angle-g_angle*3);
-        var s3 = Math.sin(_abc[0]*g_angle-g_angle*3);
-        var c4 = Math.cos(_abc[0]*g_angle-g_angle*4);
-        var s4 = Math.sin(_abc[0]*g_angle-g_angle*4);
-        var c5 = Math.cos(_abc[0]*g_angle-g_angle*5);
-        var s5 = Math.sin(_abc[0]*g_angle-g_angle*5);
-        let theta = (_abc[0]*-g_angle);
+        var c0 = Math.cos(_abc[0] * g_angle);
+        var s0 = Math.sin(_abc[0] * g_angle);
+        var c1 = Math.cos(_abc[0] * g_angle - g_angle);
+        var s1 = Math.sin(_abc[0] * g_angle - g_angle);
+        var c2 = Math.cos(_abc[0] * g_angle - g_angle * 2);
+        var s2 = Math.sin(_abc[0] * g_angle - g_angle * 2);
+        var c3 = Math.cos(_abc[0] * g_angle - g_angle * 3);
+        var s3 = Math.sin(_abc[0] * g_angle - g_angle * 3);
+        var c4 = Math.cos(_abc[0] * g_angle - g_angle * 4);
+        var s4 = Math.sin(_abc[0] * g_angle - g_angle * 4);
+        var c5 = Math.cos(_abc[0] * g_angle - g_angle * 5);
+        var s5 = Math.sin(_abc[0] * g_angle - g_angle * 5);
+        let theta = (_abc[0] * -g_angle);
 
         let x = (
-                ( _abc[1] * c0 + _abc[2] * c1 + _abc[3] * c2 + _abc[4] * c3 + _abc[5] * c4 + _abc[6] * c5)
-            ) * g_len * g_scale;
-            
+            (_abc[1] * c0 + _abc[2] * c1 + _abc[3] * c2 + _abc[4] * c3 + _abc[5] * c4 + _abc[6] * c5)
+        ) * g_len * g_scale;
+
         let y = (
-                ( _abc[1] * s0 + _abc[2] * s1 + _abc[3] * s2 + _abc[4] * s3 + _abc[5] * s4 + _abc[6] * s5)
-            ) * g_len * g_scale;
+            (_abc[1] * s0 + _abc[2] * s1 + _abc[3] * s2 + _abc[4] * s3 + _abc[5] * s4 + _abc[6] * s5)
+        ) * g_len * g_scale;
         return [
             x, y
         ];
