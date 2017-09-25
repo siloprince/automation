@@ -1,93 +1,55 @@
 
 <script type="text/javascript">
-var g_angle = Math.PI/6;
+var g_angle = Math.PI/4;
 var g_ac = Math.cos(g_angle);
 var g_as = Math.sin(g_angle);
 var g_ac1 = Math.cos(g_angle*2);
 var g_as1 = Math.sin(g_angle*2);
 var g_ac2 = Math.cos(g_angle*3);
 var g_as2 = Math.sin(g_angle*3);
-var g_scale = Math.sin(g_angle/2)/Math.cos(g_angle/2);
-var g_unit = 180/6;
+var g_scale = 1/(2+2*Math.cos(g_angle));
+var g_unit = 180/4;
 var g_len = 320;
 
-var g_main = 1;
+var g_main = 0;
 
-var g_opac = 0;
+var g_opac = 0.3;
 var g_trans = 0;
 if (g_opac===0) {
     g_trans = 1;
 } else {
     g_trans = 0;
 }
-var g_a = [0, 0, 1, 0, 0, -1, 0];
-var g_b = [0, 1, 1, 1, -1, -1, -1];
-var g_c = [3, 1, 1, 0, -1, -1, -1];
+var g_a = [0, 0, 0, 0, 0, 0, 0];
+var g_b = [2, 1, 0, -1, -1, 0, 0];
+var g_c = [0, 1, 1, -1, -1, 0, 0];
+var g_d = [3, 2, 1, -1, -2, 0, 0];
 
-var g_d = [1, 0, 0, 0, 0, 0, 0];
-var g_e = [1, 2, 1, 1, -1, -1, -2];
-var g_f = [0, 0, 1, 0, 0, -1, -1];
-var g_g = [0, 1, 1, 1, 0, -1, -1];
-var g_h = [2, 1, 1, 0, 0, -1, 0];
-var g_i = [2, 1, 1, 0, -1, -1, -1];
+var g_e = [1, 1, 0, -1, -2, 0, 0];
+var g_f = [0, 2, 1, -1, -2, 0, 0];
+var g_g = [0, 1, 1, 0, -1, 0, 0];
+var g_h = [1, 2, 0, -1, -2, 0, 0];
 
-var g_j = [0, 1, 0, 1, 0, -1, -3];
-
-var g_k = [-1, 0, 1, 0, 0,  -1, 0];
-
-var g_l = [5, 2, 1, 1, -1, -1, -2];
-
-var g_m = [6, 1, 1, 0, 0, -1, 0];
-
-
-var g_n = [-2, 0, 0, 0, 0, 0, 0]; //
-var g_o = [-2, 2, 2, 1, 0, -1, -2]; //
-var g_p = [-1, 1, 1, 1, 0, 0, 0];
-var g_q = [-1, 1, 1, 0, -1, -1, -1];
+var g_i = [0, 0, 0, 0, -1, 0, 0];
+var g_j = [1, 1, 0, 0, 0, 0, 0];
+var g_k = [0, 2, 1, 0, -2, 0, 0];
+var g_l = [1, 1, 0, -1, -1, 0, 0];
 
 //
-var g_a1 = [3, 3, 1, -1, -1, -1, -2];
-var g_b1 = [-1, 1, 0, 0, -1, -1, -1];
-var g_c1 = [8, 1, 1, 1, 0, -1, -1];
-var g_d1 = [4, 1, 1, 0, -1, -2, -2];
+var g_a1 = [0, 1, 0, -1, -1, 0, 0];
+var g_b1 = [1, 1, 0, -1, -1, 0, 0];
+var g_c1 = [2, 1, 0, -1, -1, 0, 0];
+var g_d1 = [3, 1, 0, -1, -1, 0, 0];
 
-var g_e1 = [8, 1, 0, 1, 0, -1, -1];
-var g_f1 = [4, 0, 0, 0, 0, -1, -1];
-var g_g1 = [4, 1, 1, 0, 0, -2, -2];
+var g_e1 = [4, 1, 0, -1, -1, 0, 0];
+var g_f1 = [5, 1, 0, -1, -1, 0, 0];
+var g_g1 = [6, 1, 0, -1, -1, 0, 0];
+var g_h1 = [7, 1, 0, -1, -1, 0, 0];//
 
-var g_h1 = [1, 1, 0, 0, 0, -1, -1];//
-var g_i1 = [1, 1, -1, -1, -1, -2, -1];//
-var g_j1 = [5, 1, -1, -1, -2, -2, -2];//
-
-var g_k1 =  [-2, 1, 0, 0, -1, -1, -1];
-
-var g_l1 = [7, 1, 1, 0, -1, -2, -2];
-var g_m1 = [2, 1, 0, -1, -1, -2, -1];
-var g_n1 = [0, 1, 1, 0, 0, -2, -2];
-var g_o1 = [-1, 1, 1, 1, 0, -1, -1];
-
-// 
-
-var g_a2 = [8, 1, 0, 1, 0, -1, -1];
-
-var g_b2 = [-1, 0, 0, 0, 0,  -1, 0];
-
-var g_c2 = [5, 1, 0, 0, -1, -1, -2];
-
-var g_d2 = [2, 0, 0, -1, -1, -1, -1];
-
-
-var g_e2 = [1, 1, 0, 0, 0, -1, -1];
-
-var g_f2 = [4, 0, 0, 0, 0,  -1, -1];
-
-var g_g2 = [-2, 1, 0, 0, -1, -1, -1];
-
-var g_h2 = [7, 0, 0, 0, -1, -1, -1];
-
-
-
-var g_i2 = [0, 0, 0, 0, 0, -1, -1];
+var g_i1 = [0, 1, 1, 0, -1, 0, 0];//
+var g_j1 = [0, 1, 0, -1, -2, 0, 0];//
+var g_k1 =  [0, 0, -1, -1, -1, 0, 0];
+var g_l1 =  [0, 0, 0, 0, 0, 0, 0];
 
 
 </script>
@@ -152,42 +114,42 @@ var g_i2 = [0, 0, 0, 0, 0, -1, -1];
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 0,
                         "dx": g_D[0],
                         "dy": g_D[1],                    
                         "dr": g_d[0]*g_unit,
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 0,
                         "dx": g_E[0],
                         "dy": g_E[1],                    
                         "dr": g_e[0]*g_unit,
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 0,
                         "dx": g_F[0],
                         "dy": g_F[1],                    
                         "dr": g_f[0]*g_unit,
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 1,
                         "dx": g_G[0],
                         "dy": g_G[1],                    
                         "dr": g_g[0]*g_unit,
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 1,
                         "dx": g_H[0],
                         "dy": g_H[1],                    
                         "dr": g_h[0]*g_unit,
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 1,
                         "dx": g_I[0],
                         "dy": g_I[1],                    
                         "dr": g_i[0]*g_unit,
@@ -211,44 +173,9 @@ var g_i2 = [0, 0, 0, 0, 0, -1, -1];
                     {
                         "polygon": 1,
                         "dx": g_L[0],
-                        "dy": g_L[1],
+                        "dy": g_L[1],                      
                         "dr": g_l[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_M[0],
-                        "dy": g_M[1],
-                        "dr": g_m[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": g_N[0],
-                        "dy": g_N[1],
-                        "dr": g_n[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": g_O[0],
-                        "dy": g_O[1],                    
-                        "dr": g_o[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": g_P[0],
-                        "dy": g_P[1],                    
-                        "dr": g_p[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 0,
-                        "dx": g_Q[0],
-                        "dy": g_Q[1],                    
-                        "dr": g_q[0]*g_unit,
-                        "ds": g_scale          
+                        "ds": g_scale        
                     }
                 ]  
             },
@@ -286,28 +213,28 @@ var g_i2 = [0, 0, 0, 0, 0, -1, -1];
                         "ds": g_scale      
                     },
                     {
-                        "polygon": 1,
+                        "polygon": 0,
                         "dx": g_E1[0],
                         "dy": g_E1[1],                    
                         "dr": g_e1[0]*g_unit,
                         "ds": g_scale          
                     },
                     {
-                        "polygon": 1,
+                        "polygon": 0,
                         "dx": g_F1[0],
                         "dy": g_F1[1],                      
                         "dr": g_f1[0]*g_unit,
                         "ds": g_scale        
                     },
                     {
-                        "polygon": 1,
+                        "polygon": 0,
                         "dx": g_G1[0],
                         "dy": g_G1[1],
                         "dr": g_g1[0]*g_unit,
                         "ds": g_scale      
                     },
                     {
-                        "polygon": 1,
+                        "polygon": 0,
                         "dx": g_H1[0],
                         "dy": g_H1[1],                    
                         "dr": g_h1[0]*g_unit,
@@ -335,102 +262,10 @@ var g_i2 = [0, 0, 0, 0, 0, -1, -1];
                         "ds": g_scale        
                     },
                     {
-                        "polygon": 2,
+                        "polygon": 1,
                         "dx": g_L1[0],
                         "dy": g_L1[1],                    
                         "dr": g_l1[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 2,
-                        "dx": g_M1[0],
-                        "dy": g_M1[1],                      
-                        "dr": g_m1[0]*g_unit,
-                        "ds": g_scale        
-                    },
-                    {
-                        "polygon": 2,
-                        "dx": g_N1[0],
-                        "dy": g_N1[1],                    
-                        "dr": g_n1[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 2,
-                        "dx": g_O1[0],
-                        "dy": g_O1[1],                      
-                        "dr": g_o1[0]*g_unit,
-                        "ds": g_scale        
-                    }
-                ]  
-            },
-            { 
-                "pattern":[
-                    ".r2"
-                ],
-                "next":[
-
-                    {
-                        "polygon": 1,
-                        "dx": g_A2[0],
-                        "dy": g_A2[1],
-                        "dr": g_a2[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_B2[0],
-                        "dy": g_B2[1],                    
-                        "dr": g_b2[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_C2[0],
-                        "dy": g_C2[1],                      
-                        "dr": g_c2[0]*g_unit,
-                        "ds": g_scale        
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_D2[0],
-                        "dy": g_D2[1],
-                        "dr": g_d2[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_E2[0],
-                        "dy": g_E2[1],                    
-                        "dr": g_e2[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_F2[0],
-                        "dy": g_F2[1],                      
-                        "dr": g_f2[0]*g_unit,
-                        "ds": g_scale        
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_G2[0],
-                        "dy": g_G2[1],
-                        "dr": g_g2[0]*g_unit,
-                        "ds": g_scale      
-                    },
-                    {
-                        "polygon": 1,
-                        "dx": g_H2[0],
-                        "dy": g_H2[1],                    
-                        "dr": g_h2[0]*g_unit,
-                        "ds": g_scale          
-                    },
-                    {
-                        "polygon": 2,
-                        "dx": g_I2[0],
-                        "dy": g_I2[1],                    
-                        "dr": g_i2[0]*g_unit,
                         "ds": g_scale          
                     },
                 ]  
