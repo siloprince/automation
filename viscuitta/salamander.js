@@ -37,19 +37,19 @@
             `<g class='r0'>
             <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#0000ff' stroke-linejoin="round"></polygon>
             <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
             </g>`
             ,
             `<g class='r1'>
             <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#0000ff' stroke-linejoin="round"></polygon>
             <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
             </g>`
             ,
             `<g class='r2'>
             <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#0000ff' stroke-linejoin="round"></polygon>
             <polygon opacity="${g_trans}"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
             </g>`
             ,
         ],
@@ -57,7 +57,12 @@
         ]
     };
     let param = {
-        userConfigStr: JSON.stringify(config)
+        userConfigStr: JSON.stringify(config),
+        xy: [
+            [150, 500+g_len*(1-1/2)],
+            [800, 500+g_len*(1-Math.sqrt(3)/2)],
+            [1500, 500]
+        ]
     };
     let terminateHash = {};
     let stageHash = {};
@@ -66,8 +71,12 @@
 
         let g = args.stage;
         let polygonStr = config.polygons[polygon];
-
-        g.insertAdjacentHTML('beforeend', `<g x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
+        let className = '';
+        if (param.stepLimit===1) {
+            className = 'class="move move'+polygon+'"';
+        }
+        g.insertAdjacentHTML('beforeend', `<g ${className} x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
+        
     }
     function clear(args) {
         let stage = args.stage;
@@ -106,7 +115,6 @@
                                 'dr': nexts[ni][nj][0] * g_unit,
                                 'ds' : g_scale
                             };
-                            console.error(next);
                             let sx = shape.sx * next.ds;
                             let sy = shape.sy * next.ds;
                             let t = 0;
@@ -171,11 +179,52 @@
         document.addEventListener('DOMContentLoaded',
             function () {
                 document.body.insertAdjacentHTML('beforeend', '<button id="start">start</button>');
-                let startButton = document.querySelector('button#start');
+                document.querySelector('button#start').addEventListener('click', function () {
+                    clear(args);
+                    addSeed(args);
+                    param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
+                    main(0, args);
+                });
                 document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="3">');
                 let stepLimit = document.querySelector('input#stepLimit').value;
                 document.body.insertAdjacentHTML('beforeend', '<button id="reset">reset</button>');
-                let resetButton = document.querySelector('button#reset');
+                document.querySelector('button#reset').addEventListener('click', function () {
+                    orgClick(args);
+                });
+
+                document.body.insertAdjacentHTML('beforeend', '<button id="moving">moving</button>');
+                document.querySelector('button#moving').addEventListener('click', function () {
+                    if (param.stepLimit===1) {
+                        let moves0 = document.querySelectorAll('g.move0');
+                        for (let mi=0;mi<moves0.length;mi++) {
+                            moves0[mi].classList.toggle('init0');
+                        } 
+                        let moves1 = document.querySelectorAll('g.move1');
+                        for (let mi=0;mi<moves1.length;mi++) {
+                            moves1[mi].classList.toggle('init1');
+                        } 
+                        let moves2 = document.querySelectorAll('g.move2');
+                        for (let mi=0;mi<moves2.length;mi++) {
+                            moves2[mi].classList.toggle('init2');
+                        } 
+                    }
+                });
+                document.body.insertAdjacentHTML('beforeend', `<style type="text/css"><!--
+.move {
+    transition-property: transform;
+    transition-duration: 1500ms;
+    transition-timing-function: ease;
+}
+.init0 {
+    transform: translate(${param.xy[0][0]},${param.xy[0][1]})rotate(0)scale(1,1);
+}
+.init1 {
+    transform: translate(${param.xy[1][0]},${param.xy[1][1]})rotate(0)scale(1,1);
+}
+.init2 {
+    transform: translate(${param.xy[2][0]},${param.xy[2][1]})rotate(0)scale(1,1);
+}
+                --></style>`);
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg></svg></td></tr></table>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
@@ -192,15 +241,6 @@
                 main(0, args);
                 //addSeed(args);
 
-                startButton.addEventListener('click', function () {
-                    clear(args);
-                    addSeed(args);
-                    param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
-                    main(0, args);
-                });
-                resetButton.addEventListener('click', function () {
-                    orgClick(args);
-                });
             }, false);
     }
     function orgClick(args) {
@@ -211,9 +251,10 @@
         main(0, args);
     }
     function addSeed(args) {
-        polygonSVG(0, 100, 500, 0, 1, 1, 0, args);
-        polygonSVG(1, 700, 500, 0, 1, 1, 0, args);
-        polygonSVG(2, 1400, 500, 0, 1, 1, 0, args);
+
+        polygonSVG(0, param.xy[0][0], param.xy[0][1], 0, 1, 1, 0, args);
+        polygonSVG(1, param.xy[1][0], param.xy[1][1], 0, 1, 1, 0, args);
+        polygonSVG(2, param.xy[2][0], param.xy[2][1], 0, 1, 1, 0, args);
     }
     function updateConfig() {
         let userConfigStr = param.userConfigStr;
