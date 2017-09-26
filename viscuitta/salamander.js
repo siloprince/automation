@@ -57,6 +57,7 @@
         ]
     };
     let param = {
+        currentStep: 0,
         userConfigStr: JSON.stringify(config),
         xy: [
             [150, 500+g_len*(1-1/2)],
@@ -72,7 +73,7 @@
         let g = args.stage;
         let polygonStr = config.polygons[polygon];
         let className = '';
-        if (param.stepLimit===1) {
+        if (true || param.stepLimit===1) {
             className = 'class="move move'+polygon+'"';
         }
         g.insertAdjacentHTML('beforeend', `<g ${className} x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
@@ -192,9 +193,9 @@
                     orgClick(args);
                 });
 
-                document.body.insertAdjacentHTML('beforeend', '<button id="moving">moving</button>');
-                document.querySelector('button#moving').addEventListener('click', function () {
-                    if (param.stepLimit===1) {
+                document.body.insertAdjacentHTML('beforeend', '<button id="move">move</button>');
+                document.querySelector('button#move').addEventListener('click', function () {
+                    if (true || param.stepLimit===1) {
                         let moves0 = document.querySelectorAll('g.move0');
                         for (let mi=0;mi<moves0.length;mi++) {
                             moves0[mi].classList.toggle('init0');
@@ -209,20 +210,26 @@
                         } 
                     }
                 });
+                document.body.insertAdjacentHTML('beforeend', '<button id="zoom">zoom</button>');
+                document.querySelector('button#zoom').addEventListener('click', function () {
+
+                    
+                });
+                //http://cubic-bezier.com/
                 document.body.insertAdjacentHTML('beforeend', `<style type="text/css"><!--
-.move {
+g.move {
     transition-property: transform;
-    transition-duration: 1500ms;
-    transition-timing-function: ease;
+    transition-duration: 2500ms;
+    transition-timing-function:cubic-bezier(.51,0,.55,.9);
 }
-.init0 {
-    transform: translate(${param.xy[0][0]},${param.xy[0][1]})rotate(0)scale(1,1);
+g.init0 {
+    transform: translate(${param.xy[0][0]}px,${param.xy[0][1]}px)rotate(0)scale(1,1);
 }
-.init1 {
-    transform: translate(${param.xy[1][0]},${param.xy[1][1]})rotate(0)scale(1,1);
+g.init1 {
+    transform: translate(${param.xy[1][0]}px,${param.xy[1][1]}px)rotate(0)scale(1,1);
 }
-.init2 {
-    transform: translate(${param.xy[2][0]},${param.xy[2][1]})rotate(0)scale(1,1);
+g.init2 {
+    transform: translate(${param.xy[2][0]}px,${param.xy[2][1]}px)rotate(0)scale(1,1);
 }
                 --></style>`);
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg></svg></td></tr></table>');
@@ -292,6 +299,7 @@
         ];
     }
     function main(step, args) {
+        param.currentStep = step;
         if (step >= param.stepLimit) {
             console.warn('exceed: param.stepLimit: ' + param.stepLimit);
             return;
