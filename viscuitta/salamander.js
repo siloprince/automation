@@ -179,8 +179,7 @@
         updateConfig();
         document.addEventListener('DOMContentLoaded',
             function () {
-                document.body.insertAdjacentHTML('beforeend', '<button id="start">start</button>');
-                document.querySelector('button#start').addEventListener('click', function () {
+                addButton('start', function () {
                     clear(args);
                     addSeed(args);
                     param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
@@ -188,13 +187,10 @@
                 });
                 document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="3">');
                 let stepLimit = document.querySelector('input#stepLimit').value;
-                document.body.insertAdjacentHTML('beforeend', '<button id="reset">reset</button>');
-                document.querySelector('button#reset').addEventListener('click', function () {
+                addButton('reset', function () {
                     orgClick(args);
                 });
-
-                document.body.insertAdjacentHTML('beforeend', '<button id="move">move</button>');
-                document.querySelector('button#move').addEventListener('click', function () {
+                addButton('move', function () {
                     if (true || param.stepLimit===1) {
                         let moves0 = document.querySelectorAll('g.move0');
                         for (let mi=0;mi<moves0.length;mi++) {
@@ -210,8 +206,11 @@
                         } 
                     }
                 });
-                document.body.insertAdjacentHTML('beforeend', '<button id="zoom">zoom</button>');
-                document.querySelector('button#zoom').addEventListener('click', function () {
+                addButton('zoom', function () {
+
+                    
+                });
+                addButton('next', function () {
 
                     
                 });
@@ -249,6 +248,10 @@ g.init2 {
                 //addSeed(args);
 
             }, false);
+    }
+    function addButton (title, func) {
+        document.body.insertAdjacentHTML('beforeend', `<button id="${title}">${title}</button>`);
+        document.querySelector(`button#${title}`).addEventListener('click', func);
     }
     function orgClick(args) {
         updateConfig();
