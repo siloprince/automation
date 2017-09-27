@@ -73,7 +73,7 @@
         let g = args.stage;
         let polygonStr = config.polygons[polygon];
         let className = '';
-        if (true || param.stepLimit===1) {
+        if (param.stepLimit===1) {
             className = 'class="move move'+polygon+'"';
         }
         g.insertAdjacentHTML('beforeend', `<g ${className} x-polygon="${polygon}" transform="translate(${x},${y})rotate(${r})scale(${sx},${sy})">${polygonStr}</g>`);
@@ -191,7 +191,7 @@
                     orgClick(args);
                 });
                 addButton('move', function () {
-                    if (true || param.stepLimit===1) {
+                    if (param.stepLimit===1) {
                         let moves0 = document.querySelectorAll('g.move0');
                         for (let mi=0;mi<moves0.length;mi++) {
                             moves0[mi].classList.toggle('init0');
