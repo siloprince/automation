@@ -57,6 +57,7 @@
         ]
     };
     let param = {
+        ruleIndex: 0,
         currentStep: 0,
         userConfigStr: JSON.stringify(config),
         xy: [
@@ -86,8 +87,10 @@
     }
     function rules(step, args) {
         let patternShapes = {};
-        for (let ri = 0; ri < config.rules.length; ri++) {
-            let rule = config.rules[ri];
+        param.ruleIndex = (param.ruleIndex+config.rules.length)%config.rules.length;
+        let rr = param.ruleIndex;
+        for (let ri = 0; ri < config.rules[rr].length; ri++) {
+            let rule = config.rules[rr][ri];
             let pattern = rule.pattern;
             for (let pi = 0; pi < pattern.length; pi++) {
                 let shapes = getPolygons(pattern[pi], { noDup: true });
@@ -98,8 +101,8 @@
         }
         clear(args);
         let count = 0;
-        for (let ri = 0; ri < config.rules.length; ri++) {
-            let rule = config.rules[ri];
+        for (let ri = 0; ri < config.rules[rr].length; ri++) {
+            let rule = config.rules[rr][ri];
             let pattern = rule.pattern;
             for (let pi = 0; pi < pattern.length; pi++) {
                 let shapes = patternShapes[pattern[pi]];
@@ -211,8 +214,8 @@
                     
                 });
                 addButton('next', function () {
-
-                    
+                    param.ruleIndex++;
+                    orgClick(args);
                 });
                 //http://cubic-bezier.com/
                 document.body.insertAdjacentHTML('beforeend', `<style type="text/css"><!--
