@@ -28,28 +28,25 @@
             "height": 300
         },
         "iteration": {
-            "dt": 1000,
+            "dt": 2000,
             "scaleLimit": 0.1,
             "stepLimit": 10000,
-            "shapeCount": true
+            "shapeCount": false
         },
         "polygons": [
             `<g class='r0'>
-            <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#0000ff' stroke-linejoin="round"></polygon>
-            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
+            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
             </g>`
             ,
             `<g class='r1'>
-            <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#0000ff' stroke-linejoin="round"></polygon>
-            <polygon  opacity="${g_trans}" stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
+            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
             </g>`
             ,
             `<g class='r2'>
-            <polygon  opacity="${g_opac}"  points='0 0, ${g_len / 2} 0, ${g_len * 4 / 5} ${g_len / 4}, ${g_len * 2 / 3} 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#0000ff' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}"  stroke-width="10" opacity="1" fill="#ffffff"  points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon opacity="${g_trans}" fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
+             <polygon stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
             </g>`
             ,
         ],
@@ -57,6 +54,7 @@
         ]
     };
     let param = {
+        zoom: false,
         ruleIndex: 0,
         currentStep: 0,
         userConfigStr: JSON.stringify(config),
@@ -64,9 +62,13 @@
             [150, 500+g_len*(1-1/2)],
             [800, 500+g_len*(1-Math.sqrt(3)/2)],
             [1500, 500]
+        ],
+        focus: [
+            [150-250+g_len*(1+Math.cos(Math.PI/3))/2, 500-150+g_len*(1-1/2)/2],
+            [800, 500+g_len*(1-Math.sqrt(3)/2)],
+            [1500, 500]
         ]
     };
-    let terminateHash = {};
     let stageHash = {};
     init();
     function polygonSVG(polygon, x, y, r, sx, sy, t, args) {
@@ -210,8 +212,9 @@
                     }
                 });
                 addButton('zoom', function () {
-
-                    
+                    param.zoom = ! param.zoom;
+                    document.querySelector('g#stage').classList.toggle('focus0');
+                    document.querySelector('g#stages').classList.toggle('focus0s');
                 });
                 addButton('next', function () {
                     param.ruleIndex++;
@@ -233,16 +236,31 @@ g.init1 {
 g.init2 {
     transform: translate(${param.xy[2][0]}px,${param.xy[2][1]}px)rotate(0)scale(1,1);
 }
+g.zoom {
+    transition-property: transform;
+    transition-duration: 2800ms;
+    transition-timing-function:linear;
+}
+g.zooms {
+    transition-property: transform;
+    transition-duration: 2800ms;
+    transition-timing-function:ease-in;
+}
+g.focus0 {
+    transform: translate(${-param.focus[0][0]}px,${-param.focus[0][1]}px);
+}
+g.focus0s {
+    transform: rotate(0)scale(3,3);
+}
                 --></style>`);
-                document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg></svg></td></tr></table>');
+                document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg fill="#ffffff"></svg></td></tr></table>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
                 svg.setAttribute('height', config.stage.height);
-                svg.innerHTML = '<g id="terminate"></g><g id="stage"></g>';
+                svg.innerHTML = '<g id="stages" class="zooms"><g id="stage" class="zoom"></g></g>';
                 let args = {
                     dt: config.iteration.dt
                     , stage: document.querySelector('#stage')
-                    , terminate: document.querySelector('#terminate')
                 };
                 // TODO: move to config
                 addSeed(args);
@@ -264,10 +282,16 @@ g.init2 {
         main(0, args);
     }
     function addSeed(args) {
-
-        polygonSVG(0, param.xy[0][0], param.xy[0][1], 0, 1, 1, 0, args);
-        polygonSVG(1, param.xy[1][0], param.xy[1][1], 0, 1, 1, 0, args);
-        polygonSVG(2, param.xy[2][0], param.xy[2][1], 0, 1, 1, 0, args);
+        let tx=0;
+        let ty=0;
+        if (param.zoom) {
+            document.querySelector('g#stage').setAttribute('transform',`translate(0,0)`);
+        }
+        polygonSVG(0, tx+param.xy[0][0], ty+param.xy[0][1], 0, 1, 1, 0, args);
+        if (param.zoom===false) {
+            polygonSVG(1, param.xy[1][0], param.xy[1][1], 0, 1, 1, 0, args);
+            polygonSVG(2, param.xy[2][0], param.xy[2][1], 0, 1, 1, 0, args);
+        }
     }
     function updateConfig() {
         let userConfigStr = param.userConfigStr;
@@ -310,7 +334,6 @@ g.init2 {
             console.warn('exceed: param.stepLimit: ' + param.stepLimit);
             return;
         }
-        console.warn(step);
         rules(step, args);
         let nextMain = (function (c, a) {
             return function () { main(c + 1, a); };
