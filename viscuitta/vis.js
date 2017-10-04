@@ -284,7 +284,7 @@
             if (/^\s*{/.test(userConfigStr) && /}\s*$/.test(userConfigStr)) {
                 //let userConfig = JSON.parse(userConfigStr); 
                 //var g_z = [-0, -1, 180];
-                var g_z = [param.xmove,param.ymove, (param.rotate+720)%360];
+                var g_z = [param.xmove,param.ymove,(param.rotate+720)%360];
                 console.error(param.xmove+' '+param.ymove+' '+param.rotate+' ');
                 try {
                     var g_A = getPos(g_z, g_a, g_angle, g_len,g_scale);
