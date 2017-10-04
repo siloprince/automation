@@ -13,16 +13,18 @@
                             "shapeCount": true
         },
         "rules": [
-            // harris
+            // twin dragon
             [
+                {
+                    "scale": 1/Math.sqrt(2),
+                    "stepLimit": 10,
+                },
                 { 
                     "pattern": [".r0"], "next": [[],[],[]],
-                    "scale": 1/Math.sqrt(2)
                 }
                 , 
                 { 
                     "pattern": [".r1"], "next": [[],[],[]],
-                    "scale": 1/Math.sqrt(2)
                 }
                 , 
                 { 
@@ -30,7 +32,6 @@
                         [1.5, 0, 0, 0, 0, 0, 0],
                         [1.5, 1/Math.sqrt(2), 0, 0, -1/Math.sqrt(2), 0, 0],
                         ]],
-                    "scale": 1/Math.sqrt(2) 
                 }
             ]
             ,

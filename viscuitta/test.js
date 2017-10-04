@@ -93,6 +93,10 @@
         let rr = param.ruleIndex;
         for (let ri = 0; ri < config.rules[rr].length; ri++) {
             let rule = config.rules[rr][ri];
+            if (! ('pattern' in rule)) {
+                continue;
+            }
+            console.log(rule);
             let pattern = rule.pattern;
             for (let pi = 0; pi < pattern.length; pi++) {
                 let shapes = getPolygons(pattern[pi], { noDup: true });
@@ -103,18 +107,26 @@
         }
         clear(args);
         let count = 0;
+        let scale = g_scale;
         for (let ri = 0; ri < config.rules[rr].length; ri++) {
-            let rule = config.rules[rr][ri];
+            let rule = config.rules[rr][ri];    
+            if (! ('pattern' in rule)) {
+                if ('scale' in rule) {
+                    scale = rule.scale;
+                }
+                if (param.stepLimit < 0) {
+                    param.stepLimit = Math.abs(param.stepLimit);
+                } else if ('stepLimit' in rule) {
+                    param.stepLimit = rule.stepLimit;
+                }
+                continue;
+            }
             let pattern = rule.pattern;
             for (let pi = 0; pi < pattern.length; pi++) {
                 let shapes = patternShapes[pattern[pi]];
                 for (let si = 0; si < shapes.length; si++) {
                     let shape = shapes[si];
                     let nexts = rule.next;
-                    let scale = g_scale;
-                    if ('scale' in rule) {
-                        scale = rule.scale;
-                    }
                     for (let ni = 0; ni < nexts.length; ni++) {
                         for (let nj = 0; nj < nexts[ni].length; nj++) {
                             let dxy = getPos(nexts[ni][nj],scale);
@@ -268,7 +280,7 @@ g.focus0s {
                 };
                 // TODO: move to config
                 addSeed(args);
-                param.stepLimit = 1;
+                param.stepLimit = -1;
                 main(0, args);
                 //addSeed(args);
 
@@ -281,7 +293,7 @@ g.focus0s {
     function orgClick(args) {
         updateConfig();
         clear(args);
-        param.stepLimit = 1;
+        param.stepLimit = -1;
         addSeed(args);
         main(0, args);
     }
