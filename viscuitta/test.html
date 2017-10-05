@@ -16,15 +16,23 @@
             // twin dragon
             [
                 {
-                    "scale": 1/Math.sqrt(2),
-                    "stepLimit": 10,
+                    "scale": [
+                        1,
+                        1/Math.sqrt(3), 
+                        1/Math.sqrt(2)
+                    ],
+                    "stepLimit": 6
                 },
                 { 
                     "pattern": [".r0"], "next": [[],[],[]],
                 }
                 , 
                 { 
-                    "pattern": [".r1"], "next": [[],[],[]],
+                    "pattern": [".r1"], "next": [[],[
+                        [-1, 0, 0, 0, 0, 0, 0],
+                        [3, 0, 0, 0, -1, 0, -1],
+                        [-1, 0, 1, 0, 0, 0, -1],
+                    ],[]],
                 }
                 , 
                 { 

@@ -107,7 +107,7 @@
         }
         clear(args);
         let count = 0;
-        let scale = g_scale;
+        let scale = [g_scale, g_scale, g_scale];
         for (let ri = 0; ri < config.rules[rr].length; ri++) {
             let rule = config.rules[rr][ri];    
             if (! ('pattern' in rule)) {
@@ -129,13 +129,13 @@
                     let nexts = rule.next;
                     for (let ni = 0; ni < nexts.length; ni++) {
                         for (let nj = 0; nj < nexts[ni].length; nj++) {
-                            let dxy = getPos(nexts[ni][nj],scale);
+                            let dxy = getPos(nexts[ni][nj],scale[ni]);
                             let next = {
                                 'polygon': ni,
                                 'dx': dxy[0],
                                 'dy': dxy[1],
                                 'dr': nexts[ni][nj][0] * g_unit,
-                                'ds' : scale
+                                'ds' : scale[ni]
                             };
                             let sx = shape.sx * next.ds;
                             let sy = shape.sy * next.ds;
