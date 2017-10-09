@@ -108,6 +108,7 @@
         ]
     };
     let param = {
+        wait: 6000,
         count: 0,
         zoom: false,
         ruleIndex: 0,
@@ -426,9 +427,17 @@ g.focus0s {
                 main(0, args);
                 //addSeed(args);
 
-                start(args);
-
+                loop(args);
             }, false);
+    }
+    function loop (args) {
+        setTimeout(function(){
+            start(args);
+            setTimeout(function(){
+                move();
+                loop(args);
+            },100);
+        },6000);
     }
     function addButton(title, func) {
         document.body.insertAdjacentHTML('beforeend', `<button id="${title}">${title}</button>`);
