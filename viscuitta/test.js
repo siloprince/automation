@@ -326,8 +326,8 @@
         document.addEventListener('DOMContentLoaded',
             function () {
 
-                addButton('start', function(){start(args);});
-                addButton('move', move);
+               // addButton('start', function(){start(args);});
+               // addButton('move', move);
                 /*
                 addButton('start', function () {
                     clear(args);
@@ -428,7 +428,7 @@ g.focus0s {
   }
 }
                 --></style>`);
-                document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg fill="#ffffff"></svg></td></tr></table>');
+                document.body.insertAdjacentHTML('beforeend', '<svg fill="#ffffff"></svg>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
                 svg.setAttribute('height', config.stage.height);
