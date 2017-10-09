@@ -299,13 +299,21 @@
         addSeed(args);
         param.stepLimit = 1;
         main(0, args);
-        if (param.count % 3 === 0) {
+        if (param.count % 6 === 0) {
             showImage('base');
-            //move();
-        } else if (param.count % 3 === 1) {
+        } else if (param.count % 6 === 1) {
             showImage('');
-        } else if (param.count % 3 === 2) {
+        } else if (param.count % 6 === 2) {
             showImage('-2');
+        } else if (param.count % 6 === 3) {
+            move();
+            showImage('-2');
+        } else if (param.count % 6 === 4) {
+            move();
+            showImage('');
+        } else if (param.count % 6 === 5) {
+            move();
+            showImage('base');
             incr();
         }
         param.count++;
