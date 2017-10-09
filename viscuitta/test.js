@@ -418,11 +418,15 @@ g.focus0s {
     opacity: 1;
   }
 
-  50% {
+  40% {
     transform: scale(.3);
     opacity: .4;
   }
 
+  95% {
+    transform: scale(.85);
+    opacity: 1;
+  }
   100% {
     transform: scale(1);
     opacity: 1;
