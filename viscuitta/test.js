@@ -108,7 +108,8 @@
         ]
     };
     let param = {
-        wait: 6000,
+        moveDuration: 1300,//2500,
+        waitDuration: 2200,
         count: 0,
         zoom: false,
         ruleIndex: 0,
@@ -367,13 +368,14 @@
                     param.ruleIndex++;
                     orgClick(args);
                 });
+                cubic-bezier(.51,0,.55,.9)
                 */
                 //http://cubic-bezier.com/
                 document.body.insertAdjacentHTML('beforeend', `<style type="text/css"><!--
 g.move {
     transition-property: transform;
-    transition-duration: 2500ms;
-    transition-timing-function:cubic-bezier(.51,0,.55,.9);
+    transition-duration: ${param.moveDuration}ms;
+    transition-timing-function:ease-in;
 }
 g.init0 {
     transform: translate(${param.xy[0][0]}px,${param.xy[0][1]}px)rotate(0)scale(1,1);
@@ -437,7 +439,7 @@ g.focus0s {
                 move();
                 loop(args);
             },100);
-        },6000);
+        },param.waitDuration);
     }
     function addButton(title, func) {
         document.body.insertAdjacentHTML('beforeend', `<button id="${title}">${title}</button>`);
