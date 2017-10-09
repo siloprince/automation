@@ -109,7 +109,8 @@
     };
     let param = {
         moveDuration: 1300,//2500,
-        waitDuration: 2200,
+        scaleDuration: 2000,
+        waitDuration: 4500,
         count: 0,
         zoom: false,
         ruleIndex: 0,
@@ -397,7 +398,7 @@ g.zooms {
     transition-timing-function:ease-in;
 }
 g.rr {
-    animation: opacityscale ${param.waitDuration}ms ease 0s 1 alternate none running;
+    animation: opacityscale ${param.scaleDuration}ms ease 0s 1 alternate none running;
 }
 g.each {
     transform: scale(0.4,0.4);
