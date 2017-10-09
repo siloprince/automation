@@ -397,9 +397,7 @@ g.zooms {
     transition-timing-function:ease-in;
 }
 g.rr {
-    transition-property: transform;
-    transition-duration: 2800ms;
-    transition-timing-function:ease-in;
+    animation: opacityscale ${param.waitDuration}ms ease 0s 1 alternate none running;
 }
 g.each {
     transform: scale(0.4,0.4);
@@ -412,6 +410,22 @@ g.focus0s {
 }
 .hide {
     display: none;
+}
+@keyframes opacityscale {
+  0% {
+    transform: scale(1);
+    opacity: 1;
+  }
+
+  50% {
+    transform: scale(.3);
+    opacity: .4;
+  }
+
+  100% {
+    transform: scale(1);
+    opacity: 1;
+  }
 }
                 --></style>`);
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg fill="#ffffff"></svg></td></tr></table>');
