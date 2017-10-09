@@ -35,32 +35,71 @@
         },
         "polygons": [
             `<g class='r0' transform="translate(${(g_len * (1 + g_ac))/2},${(g_len * g_as)/2})"><g class='rr'><g transform="translate(${-(g_len * (1 + g_ac))/2},${-(g_len * g_as)/2})">
-            <!--
+            <g class='base hide'>
             <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
             <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
-            -->
+            </g>
             <g transform="translate(${-g_len/2},${-g_len})">
-            <image href="./image/6/30-2.png">
+            <image class='img0 hide' href="./image/0/30.png"/>
+            <image class='img1 hide' href="./image/1/30.png"/>
+            <image class='img2 hide' href="./image/2/30.png"/>
+            <image class='img3 hide' href="./image/3/30.png"/>
+            <image class='img4 hide' href="./image/4/30.png"/>
+            <image class='img5 hide' href="./image/5/30.png"/>
+            <image class='img6 hide' href="./image/6/30.png"/>
+            <image class='img0a hide' href="./image/0/30-2.png"/>
+            <image class='img1a hide' href="./image/1/30-2.png"/>
+            <image class='img2a hide' href="./image/2/30-2.png"/>
+            <image class='img3a hide' href="./image/3/30-2.png"/>
+            <image class='img4a hide' href="./image/4/30-2.png"/>
+            <image class='img5a hide' href="./image/5/30-2.png"/>
+            <image class='img6a hide' href="./image/6/30-2.png"/>
             </g>
             </g></g></g>`
             ,
             `<g class='r1' transform="translate(${(g_len * (1 + g_ac1))/2},${(g_len * g_as1)/2})"><g class='rr'><g transform="translate(${-(g_len * (1 + g_ac1))/2},${-(g_len * g_as1)/2})">
-            <!--
+            <g class='base hide'>
             <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
             <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
-            -->
+            </g>
             <g transform="translate(${-g_len/2},${-g_len/2})">
-            <image href="./image/6/60-2.png">
+            <image class='img0 hide' href="./image/0/60.png"/>
+            <image class='img1 hide' href="./image/1/60.png"/>
+            <image class='img2 hide' href="./image/2/60.png"/>
+            <image class='img3 hide' href="./image/3/60.png"/>
+            <image class='img4 hide' href="./image/4/60.png"/>
+            <image class='img5 hide' href="./image/5/60.png"/>
+            <image class='img6 hide' href="./image/6/60.png"/>
+            <image class='img0a hide' href="./image/0/60-2.png"/>
+            <image class='img1a hide' href="./image/1/60-2.png"/>
+            <image class='img2a hide' href="./image/2/60-2.png"/>
+            <image class='img3a hide' href="./image/3/60-2.png"/>
+            <image class='img4a hide' href="./image/4/60-2.png"/>
+            <image class='img5a hide' href="./image/5/60-2.png"/>
+            <image class='img6a hide' href="./image/6/60-2.png"/>
             </g>
             </g></g></g>`
             ,
             `<g class='r2' transform="translate(${g_len/2},${g_len/2})"><g class='rr'><g transform="translate(${-g_len/2},${-g_len/2})">
-            <!--
+            <g class='base hide'>
              <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
              <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
-             -->
+             </g>
              <g transform="translate(${-g_len/2},${-g_len/2})">
-             <image href="./image/6/90-2.png">
+            <image class='img0 hide' href="./image/0/90.png"/>
+            <image class='img1 hide' href="./image/1/90.png"/>
+            <image class='img2 hide' href="./image/2/90.png"/>
+            <image class='img3 hide' href="./image/3/90.png"/>
+            <image class='img4 hide' href="./image/4/90.png"/>
+            <image class='img5 hide' href="./image/5/90.png"/>
+            <image class='img6 hide' href="./image/6/90.png"/>
+            <image class='img0a hide' href="./image/0/90-2.png"/>
+            <image class='img1a hide' href="./image/1/90-2.png"/>
+            <image class='img2a hide' href="./image/2/90-2.png"/>
+            <image class='img3a hide' href="./image/3/90-2.png"/>
+            <image class='img4a hide' href="./image/4/90-2.png"/>
+            <image class='img5a hide' href="./image/5/90-2.png"/>
+            <image class='img6a hide' href="./image/6/90-2.png"/>
              </g>
              </g></g></g>`
             ,
@@ -101,6 +140,12 @@
         let stage = args.stage;
         stageHash = {};
         stage.innerHTML = '';
+    }
+    function last() {
+        return (param.ruleIndex-1+config.rules.length)%config.rules.length;
+    }
+    function incr() {
+        param.ruleIndex = (param.ruleIndex+1+config.rules.length)%config.rules.length;
     }
     function rules(step, args) {
         let patternShapes = {};
@@ -210,18 +255,38 @@
             console.warn('shapeCount:' + count);
         }
     }
+    function showImage() {
+        let imgs_last = document.querySelectorAll('image.img'+last());
+        for (let ii=0;ii<imgs_last.length;ii++){
+            imgs_last[ii].classList.add('hide');
+        }
+        let imgs = document.querySelectorAll('image.img'+param.ruleIndex);
+        for (let ii=0;ii<imgs.length;ii++){
+            imgs[ii].classList.remove('hide');
+        }
+    }
     function init() {
         param.userConfigStr = document.currentScript.textContent.trim();
         updateConfig();
         document.addEventListener('DOMContentLoaded',
             function () {
+
+                addButton('start', function () {
+                    clear(args);
+                    addSeed(args);
+                    param.stepLimit = 1;
+                    //main(0, args);
+                    showImage();
+                    incr();
+                });
+                /*
                 addButton('start', function () {
                     clear(args);
                     addSeed(args);
                     param.stepLimit = parseInt(document.querySelector('input#stepLimit').value, 10);
                     main(0, args);
                 });
-                document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="3">');
+                document.body.insertAdjacentHTML('beforeend', '<input id="stepLimit" size="5" value="1">');
                 let stepLimit = document.querySelector('input#stepLimit').value;
                 addButton('reset', function () {
                     orgClick(args);
@@ -249,15 +314,12 @@
                     for (let ri=0;ri<rrs.length;ri++) {
                         rrs[ri].classList.toggle('each');
                     }
-                    /*
-                    document.querySelector('g#stage').classList.toggle('focus0');
-                    document.querySelector('g#stages').classList.toggle('focus0s');
-                    */
                 });
                 addButton('next', function () {
                     param.ruleIndex++;
                     orgClick(args);
                 });
+                */
                 //http://cubic-bezier.com/
                 document.body.insertAdjacentHTML('beforeend', `<style type="text/css"><!--
 g.move {
@@ -297,6 +359,9 @@ g.focus0 {
 }
 g.focus0s {
     transform: rotate(0)scale(3,3);
+}
+.hide {
+    display: none;
 }
                 --></style>`);
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg fill="#ffffff"></svg></td></tr></table>');
