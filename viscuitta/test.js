@@ -34,20 +34,35 @@
             "shapeCount": false
         },
         "polygons": [
-            `<g class='r0'>
-            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            `<g class='r0' transform="translate(${(g_len * (1 + g_ac))/2},${(g_len * g_as)/2})"><g class='rr'><g transform="translate(${-(g_len * (1 + g_ac))/2},${-(g_len * g_as)/2})">
+            <!--
+            <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
             <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
-            </g>`
+            -->
+            <g transform="translate(${-g_len/2},${-g_len})">
+            <image href="./image/6/30-2.png">
+            </g>
+            </g></g></g>`
             ,
-            `<g class='r1'>
-            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
+            `<g class='r1' transform="translate(${(g_len * (1 + g_ac1))/2},${(g_len * g_as1)/2})"><g class='rr'><g transform="translate(${-(g_len * (1 + g_ac1))/2},${-(g_len * g_as1)/2})">
+            <!--
+            <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
             <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
-            </g>`
+            -->
+            <g transform="translate(${-g_len/2},${-g_len/2})">
+            <image href="./image/6/60-2.png">
+            </g>
+            </g></g></g>`
             ,
-            `<g class='r2'>
-             <polygon stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
-            </g>`
+            `<g class='r2' transform="translate(${g_len/2},${g_len/2})"><g class='rr'><g transform="translate(${-g_len/2},${-g_len/2})">
+            <!--
+             <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
+             <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
+             -->
+             <g transform="translate(${-g_len/2},${-g_len/2})">
+             <image href="./image/6/90-2.png">
+             </g>
+             </g></g></g>`
             ,
         ],
         "rules": [
@@ -229,8 +244,15 @@
                 });
                 addButton('zoom', function () {
                     param.zoom = ! param.zoom;
+                    
+                    let rrs = document.querySelectorAll('g.rr')
+                    for (let ri=0;ri<rrs.length;ri++) {
+                        rrs[ri].classList.toggle('each');
+                    }
+                    /*
                     document.querySelector('g#stage').classList.toggle('focus0');
                     document.querySelector('g#stages').classList.toggle('focus0s');
+                    */
                 });
                 addButton('next', function () {
                     param.ruleIndex++;
@@ -261,6 +283,14 @@ g.zooms {
     transition-property: transform;
     transition-duration: 2800ms;
     transition-timing-function:ease-in;
+}
+g.rr {
+    transition-property: transform;
+    transition-duration: 2800ms;
+    transition-timing-function:ease-in;
+}
+g.each {
+    transform: scale(0.4,0.4);
 }
 g.focus0 {
     transform: translate(${-param.focus[0][0]}px,${-param.focus[0][1]}px);

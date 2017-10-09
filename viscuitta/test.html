@@ -21,7 +21,33 @@
                         1/Math.sqrt(3), 
                         1/Math.sqrt(2)
                     ],
-                    "stepLimit": 2
+                    "stepLimit": 1
+                },
+                { 
+                    "pattern": [".r0"], "next": [[],[],[]],
+                }
+                , 
+                { 
+                    "pattern": [".r2"], "next": [[], [],[
+                        [1.5, 0, 0, 0, 0, 0, 0],
+                        [1.5, 1/Math.sqrt(2), 0, 0, -1/Math.sqrt(2), 0, 0],
+                        ]],
+                },
+                { 
+                    "pattern": [".r1"], "next": [[],[],[]],
+                }
+                , 
+            ]
+            ,
+            // twin dragon
+            [
+                {
+                    "scale": [
+                        1,
+                        1/Math.sqrt(3), 
+                        1/Math.sqrt(2)
+                    ],
+                    "stepLimit": 6
                 },
                 { 
                     "pattern": [".r0"], "next": [[],[],[]],
@@ -36,10 +62,7 @@
                 }
                 , 
                 { 
-                    "pattern": [".r2"], "next": [[], [],[
-                        [1.5, 0, 0, 0, 0, 0, 0],
-                        [1.5, 1/Math.sqrt(2), 0, 0, -1/Math.sqrt(2), 0, 0],
-                        ]],
+                    "pattern": [".r2"], "next": [[],[],[]],
                 }
             ]
             ,
