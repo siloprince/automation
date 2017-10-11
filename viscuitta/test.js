@@ -433,11 +433,11 @@ g.focus0s {
   }
 }
                 --></style>`);
-                document.body.insertAdjacentHTML('beforeend', '<svg fill="#ffffff"></svg>');
+                document.body.insertAdjacentHTML('beforeend', '<svg fill="#1a274d"></svg>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
                 svg.setAttribute('height', config.stage.height);
-                svg.innerHTML = '<g id="stages" class="zooms"><g id="stage" class="zoom"></g></g>';
+                svg.innerHTML = '<rect fill="#1a274d" width="2000" height="2000"/><g  id="stages" class="zooms"><g id="stage" class="zoom"></g></g>';
                 let args = {
                     dt: config.iteration.dt
                     , stage: document.querySelector('#stage')
