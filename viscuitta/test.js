@@ -447,11 +447,16 @@ g.focus0s {
                 param.stepLimit = -1;
                 main(0, args);
                 //addSeed(args);
-
-                loop(args);
+                setTimeout(function(){
+                    move();
+                    loop(args);
+                },10000);
             }, false);
     }
     function loop (args) {
+        if (param.count >= config.rules.length * 6) {
+            return;
+        }
         setTimeout(function(){
             start(args);
             setTimeout(function(){
