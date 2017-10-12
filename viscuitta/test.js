@@ -37,7 +37,7 @@
             `<g class='r0' transform="translate(${(g_len * (1 + g_ac)) / 2},${(g_len * g_as) / 2})"><g class='rr'><g transform="translate(${-(g_len * (1 + g_ac)) / 2},${-(g_len * g_as) / 2})">
             <g class='base hide'>
             <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#1a274d' stroke-linejoin="round"></polygon>
-            <polygon fill="#1a274d" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
+            <polygon fill="#1a274d" stroke-width="0" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
             </g>
             <g transform="translate(${-g_len / 2},${-g_len})scale(0.3333,0.3333)">
             <image class='img0 hide' href="./image/0/30.png"/>
@@ -60,7 +60,7 @@
             `<g class='r1' transform="translate(${(g_len * (1 + g_ac1)) / 2},${(g_len * g_as1) / 2})"><g class='rr'><g transform="translate(${-(g_len * (1 + g_ac1)) / 2},${-(g_len * g_as1) / 2})">
             <g class='base hide'>
             <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#1a274d' stroke-linejoin="round"></polygon>
-            <polygon fill="#1a274d" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
+            <polygon fill="#1a274d" stroke-width="0" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
             </g>
             <g transform="translate(${-g_len / 2},${-g_len / 2})scale(0.3333,0.3333)">
             <image class='img0 hide' href="./image/0/60.png"/>
@@ -83,7 +83,7 @@
             `<g class='r2' transform="translate(${g_len / 2},${g_len / 2})"><g class='rr'><g transform="translate(${-g_len / 2},${-g_len / 2})">
             <g class='base hide'>
              <polygon fill="#ffffff" stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#1a274d' stroke-linejoin="round"></polygon>
-             <polygon fill="#1a274d" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
+             <polygon fill="#1a274d" stroke-width="0" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
              </g>
              <g transform="translate(${-g_len / 2},${-g_len / 2})scale(0.3333,0.3333)">
             <image class='img0 hide' href="./image/0/90.png"/>
@@ -108,9 +108,9 @@
         ]
     };
     let param = {
-        moveDuration: 1300,//2500,
-        scaleDuration: 2000,
-        waitDuration: 4500,
+        moveDuration: 2300,//2500,
+        scaleDuration: 3000,
+        waitDuration: 5500,
         count: 0,
         zoom: false,
         ruleIndex: 0,
