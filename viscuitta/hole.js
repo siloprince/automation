@@ -1,14 +1,12 @@
 'use strict';
 (function(console,document,window){
+
     let script = document.currentScript;
     
-    let s = 2;
-    let a = -0.36;
-    let b = 0.4;
-    let x = a*s*s - b*s*s*s + b*s + s*s;
-    let z =  a - b*s + b/s - x/s*s + 1;
-    let y = (b*s + s*s - x)/s;
-    
+    let s = 3.2;
+    let a = -0.5;
+    let b = 0.5;
+
     let x0 = 1;
     let y0 = b;
     let x1 = a; 
@@ -18,14 +16,16 @@
     let x3 = 1;
     let y3 = -b;
 
-    let x4 = x;
-    let y4 = y;
-    let x5 = z; 
-    let y5 = y;
-    let x6 = z;
-    let y6 = y-(x-z)*(1-a)/(2*b);
-    let x7 = x;
-    let y7 = y-(x-z)*(1-a)/(2*b);
+    let xx = 0;
+    let yy = a*s;
+    let x4 = xx+ 0;
+    let y4 = yy+ 0;
+    let x5 = xx+ s*(2*b); 
+    let y5 = yy+ 0;
+    let x6 = xx+ s*(2*b);
+    let y6 = yy+ s*(1-a);
+    let x7 = xx+ 0;
+    let y7 = yy+ s*(1-a);
 
     let x8 = 1*s*s;
     let y8 = b*s*s;
@@ -37,18 +37,16 @@
     let y11 = -b*s*s;
 
     script.insertAdjacentHTML('afterend',`<svg width="1500" height="1500">
-    <g transform="translate(700,700)scale(200,200)">
-        <polygon points="${x8},${y8} ${x9},${y9} ${x10},${y10} ${x11},${y11}" opacity="0.2" />
-        <polygon points="${x4},${y4} ${x5},${y5} ${x6},${y6} ${x7},${y7}" opacity="0.4"/>
-        <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" fill="#ffffff"/>
+    <g transform="translate(700,700)scale(50,50)">
+    <g transform="scale(${s},${s})rotate(90)">
+    <g transform="scale(${s},${s})rotate(90)">
+        <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" opacity="0.2" />
+    </g></g>
+    <g transform="scale(${s},${s})rotate(90)">
+        <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" opacity="0.4"/>
+    </g>
+        <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" opacity="0.6"/>
+  
     </g>
   </svg>`);
 })(console,document,window);
-/*
-        
-        <polygon points="${x8},${y8} ${x9},${y9} ${x10},${y10} ${x11},${y11}" stroke="#ff0000" fill="none"/>
-http://www.wolframalpha.com/input/?i=y+%3D+(b+s+%2B+s%5E2+-+x)%2Fs,+z+%3D+(a+s%5E2+-+b+s%5E3+%2B+b+s+%2B+s%5E2+-+x)%2Fs%5E2,+z+%3D+s%5E2+a+-+s+b+-+s+(y-(x-z)(1-a)%2F2%2Fb)
-
-http://www.wolframalpha.com/input/?i=y+%3D+(b+s+%2B+s%5E2+-+x)%2Fs,+z+%3D+(a+s%5E2+-+b+s%5E3+%2B+b+s+%2B+s%5E2+-+x)%2Fs%5E2
-
-*/
