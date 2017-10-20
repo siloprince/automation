@@ -35,18 +35,18 @@
         },
         "polygons": [
             `<g class='r0'>
-            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
+            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac)} ${g_len * g_as},${g_len * g_ac} ${g_len * g_as}' stroke='#1a274d' stroke-linejoin="round"></polygon>
+            <polygon fill="#1a274d" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac)) / 2} ${(0 + g_len * g_as) / 2},${(g_len * (1 + g_ac) + g_len * g_ac) / 2} ${(g_len * g_as + g_len * g_as) / 2},${(g_len * g_ac + 0) / 2} ${(g_len * g_as + 0) / 2}' ></polygon>
             </g>`
             ,
             `<g class='r1'>
-            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
+            <polygon  stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac1)} ${g_len * g_as1},${g_len * g_ac1} ${g_len * g_as1}' stroke='#1a274d' stroke-linejoin="round"></polygon>
+            <polygon fill="#1a274d" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac1)) / 2} ${(0 + g_len * g_as1) / 2},${(g_len * (1 + g_ac1) + g_len * g_ac1) / 2} ${(g_len * g_as1 + g_len * g_as1) / 2},${(g_len * g_ac1 + 0) / 2} ${(g_len * g_as1 + 0) / 2}' ></polygon>
             </g>`
             ,
             `<g class='r2'>
-             <polygon stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#00165f' stroke-linejoin="round"></polygon>
-            <polygon fill="#00165f" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
+             <polygon stroke-width="10" points='0 0, ${g_len} 0, ${g_len * (1 + g_ac2)} ${g_len * g_as2},${g_len * g_ac2} ${g_len * g_as2}' stroke='#1a274d' stroke-linejoin="round"></polygon>
+            <polygon fill="#1a274d" points='${(0 + g_len) / 2} ${(0 + 0) / 2},${(g_len + g_len * (1 + g_ac2)) / 2} ${(0 + g_len * g_as2) / 2},${(g_len * (1 + g_ac2) + g_len * g_ac2) / 2} ${(g_len * g_as2 + g_len * g_as2) / 2},${(g_len * g_ac2 + 0) / 2} ${(g_len * g_as2 + 0) / 2}' ></polygon>
             </g>`
             ,
         ],
@@ -257,7 +257,7 @@ g.focus0s {
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);
                 svg.setAttribute('height', config.stage.height);
-                svg.innerHTML = '<g id="stages" class="zooms"><g id="stage" class="zoom"></g></g>';
+                svg.innerHTML = '<rect fill="#1a274d" width="2000" height="2000" /><g id="stages" class="zooms"><g id="stage" class="zoom"></g></g>';
                 let args = {
                     dt: config.iteration.dt
                     , stage: document.querySelector('#stage')
@@ -289,8 +289,8 @@ g.focus0s {
         }
         polygonSVG(0, tx+param.xy[0][0], ty+param.xy[0][1], 0, 1, 1, 0, args);
         if (param.zoom===false) {
-            polygonSVG(1, param.xy[1][0], param.xy[1][1], 0, 1, 1, 0, args);
-            polygonSVG(2, param.xy[2][0], param.xy[2][1], 0, 1, 1, 0, args);
+        // polygonSVG(1, param.xy[1][0], param.xy[1][1], 0, 1, 1, 0, args);
+         //   polygonSVG(2, param.xy[2][0], param.xy[2][1], 0, 1, 1, 0, args);
         }
     }
     function updateConfig() {
