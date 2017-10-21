@@ -221,7 +221,7 @@
                     orgClick(args);
                 });
                 //http://cubic-bezier.com/
-                document.body.insertAdjacentHTML('beforeend', `<style type="text/css"><!--
+                document.body.insertAdjacentHTML('beforeend', `<style type="text/css" style="display:none">
 g.move {
     transition-property: transform;
     transition-duration: 2500ms;
@@ -252,7 +252,7 @@ g.focus0 {
 g.focus0s {
     transform: rotate(0)scale(3,3);
 }
-                --></style>`);
+                </style>`);
                 document.body.insertAdjacentHTML('beforeend', '<table border="1"><tr><td><svg fill="#ffffff"></svg></td></tr></table>');
                 let svg = document.querySelector('svg');
                 svg.setAttribute('width', config.stage.width);

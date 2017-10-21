@@ -4,7 +4,7 @@
     let script = document.currentScript;
     
     let s = 2.4;
-    let a = -0.5;
+    let a = -1;
     let b = 0.6;
 
     let x0 = 1;
@@ -19,11 +19,10 @@
 
     script.insertAdjacentHTML('afterend',`<svg width="1500" height="1500">
     <g transform="translate(700,700)scale(50,50)">
-    <g transform="scale(${s},${s})rotate(90)">
-    <g transform="scale(${s},${s})rotate(90)">
+    <g transform="scale(${s},${s})rotate(45)">
+    <g transform="scale(${s},${s})rotate(45)">
         <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" opacity="0.2" />
-    </g></g>
-    <g transform="scale(${s},${s})rotate(90)">
+    </g>
         <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" opacity="0.4"/>
     </g>
         <polygon points="${x0},${y0} ${x1},${y1} ${x2},${y2} ${x3},${y3}" fill="#ffffff"/>
