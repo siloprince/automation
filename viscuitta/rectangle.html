@@ -1,0 +1,90 @@
+<html>
+<header>
+    <style>
+        .flip {
+            transform: scale(-1,1)
+        }
+    </style>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeRatio (raw) {
+        let ratio = 1+raw/100;
+        let side = 4;
+        changeRot(side);
+        var pointsArray = [];
+        for (let vi=0;vi<side;vi++) {
+            let x = Math.cos(Math.PI/4+vi*2*Math.PI/side);
+            let y = ratio*Math.sin(Math.PI/4+vi*2*Math.PI/side);
+            pointsArray.push(x+','+y);
+        }
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', pointsArray.join(' '));
+    }
+    function changeScale(raw) {
+        let scale = raw/30;
+
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+    }
+    function changeRot(side) {
+        let rot = 360/side/2;
+        let rots = document.querySelectorAll('g.rot');
+        for (let ri=0;ri<rots.length;ri++) {
+            rots[ri].setAttribute('transform',`rotate(${rot})`);
+        }        
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeRatio(50);
+        changeScale(80);
+    });
+    </script>
+</header>
+<body>
+    <input id="side" type="range" min="0" max="100" value="50" oninput="
+   let val = parseInt(event.target.value,10);
+   changeRatio(val);
+    "/> ratio<p/>
+    <input type="range" min="0" max="100" value="80" oninput="
+   let val = parseInt(event.target.value,10);
+   changeScale(val);
+    "/> scale<p/>
+    <button onclick="
+    let side = parseInt(document.querySelector('input#side').value,10);
+    if (side%2===1) {
+        let flippable = document.querySelector('.flippable');
+        flippable.classList.toggle('flip');
+    }
+    "
+    > flip</button><p/>
+<svg width="1500" height="1500">
+    <g transform="translate(400,150)scale(30,30)">  
+
+        <g class="scale">
+            <g class="rot">
+            <g class="scale" opacity="0.4">
+                <g class="rot">    
+                <use  xlink:href="#x"/>
+                </g>
+            </g>
+            <g opacity="0.2">
+                <use  xlink:href="#x"/>
+        </g>
+        </g>
+        </g>
+        <g class="flippable">
+        <g transform="scale(1,1)" fill="#ffffff">
+            <use  xlink:href="#x"/>
+        </g>
+        </g>
+    </g>
+  </svg>
+
+</body>
+</html>
