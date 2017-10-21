@@ -1,0 +1,63 @@
+<html>
+<header>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeShape (raw) {
+        let val = -raw/100;
+        let x0 = 1;
+        let y0 = 0;
+        let x1 = val; 
+        let y1 = (1-val)/Math.sqrt(3);
+        let x2 = val;
+        let y2 = -(1-val)/Math.sqrt(3);
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', `${x0},${y0} ${x1},${y1} ${x2},${y2}`);
+    }
+    function changeScale(raw) {
+        let scale = raw/30;
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeShape(50);
+        changeScale(80);
+    });
+    </script>
+</header>
+<body>
+    <input type="range" min="0" max="100" value="50" oninput="
+   let val = parseInt(event.target.value,10);
+   changeShape(val);
+    "/> param <p/>
+    <input type="range" min="0" max="100" value="80" oninput="
+   let val = parseInt(event.target.value,10);
+   changeScale(val);
+    "/> scale<p/>
+<svg width="1500" height="1500">
+    <g transform="translate(400,300)scale(20,20)">  
+        <g class="scale">
+            <g class="scale" opacity="0.4">
+                <g transform="rotate(30)rotate(30)">
+                <use  xlink:href="#x"/>
+                </g>
+            </g>
+            <g opacity="0.6" transform="rotate(30)">
+                <use  xlink:href="#x"/>
+            </g>
+        </g>
+        
+        <g transform="scale(1,1)" fill="#ffffff">
+            <use  xlink:href="#x"/>
+        </g>
+    </g>
+  </svg>
+
+</body>
+</html>
