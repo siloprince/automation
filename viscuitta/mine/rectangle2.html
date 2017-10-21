@@ -1,0 +1,110 @@
+<html>
+<header>
+    <style>
+        .flip {
+            transform: scale(-1,1)
+        }
+    </style>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeParam (raw1, raw2) {
+
+        let a = -raw1/100;
+        let b = raw2/100;
+        var pointsArray = [];
+        let x0 = 1;
+        let y0 = b;
+        pointsArray.push(x0+','+y0);
+        let x1 = a; 
+        let y1 = b;
+        pointsArray.push(x1+','+y1);
+        let x2 = a;
+        let y2 = -b;
+        pointsArray.push(x2+','+y2);
+        let x3 = 1;
+        let y3 = -b;
+        pointsArray.push(x3+','+y3);
+
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', pointsArray.join(' '));
+    }
+    function changeScale(raw) {
+        let scale = raw/30;
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+    }
+    function changeRot(raw) {
+        let rot = 360*raw/100;
+        let rots = document.querySelectorAll('g.rot');
+        for (let ri=0;ri<rots.length;ri++) {
+            rots[ri].setAttribute('transform',`rotate(${rot})`);
+        } 
+        let invrots = document.querySelectorAll('g.invrot');
+        for (let ri=0;ri<invrots.length;ri++) {
+            invrots[ri].setAttribute('transform',`rotate(${-rot})`);
+        }              
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeRot(50);
+        changeParam(50,50);
+        changeScale(80);
+    });
+    </script>
+</header>
+<body>
+    <input id="param1" type="range" min="0" max="100" value="50" oninput="
+   let param1 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   changeParam(param1, param2);
+    "/> param 1 <p/>
+    <input id="param2" type="range" min="0" max="100" value="50" oninput="
+   let param2 = parseInt(event.target.value,10);
+   let input1 = document.querySelector('input#param1');
+   let param1 = parseInt(input1.value,10);
+   changeParam(param1, param2);
+    "/> param 2<p/>
+    <input id="param2" type="range" min="0" max="100" value="50" oninput="
+   let value = parseInt(event.target.value,10);
+   changeRot(value);
+    "/> rotate<p/>
+    <input type="range" min="0" max="100" value="80" oninput="
+   let val = parseInt(event.target.value,10);
+   changeScale(val);
+    "/> scale<p/>
+    <button onclick="
+    let flippable = document.querySelector('.flippable');
+    flippable.classList.toggle('flip');
+    "
+    > flip</button><p/>
+<svg width="1500" height="1500">
+    <g transform="translate(400,200)scale(30,30)">  
+
+        <g class="scale">
+            <g class="invrot">
+            <g class="scale" opacity="0.4">
+                <g class="rot">    
+                <use  xlink:href="#x"/>
+                </g>
+            </g>
+            <g opacity="0.2">
+                <use  xlink:href="#x"/>
+            </g>
+        </g>
+        </g>
+        <g class="flippable">
+        <g transform="scale(1,1)" fill="#ffffff">
+            <use  xlink:href="#x"/>
+        </g>
+        </g>
+    </g>
+  </svg>
+
+</body>
+</html>
