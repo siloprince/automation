@@ -1,0 +1,60 @@
+<html>
+<header>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeShape (raw) {
+        let rot = raw*90/100;
+        let theta = rot*Math.PI/180;
+        // http://keisan.casio.jp/has10/SpecExec.cgi?path=04000000.%90%94%8Aw%8C%F6%8E%AE%8FW%2F01000200.%96%CA%90%CF%2F11014100.%8EO%8Ap%8C%60%82%CC%96%CA%90%CF%81i%82P%95%D3%82%C6%82Q%8Ap%82%A9%82%E7%81j%2Fdefault.xml
+
+        let tan1 = Math.tan(theta);
+        let tan2 = Math.tan(2*theta);
+        let height = 2 * (tan1*tan2)/(tan1+tan2);
+    
+        let x0 = 0;
+        let y0 = 0;
+        let x1 = height/tan1;
+        let y1 = height;
+        let x2 = 2;
+        let y2 = 0;
+
+        let u = Math.sqrt(1+tan1*tan1);
+        let scale = u/2;
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', `${x0},${y0} ${x1},${y1} ${x2},${y2}`);
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+
+        let robj = document.querySelector('.rotate');
+        robj.setAttribute('transform',`rotate(${rot})`);
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeShape(50);
+    });
+    </script>
+</header>
+<body>
+    <input type="range" min="0" max="100" value="50" oninput="
+   let val = parseInt(event.target.value,10);
+   changeShape(val);
+    "/> param <p/>
+<svg width="1500" height="1500">
+    <g transform="translate(200,100)scale(70,70)rotate(0)">  
+
+        <g opacity="0.4"><use  xlink:href="#x"/></g>
+        <g class="rotate">
+         <g class="scale" opacity="0.2"><use  xlink:href="#x"/></g>
+        </g>
+        
+    </g>
+  </svg>
+
+</body>
+</html>

@@ -11,21 +11,20 @@
         </defs>
     </svg>
     <script type="text/javascript">
-    function changeSide (raw) {
-        let val = raw;
-        changeRot(val);
+    function changeRatio (raw) {
+        let ratio = 1+(raw-30)/100;
+        let side = 4;
+        changeRot(side);
         var pointsArray = [];
-        for (let vi=0;vi<val;vi++) {
-            let x = Math.cos(vi*2*Math.PI/val);
-            let y = Math.sin(vi*2*Math.PI/val);
+        for (let vi=0;vi<side;vi++) {
+            let x = Math.cos(Math.PI/4+vi*2*Math.PI/side);
+            let y = ratio*Math.sin(Math.PI/4+vi*2*Math.PI/side);
             pointsArray.push(x+','+y);
         }
         let xobj = document.querySelector('polygon#x');
         xobj.setAttribute('points', pointsArray.join(' '));
     }
     function changeScale(raw) {
-        let side = parseInt(document.querySelector('input#side').value,10);
-        changeRot(side);
         let scale = raw/30;
 
         let scales = document.querySelectorAll('g.scale');
@@ -34,10 +33,7 @@
         }
     }
     function changeRot(side) {
-        let rot = 180/2;
-        if (side%2===0) {
-            rot = 360/side/2/2;
-        }
+        let rot = 360/side/2;
         let rots = document.querySelectorAll('g.rot');
         for (let ri=0;ri<rots.length;ri++) {
             rots[ri].setAttribute('transform',`rotate(${rot})`);
@@ -45,30 +41,22 @@
     }
     document.addEventListener('DOMContentLoaded',
     function(){
-        changeSide(3);
+        changeRatio(50);
         changeScale(80);
     });
     </script>
 </header>
 <body>
-    <input id="side" type="range" min="3" max="10" value="3" oninput="
+    <input id="side" type="range" min="0" max="100" value="50" oninput="
    let val = parseInt(event.target.value,10);
-   changeSide(val);
-    "/> side<p/>
+   changeRatio(val);
+    "/> ratio<p/>
     <input type="range" min="0" max="100" value="80" oninput="
    let val = parseInt(event.target.value,10);
    changeScale(val);
     "/> scale<p/>
-    <button onclick="
-    let side = parseInt(document.querySelector('input#side').value,10);
-    if (side%2===1) {
-        let flippable = document.querySelector('.flippable');
-        flippable.classList.toggle('flip');
-    }
-    "
-    > flip</button><p/>
 <svg width="1500" height="1500">
-    <g transform="translate(300,250)scale(30,30)">  
+    <g transform="translate(400,200)scale(30,30)">  
 
         <g class="scale">
             <g class="rot">
