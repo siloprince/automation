@@ -1,0 +1,120 @@
+<html>
+<header>
+    <style>
+        .flip {
+            transform: scale(-1,1)
+        }
+    </style>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeSide (raw) {
+        let val = raw;
+        changeRot(val);
+        var pointsArray = [];
+        for (let vi=0;vi<val;vi++) {
+            let x = Math.cos(vi*2*Math.PI/val);
+            let y = Math.sin(vi*2*Math.PI/val);
+            pointsArray.push(x+','+y);
+        }
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', pointsArray.join(' '));
+    }
+    function changeScale(raw) {
+        let side = parseInt(document.querySelector('input#side').value,10);
+        changeRot(side);
+        let scale = raw/30;
+
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+    }
+    function changeTrans(xraw,yraw) {
+        let x = (xraw-50)/100;
+        let y = (yraw-50)/100;
+
+        let trans = document.querySelectorAll('g.trans');
+        for (let si=0;si<trans.length;si++) {
+            trans[si].setAttribute('transform',`translate(${x},${y})`);
+        }
+    }
+    function changeRot(side) {
+        let rot = 180/2;
+        if (side%2===0) {
+            rot = 360/side/2/2;
+        }
+        let rots = document.querySelectorAll('g.rot');
+        for (let ri=0;ri<rots.length;ri++) {
+            rots[ri].setAttribute('transform',`rotate(${rot})`);
+        }        
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeTrans(50,50);
+        changeSide(3);
+        changeScale(80);
+    });
+    </script>
+</header>
+<body>
+    <input id="side" type="range" min="3" max="10" value="3" oninput="
+   let val = parseInt(event.target.value,10);
+   changeSide(val);
+    "/> side<p/>
+    <input id="x" type="range" min="0" max="100" value="50" oninput="
+   let x = parseInt(event.target.value,10);
+   let y = parseInt(document.querySelector('input#y').value,10);
+   changeTrans(x,y);
+    "/> x<p/>
+
+    <input id="y" type="range" min="0" max="100" value="50" oninput="
+   let y = parseInt(event.target.value,10);
+   let x = parseInt(document.querySelector('input#x').value,10);
+   changeTrans(x,y)
+    "/> y<p/>
+    <input type="range" min="0" max="100" value="80" oninput="
+   let val = parseInt(event.target.value,10);
+   changeScale(val);
+    "/> scale<p/>
+    <!--
+    <button onclick="
+    let side = parseInt(document.querySelector('input#side').value,10);
+    if (side%2===1) {
+        let flippable = document.querySelector('.flippable');
+        flippable.classList.toggle('flip');
+    }
+    "
+    > flip</button><p/>-->
+<svg width="1500" height="1500">
+    <g transform="translate(300,250)scale(30,30)">  
+
+        <g class="trans">
+        <g class="scale">
+            <g class="rot">
+            <g class="trans">
+            <g class="scale" opacity="0.4">
+                <g class="rot">    
+                <use  xlink:href="#x"/>
+                </g>
+            </g>
+            </g>
+            <g opacity="0.2">
+                <use  xlink:href="#x"/>
+        </g>
+        </g>
+        </g>
+        </g>
+        <g class="flippable">
+        <g transform="scale(1,1)" fill="#ffffff">
+            <use  xlink:href="#x"/>
+        </g>
+        </g>
+    </g>
+  </svg>
+
+</body>
+</html>

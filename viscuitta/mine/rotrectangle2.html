@@ -1,0 +1,107 @@
+<html>
+<header>
+    <style>
+        .flip {
+            transform: scale(-1,1)
+        }
+    </style>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeRatio (raw) {
+        let ratio = 1+(raw-30)/100;
+        let side = 4;
+        changeRot(side);
+        var pointsArray = [];
+        for (let vi=0;vi<side;vi++) {
+            let x = Math.cos(Math.PI/4+vi*2*Math.PI/side);
+            let y = ratio*Math.sin(Math.PI/4+vi*2*Math.PI/side);
+            pointsArray.push(x+','+y);
+        }
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', pointsArray.join(' '));
+    }
+    function changeScale(raw) {
+        let scale = raw/30;
+
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+    }
+    function changeTrans(xraw,yraw) {
+        let x = (xraw-50)/100;
+        let y = (yraw-50)/100;
+
+        let trans = document.querySelectorAll('g.trans');
+        for (let si=0;si<trans.length;si++) {
+            trans[si].setAttribute('transform',`translate(${x},${y})`);
+        }
+    }
+    function changeRot(side) {
+        let rot = 360/side/2;
+        let rots = document.querySelectorAll('g.rot');
+        for (let ri=0;ri<rots.length;ri++) {
+            rots[ri].setAttribute('transform',`rotate(${rot})`);
+        }        
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeTrans(50,50);
+        changeRatio(50);
+        changeScale(80);
+    });
+    </script>
+</header>
+<body>
+    <input id="side" type="range" min="0" max="100" value="50" oninput="
+   let val = parseInt(event.target.value,10);
+   changeRatio(val);
+    "/> ratio<p/>
+    <input id="x" type="range" min="0" max="100" value="50" oninput="
+   let x = parseInt(event.target.value,10);
+   let y = parseInt(document.querySelector('input#y').value,10);
+   changeTrans(x,y);
+    "/> x<p/>
+
+    <input id="y" type="range" min="0" max="100" value="50" oninput="
+   let y = parseInt(event.target.value,10);
+   let x = parseInt(document.querySelector('input#x').value,10);
+   changeTrans(x,y)
+    "/> y<p/>
+    <input type="range" min="0" max="100" value="80" oninput="
+   let val = parseInt(event.target.value,10);
+   changeScale(val);
+    "/> scale<p/>
+<svg width="1500" height="1500">
+    <g transform="translate(400,200)scale(30,30)">  
+
+        <g class="trans">
+        <g class="scale">
+            <g class="rot">
+            <g class="trans">
+            <g class="scale" opacity="0.4">
+                <g class="rot">    
+                <use  xlink:href="#x"/>
+                </g>
+            </g>
+             </g>
+            <g opacity="0.2">
+                <use  xlink:href="#x"/>
+        </g>
+        </g>
+        </g>
+        </g>
+        <g class="flippable">
+        <g transform="scale(1,1)" fill="#ffffff">
+            <use  xlink:href="#x"/>
+        </g>
+        </g>
+    </g>
+  </svg>
+
+</body>
+</html>
