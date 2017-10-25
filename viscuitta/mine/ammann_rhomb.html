@@ -1,0 +1,75 @@
+<html>
+<header>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeShape (raw) {
+        // https://www.wolframalpha.com/input/?i=solve+a%2Bb+%3D+1%2Fb+%2B+a+b%5E4+over+the+real
+        let a = raw/100;
+        let b = 1;
+        let c = Math.pow(9*Math.pow(a,2) + Math.sqrt(3)*Math.sqrt(27*Math.pow(a,4) + 4*Math.pow(a,6)),1/3);
+        if (a===1/2) {
+            b = 1;
+        } else {
+            b = (Math.pow(2,1/3) * c*c - 2*Math.pow(3,1/3)*a*a)/(Math.pow(6,2/3)*a*c);
+        }
+
+        let theta = Math.PI/2.5;
+        let cos = Math.cos(theta);
+        let sin = Math.sin(theta);
+
+        let x0 = 0;
+        let y0 = 0;
+        let x1 = 1;
+        let y1 = 0;
+        let x2 = 1 - b*cos;
+        let y2 = b*sin;
+        let x3 = a*b*b*b - b*cos;
+        let y3 = b*sin;
+        let x4 = cos+x3*b*b*cos;
+        let y4 = x3*b;
+        let x5 = 0- y4*b*cos;
+        let y5 = y4;
+
+        let scale = 1/b;
+
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', `${x0},${y0} ${x1},${y1} ${x2},${y2}, ${x3},${y3} ${x4},${y4} ${x5},${y5}`);
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+        let trans = document.querySelectorAll('g.trans');
+        for (let si=0;si<trans.length;si++) {
+            trans[si].setAttribute('transform',`translate(${0},${b-a*b*b})`);
+        }
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeShape(50);
+    });
+    </script>
+</header>
+<body>
+    <input type="range" min="0" max="100" value="50" oninput="
+   let val = parseInt(event.target.value,10);
+   changeShape(val);
+    "/> param <p/>
+<svg width="1500" height="1500">
+    <g transform="translate(200,100)scale(70,70)rotate(0)">  
+
+        <g opacity="0.4"><use  xlink:href="#x"/></g>
+        <g class="trans">
+        <g transform="rotate(-90)scale(-1,1)">
+         <g class="scale" opacity="0.2"><use  xlink:href="#x"/></g>
+        </g>
+    </g>
+        
+    </g>
+  </svg>
+
+</body>
+</html>
