@@ -1,0 +1,191 @@
+<html>
+<header>
+    <style>
+        .flip {
+            transform: scale(-1,1)
+        }
+    </style>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x"/>
+        </defs>
+    </svg>
+    <script type="text/javascript">
+    function changeParam (raw1, raw2, raw3, raw4, raw5, raw6, raw7) {
+console.log(raw1+' '+raw2);
+        let a = -raw1/100;
+        let b = raw2/100;
+        let c = 0.5+0.5*raw3/100;
+        let d = raw4/100;
+        let e = raw5/100;//0.5;
+        let f = 0.2*raw6/100;//0.3;
+        let g = 0.5+raw7/100;//0.6;
+        var pointsArray = [];
+        let x0 = 1;
+        let y0 = b;
+        pointsArray.push(x0+','+y0);
+        let x001 = 1-e; 
+        let y001 = b;
+        pointsArray.push(x001+','+y001);
+        let x002 = 1-e; 
+        let y002 = b-f;
+        pointsArray.push(x002+','+y002);
+        let x003 = 1-g; 
+        let y003 = b-f;
+        pointsArray.push(x003+','+y003);
+        let x004 = 1-g; 
+        let y004 = b;
+        pointsArray.push(x004+','+y004);
+        let x1 = a; 
+        let y1 = b;
+        pointsArray.push(x1+','+y1);
+        let x2 = a;
+        let y2 = -b;
+        pointsArray.push(x2+','+y2);
+        let x3 = 1;
+        let y3 = -b;
+        pointsArray.push(x3+','+y3);
+        let x101 = 1; 
+        let y101 = b-c;
+        pointsArray.push(x101+','+y101);
+        let x102 = 1-d; 
+        let y102 = b-c;
+        pointsArray.push(x102+','+y102);
+        let x103 = 1-d; 
+        let y103 = -b+c;
+        pointsArray.push(x103+','+y103);
+        let x104 = 1; 
+        let y104 = -b+c;
+        pointsArray.push(x104+','+y104);
+
+        let xobj = document.querySelector('polygon#x');
+        xobj.setAttribute('points', pointsArray.join(' '));
+    }
+    function changeScale(raw) {
+        let scale = raw/30;
+        let scales = document.querySelectorAll('g.scale');
+        for (let si=0;si<scales.length;si++) {
+            scales[si].setAttribute('transform',`scale(${scale},${scale})`);
+        }
+    }
+    function changeRot(side) {
+        let rot = 360/side;
+        let rots = document.querySelectorAll('g.rot');
+        for (let ri=0;ri<rots.length;ri++) {
+            rots[ri].setAttribute('transform',`rotate(${rot})`);
+        }        
+    }
+    document.addEventListener('DOMContentLoaded',
+    function(){
+        changeRot(4);
+        changeParam(14,38,10,10,50,50,50);
+        changeScale(80);
+    });
+    </script>
+</header>
+<body>
+    <input id="param1" type="range" min="0" max="100" value="14" oninput="
+   let param1 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   let param3 = parseInt(document.querySelector('input#param3').value,10);
+   let param4 = parseInt(document.querySelector('input#param4').value,10);
+   let param5 = parseInt(document.querySelector('input#param5').value,10);
+   let param6 = parseInt(document.querySelector('input#param6').value,10);
+   let param7 = parseInt(document.querySelector('input#param7').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 1 <p/>
+    <input id="param2" type="range" min="0" max="100" value="38" oninput="
+   let param2 = parseInt(event.target.value,10);
+   let param1 = parseInt(document.querySelector('input#param1').value,10);
+   let param3 = parseInt(document.querySelector('input#param3').value,10);
+   let param4 = parseInt(document.querySelector('input#param4').value,10);
+   let param5 = parseInt(document.querySelector('input#param5').value,10);
+   let param6 = parseInt(document.querySelector('input#param6').value,10);
+   let param7 = parseInt(document.querySelector('input#param7').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 2<p/>
+    <input id="param3" type="range" min="0" max="100" value="10" oninput="
+   let param3 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   let param1 = parseInt(document.querySelector('input#param1').value,10);
+   let param4 = parseInt(document.querySelector('input#param4').value,10);
+   let param5 = parseInt(document.querySelector('input#param5').value,10);
+   let param6 = parseInt(document.querySelector('input#param6').value,10);
+   let param7 = parseInt(document.querySelector('input#param7').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 3 <p/>
+    <input id="param4" type="range" min="0" max="100" value="10" oninput="
+   let param4 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   let param3 = parseInt(document.querySelector('input#param3').value,10);
+   let param1 = parseInt(document.querySelector('input#param1').value,10);
+   let param5 = parseInt(document.querySelector('input#param5').value,10);
+   let param6 = parseInt(document.querySelector('input#param6').value,10);
+   let param7 = parseInt(document.querySelector('input#param7').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 4<p/>
+    <input id="param5" type="range" min="0" max="100" value="30" oninput="
+   let param5 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   let param1 = parseInt(document.querySelector('input#param1').value,10);
+   let param4 = parseInt(document.querySelector('input#param4').value,10);
+   let param3 = parseInt(document.querySelector('input#param3').value,10);
+   let param6 = parseInt(document.querySelector('input#param6').value,10);
+   let param7 = parseInt(document.querySelector('input#param7').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 5 <p/>
+    <input id="param6" type="range" min="0" max="100" value="30" oninput="
+   let param6 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   let param3 = parseInt(document.querySelector('input#param3').value,10);
+   let param1 = parseInt(document.querySelector('input#param1').value,10);
+   let param4 = parseInt(document.querySelector('input#param4').value,10);
+   let param5 = parseInt(document.querySelector('input#param5').value,10);
+   let param7 = parseInt(document.querySelector('input#param7').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 6<p/>
+    <input id="param7" type="range" min="0" max="100" value="30" oninput="
+   let param7 = parseInt(event.target.value,10);
+   let param2 = parseInt(document.querySelector('input#param2').value,10);
+   let param3 = parseInt(document.querySelector('input#param3').value,10);
+   let param1 = parseInt(document.querySelector('input#param1').value,10);
+   let param5 = parseInt(document.querySelector('input#param5').value,10);
+   let param4 = parseInt(document.querySelector('input#param4').value,10);
+   let param6 = parseInt(document.querySelector('input#param6').value,10);
+   changeParam(param1, param2,param3,param4,param5,param6,param7);
+    "/> param 7<p/>
+    <input type="range" min="0" max="100" value="80" oninput="
+   let val = parseInt(event.target.value,10);
+   console.log('s='+val);
+   changeScale(val);
+    "/> scale<p/>
+    <button onclick="
+    let flippable = document.querySelector('.flippable');
+    flippable.classList.toggle('flip');
+    "
+    > flip</button><p/>
+<svg width="1500" height="1500">
+    <g transform="translate(400,200)scale(30,30)">  
+
+        <g class="scale">
+            <g class="rot">
+            <g class="scale" opacity="0.4">
+                <g class="rot">    
+                <use  xlink:href="#x"/>
+                </g>
+            </g>
+            <g opacity="0.2">
+                <use  xlink:href="#x"/>
+        </g>
+        </g>
+        </g>
+        <g class="flippable">
+        <g transform="scale(1,1)" fill="#ffffff">
+            <use  xlink:href="#x"/>
+        </g>
+        </g>
+    </g>
+  </svg>
+
+</body>
+</html>
