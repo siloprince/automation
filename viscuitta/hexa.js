@@ -273,9 +273,9 @@
     }
     function addSeed (args) {
         if (typeof g_main !== 'undefined') {
-            polygonSVG(g_main, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);
+            polygonSVG(g_main, config.stage.width / 6, config.stage.height / 6, 0, 1, 1, 0, args);
         } else {
-            polygonSVG(0, config.stage.width / 3, config.stage.height / 3, 0, 1, 1, 0, args);            
+            polygonSVG(0, config.stage.width / 6, config.stage.height / 6, 0, 1, 1, 0, args);            
         }
     }
     function updateConfig() {
