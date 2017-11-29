@@ -198,7 +198,7 @@ function mouseMove(e){
 		// テクスチャユニットを指定してバインドし登録する
 		gl.activeTexture(gl.TEXTURE2);
 
-//		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, video);
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, video);
 		
 		gl.bindTexture(gl.TEXTURE_2D, texture2);
 		gl.uniform1i(uniLocation[3+3], 2);
