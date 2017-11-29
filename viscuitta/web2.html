@@ -29,9 +29,10 @@ var uniLocation = [];
 var count = 0;
 var mvpMatrix, mMatrix,tmpMatrix,m;
 var texture0 = null, texture1 = null;
+var videoTexture = null;
 var index;
-var texture2 = null;
 var video;
+var videoTexture;
 
 // onload
 window.onload = function(){
@@ -64,7 +65,7 @@ window.onload = function(){
 	uniLocation.push(gl.getUniformLocation(prg, 'mvpMatrix'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture0'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture1'));
-	uniLocation.push(gl.getUniformLocation(prg, 'texture2'));
+	uniLocation.push(gl.getUniformLocation(prg, 'videoTexture'));
 	
 	// attributeLocationを配列に取得
 	var attLocation = new Array();
@@ -108,9 +109,6 @@ window.onload = function(){
 		1, 2, 3
 	];
 	
-
-
-
 	// VBOとIBOの生成
 	var vPosition     = create_vbo(position);
 	var vColor        = create_vbo(color);
@@ -143,7 +141,7 @@ window.onload = function(){
 	create_texture('texture0.png', 0);
 	create_texture('texture1.png', 1);
 
-	texture2 = gl.createTexture(gl.TEXTURE_2D);
+	videoTexture = gl.createTexture(gl.TEXTURE_2D);
 	
 	// その他の初期化
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
@@ -195,14 +193,13 @@ function mouseMove(e){
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, texture1);
 		gl.uniform1i(uniLocation[2+3], 1);
-/*
+
 		// テクスチャを更新する
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, video);
-*/
 		// テクスチャユニットを指定してバインドし登録する
 		gl.activeTexture(gl.TEXTURE2);
-		gl.bindTexture(gl.TEXTURE_2D, texture2);
-		gl.uniform1i(uniLocation[3+3], 2);
+		gl.bindTexture(gl.TEXTURE_2D, videoTexture);
+		gl.uniform1i(uniLocation[3+3], 1);
 		
 		// モデル座標変換行列の生成
 		m.identity(mMatrix);
