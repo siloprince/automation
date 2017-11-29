@@ -8,7 +8,7 @@
         uniform vec2  resolution;
         uniform sampler2D texture0;
         uniform sampler2D texture1;
-        //uniform sampler2D texture2;
+        uniform sampler2D texture2;
         varying vec4      vColor;
         varying vec2      vTextureCoord;
         
@@ -58,9 +58,9 @@
             vec2 texCoord = vec2(red,blue);
             vec4 smpColor0 = texture2D(texture0, texCoord);
             vec4 smpColor1 = texture2D(texture1, texCoord);
-            //vec4 smpColor2 = texture2D(texture2, texCoord);
+            vec4 smpColor2 = texture2D(texture2, texCoord);
             //gl_FragColor   = smpColor0 * smpColor1 * smpColor2;
-            gl_FragColor   = smpColor1;
+            gl_FragColor   = smpColor2;
         }
     </script><!-- /fragment shader -->
     
