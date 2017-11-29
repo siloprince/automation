@@ -2,6 +2,13 @@
 //
 // WebGLで複数のテクスチャを利用し合成処理する
 
+var c, cw, ch, mx, my, gl, run, eCheck;
+var startTime;
+var time = 0.0;
+var tempTime = 0.0;
+var fps = 1000 / 30;
+var uniLocation = new Array();
+
 onload = function(){
 	// canvasエレメントを取得
 	var c = document.getElementById('canvas');
@@ -136,7 +143,7 @@ onload = function(){
 		gl.flush();
 		
 		// ループのために再帰呼び出し
-		setTimeout(arguments.callee, 1000 / 30);
+		setTimeout(arguments.callee, fps);
 	})();
 	
 	// シェーダを生成する関数
