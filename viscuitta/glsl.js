@@ -143,8 +143,6 @@ window.onload = function(){
 	create_texture('texture0.png', 0);
 	create_texture('texture1.png', 1);
 
-	texture2 = gl.createTexture(gl.TEXTURE_2D);
-	
 	// その他の初期化
 	gl.clearColor(0.0, 0.0, 0.0, 1.0);
 	mx = 0.5; my = 0.5;
@@ -195,14 +193,18 @@ function mouseMove(e){
 		gl.activeTexture(gl.TEXTURE1);
 		gl.bindTexture(gl.TEXTURE_2D, texture1);
 		gl.uniform1i(uniLocation[2+3], 1);
+
 /*
-		// テクスチャを更新する
-		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, video);
-*/
 		// テクスチャユニットを指定してバインドし登録する
 		gl.activeTexture(gl.TEXTURE2);
+
+		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA,gl.UNSIGNED_BYTE, video);
+		
 		gl.bindTexture(gl.TEXTURE_2D, texture2);
 		gl.uniform1i(uniLocation[3+3], 2);
+
+*/
+		// テクスチャを更新する
 		
 		// モデル座標変換行列の生成
 		m.identity(mMatrix);
@@ -414,6 +416,8 @@ function canWebcam(){
 				
 				// video エレメントの生成
 				video = document.createElement('video');
+
+
 				
 				// video エレメントにイベントを設定
 				video.addEventListener('canplay', function(){
@@ -422,6 +426,27 @@ function canWebcam(){
 					
 					// video 再生開始をコール
 					video.play();
+
+										// テクスチャオブジェクトの生成
+										texture2 = gl.createTexture(gl.TEXTURE_2D);
+										
+										// テクスチャをバインドする
+										gl.bindTexture(gl.TEXTURE_2D, texture2);
+										
+										// テクスチャへイメージを適用
+										gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
+										
+										// ミップマップを生成
+										gl.generateMipmap(gl.TEXTURE_2D);
+										
+										// テクスチャのバインドを無効化
+										gl.bindTexture(gl.TEXTURE_2D, null);
+										
+					
+										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 					
 					// レンダリング関数を呼ぶ
 					render();
