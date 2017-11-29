@@ -431,22 +431,23 @@ function canWebcam(){
 										texture2 = gl.createTexture(gl.TEXTURE_2D);
 										
 										// テクスチャをバインドする
+										gl.activeTexture(gl.TEXTURE2);
 										gl.bindTexture(gl.TEXTURE_2D, texture2);
 										
 										// テクスチャへイメージを適用
 										gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
-										
+										/*
 										// ミップマップを生成
 										gl.generateMipmap(gl.TEXTURE_2D);
 										
 										// テクスチャのバインドを無効化
 										gl.bindTexture(gl.TEXTURE_2D, null);
-										
+										*/
 					
-										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
-										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
-										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
-										  gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
+										gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MAG_FILTER, gl.LINEAR);
+										gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_MIN_FILTER, gl.LINEAR);
+										gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_S, gl.CLAMP_TO_EDGE);
+										gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 					
 					// レンダリング関数を呼ぶ
 					render();
