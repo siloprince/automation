@@ -59,9 +59,11 @@
         currentStep: 0,
         userConfigStr: JSON.stringify(config),
         xy: [
-            [150, 500+g_len*(1-1/2)],
-            [800, 500+g_len*(1-Math.sqrt(3)/2)],
-            [1500, 500]
+            [150, 200+g_len*(1-1/2)],
+            [800, 200+g_len*(1-Math.sqrt(3)/2)],
+            [1500, 2
+            
+            00]
         ],
         focus: [
             [150-250+g_len*(1+Math.cos(Math.PI/3))/2, 500-150+g_len*(1-1/2)/2],
