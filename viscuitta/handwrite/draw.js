@@ -42,7 +42,7 @@ for (let ci = 0; ci < containerList.length; ci++) {
             if (drawingPath) {
                 container.removeChild(drawingPath);
             }
-            drawingPath = createPathWithBezier(drawingPoints);
+            drawingPath = createPathWithBezier(drawingPoints,x,y);
             Object.assign(drawingPath.style, defaultPathStyle);
             container.appendChild(drawingPath);
         }
@@ -62,7 +62,7 @@ for (let ci = 0; ci < containerList.length; ci++) {
         console.log('drawingPoints', JSON.stringify(drawingPoints.map(point => [point.x, point.y])));
         drawingPoints = simplify(drawingPoints, parseFloat(8), true);
         let path;
-        path = createPathWithBezier(drawingPoints);
+        path = createPathWithBezier(drawingPoints,cx,cy);
         console.log(path);
         Object.assign(path.style, defaultPathStyle);
         container.appendChild(path);
@@ -82,14 +82,16 @@ function createPath(points) {
     return path;
 }
 
-function createPathWithBezier(points) {
+function createPathWithBezier(points,cx,cy) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     const cubics = catmullRom2bezier(points);
     let attribute = `M${points[0].x}, ${points[0].y}`;
     for (let i = 0; i < cubics.length; i++) {
         attribute += `C${cubics[i][0]},${cubics[i][1]} ${cubics[i][2]},${cubics[i][3]} ${cubics[i][4]},${cubics[i][5]}`;
+        if (cubics[i][2]===cx && cubics[i][3]===cy && cubics[i][4]===cx && cubics[i][5]===cy) {
+            break;
+        }
     }
-
     path.setAttributeNS(null, 'd', attribute);
     return path;
 }
