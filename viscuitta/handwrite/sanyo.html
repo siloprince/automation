@@ -1,0 +1,109 @@
+<html>
+  <body>
+  <input id="scale" type="range" min="0" value="100" max="200"/>
+  <div id="draw"></div>
+  <script type="text/javascript">
+'use strict';
+
+draw(100);
+
+let scalevalue = document.querySelector('input#scale');
+scale.addEventListener('change',function(ev){
+  let val = parseFloat(ev.target.value);
+  draw(val);
+});
+
+function draw(val) {
+let base = 100;
+let len = base+val;
+let move = base/Math.sqrt(2);
+let scale =val/Math.sqrt(2)/base;
+　
+let svg = `
+<?xml version="1.0" encoding="UTF-8"?>
+<svg 
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="2000" height="2000"
+>
+<!-- edge -->
+  <g transform="translate(200,75)">
+   <g transform="scale(1)">
+   <g >
+    <path id="0" d="M -100,0  -30,0 0,30 0,0 100,0"  style="fill:none;stroke:#ff0000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+   </g> <!-- end of id="0" -->
+
+  <g transform="translate(300,0)">
+    <path id="1" d="M -100,0  -30,0 0,30 0,0 100,0"  style="fill:none;stroke:#0000ff;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+   </g> <!-- end of id="1" -->
+   </g>
+   </g>
+
+<!-- tile -->
+<g transform="translate(250,350)">
+
+ <g transform="scale(0.5)">
+  <g id="atile">
+    <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+    <use xlink:href="#0" transform="translate(${len},0)rotate(-90)"/>
+    <use xlink:href="#0" transform="translate(0,${len})rotate(180)"/>
+    <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+
+    <g transform="rotate(-90)">
+    <g id="acap" transform="translate(${-len},${-len})scale(${scale})">
+    <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+    </g>
+    </g>
+    <g transform="rotate(0)">
+      <use xlink:href="#acap"/>
+    </g>
+    <g transform="rotate(90)">
+      <use xlink:href="#acap"/>
+    </g>
+    <g transform="rotate(180)">
+      <use xlink:href="#acap"/>
+    </g>
+   </g> 
+      </g> 
+  </g>
+ </g>
+   <!-- end of tile -->
+
+<!-- tile -->
+<g transform="translate(650,350)">
+
+ <g transform="scale(0.5)">
+  <g id="tile">
+    <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+    <use xlink:href="#0" transform="translate(${len},0)rotate(-90)"/>
+    <use xlink:href="#0" transform="translate(0,${len})rotate(180)"/>
+    <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+
+    <g transform="rotate(-90)">
+    <g id="cap" transform="translate(${-len},${-len})scale(${scale})">
+    <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+    </g>
+    </g>
+    <g transform="rotate(0)">
+    <g id="small" transform="translate(${-len},${-len})scale(${scale})">
+    <use xlink:href="#1" transform="translate(${-move},${move})rotate(225)"/>
+    <use xlink:href="#1" transform="translate(${-move},${-move})rotate(-45)"/>
+    <use xlink:href="#1" transform="translate(${move},${-move})rotate(45)"/>
+    </g>
+    </g>
+    <g transform="rotate(90)">
+      <use xlink:href="#small"/>
+    </g>
+    <g transform="rotate(180)">
+      <use xlink:href="#small"/>
+    </g>
+
+   </g> 
+  </g>
+ </g>
+</svg>`;
+document.querySelector('div#draw').insertAdjacentHTML('afterend',svg);
+}
+</script>
+  </body>
+  </html>

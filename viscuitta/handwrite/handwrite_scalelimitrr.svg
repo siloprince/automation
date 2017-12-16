@@ -1,0 +1,230 @@
+<?xml version="1.0" encoding="UTF-8" standalone="no"?>
+<svg
+   xmlns:dc="http://purl.org/dc/elements/1.1/"
+   xmlns:cc="http://creativecommons.org/ns#"
+   xmlns:rdf="http://www.w3.org/1999/02/22-rdf-syntax-ns#"
+   xmlns:svg="http://www.w3.org/2000/svg"
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   xmlns:sodipodi="http://sodipodi.sourceforge.net/DTD/sodipodi-0.dtd"
+   xmlns:inkscape="http://www.inkscape.org/namespaces/inkscape"
+   id="svg18922"
+   version="1.1"
+   inkscape:version="0.48.2 r9819"
+   width="100%"
+   height="100%"
+   sodipodi:docname="handwrite_scalelimitrr.svg">
+  <metadata
+     id="metadata19000">
+    <rdf:RDF>
+      <cc:Work
+         rdf:about="">
+        <dc:format>image/svg+xml</dc:format>
+        <dc:type
+           rdf:resource="http://purl.org/dc/dcmitype/StillImage" />
+        <dc:title></dc:title>
+      </cc:Work>
+    </rdf:RDF>
+  </metadata>
+  <defs
+     id="defs18998" />
+  <sodipodi:namedview
+     pagecolor="#ffffff"
+     bordercolor="#666666"
+     borderopacity="1"
+     objecttolerance="10"
+     gridtolerance="10"
+     guidetolerance="10"
+     inkscape:pageopacity="0"
+     inkscape:pageshadow="2"
+     inkscape:window-width="1440"
+     inkscape:window-height="791"
+     id="namedview18996"
+     showgrid="false"
+     inkscape:zoom="1"
+     inkscape:cx="244.6835"
+     inkscape:cy="728.63047"
+     inkscape:window-x="0"
+     inkscape:window-y="0"
+     inkscape:window-maximized="1"
+     inkscape:current-layer="svg18922" />
+  <!-- edge -->
+  <g
+     transform="translate(100,200)"
+     id="g18924">
+    <g
+       transform="scale(2)"
+       id="g18926">
+      <g
+         id="0">
+        <path
+           id="1"
+           d="m 0,0 4.3335369,7.0256108 9.7447051,11.1837362 13.91237,7.846096 20.225169,2.638694 11.126338,-3.522387 13.823809,13.403662 7.264555,1.835742 L 73.239848,38.600311 59.579983,25.345676 64.403517,11.873745 78.258132,-2.1475358 92.37461,-3.3168314 100,0"
+           style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cccccccccccccc" />
+      </g>
+      <!-- end of id="0" -->
+    </g>
+  </g>
+  <!-- tile -->
+  <g
+     transform="translate(50,350)"
+     id="g18930">
+    <g
+       transform="scale(1.5)"
+       id="g18932">
+      <g
+         id="tile">
+        <use
+           xlink:href="#0"
+           id="use18935" />
+        <use
+           xlink:href="#0"
+           transform="rotate(-90,100,0)"
+           id="use18937" />
+        <g
+           id="tile0"
+           transform="scale(0.70710678)">
+          <use
+             xlink:href="#0"
+             transform="rotate(45)"
+             id="use18940" />
+        </g>
+        <use
+           xlink:href="#tile0"
+           transform="rotate(180,50,50)"
+           id="use18942" />
+        <circle
+           cx="45"
+           cy="20"
+           r="5"
+           id="circle18944"
+           d="m 50,20 c 0,2.761424 -2.238576,5 -5,5 -2.761424,0 -5,-2.238576 -5,-5 0,-2.761424 2.238576,-5 5,-5 2.761424,0 5,2.238576 5,5 z"
+           sodipodi:cx="45"
+           sodipodi:cy="20"
+           sodipodi:rx="5"
+           sodipodi:ry="5"
+           transform="translate(-30.842536,8.5467268)"
+           style="fill:none;stroke:#000000;stroke-width:1" />
+        <path
+           id="path18946"
+           d="M 79.120679,26.317146 90,20"
+           style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           id="path18948"
+           d="M 111.07801,60.842535 90,30"
+           style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           id="path18950"
+           d="M 60.540838,44.830759 39.83443,33.311257"
+           style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+        <path
+           id="path18952"
+           d="M 39.731417,33.64974 26.828541,34.764531"
+           style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"
+           inkscape:connector-curvature="0"
+           sodipodi:nodetypes="cc" />
+      </g>
+      <!-- end of tile -->
+    </g>
+  </g>
+  <!-- tiling -->
+  <g
+     transform="translate(300,350)"
+     id="g18954">
+    <g
+       transform="scale(2)"
+       id="g18956">
+      <g
+         id="tiling2">
+        <g
+           id="tiling0">
+          <use
+             xlink:href="#tile"
+             id="use18960" />
+          <g
+             id="tiling1"
+             transform="scale(0.70710678)">
+            <use
+               xlink:href="#tile"
+               transform="rotate(45)"
+               id="use18963" />
+          </g>
+          <use
+             xlink:href="#tiling1"
+             transform="rotate(-90,50,50)"
+             id="use18965" />
+        </g>
+        <use
+           xlink:href="#tiling0"
+           transform="rotate(-90,100,0)"
+           id="use18967" />
+      </g>
+      <g
+         transform="translate(0,100)"
+         id="g18969">
+        <g
+           id="tiling3">
+          <use
+             xlink:href="#tiling2"
+             transform="scale(0.5)"
+             id="use18972" />
+          <g
+             transform="translate(100,0)"
+             id="g18974">
+            <use
+               xlink:href="#tiling2"
+               transform="scale(0.5)"
+               id="use18976" />
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(0,150)"
+         id="g18978">
+        <g
+           id="tiling4">
+          <use
+             xlink:href="#tiling3"
+             transform="scale(0.5)"
+             id="use18981" />
+          <g
+             transform="translate(100,0)"
+             id="g18983">
+            <use
+               xlink:href="#tiling3"
+               transform="scale(0.5)"
+               id="use18985" />
+          </g>
+        </g>
+      </g>
+      <g
+         transform="translate(0,175)"
+         id="g18987">
+        <g
+           id="tiling5">
+          <use
+             xlink:href="#tiling4"
+             transform="scale(0.5)"
+             id="use18990" />
+          <g
+             transform="translate(100,0)"
+             id="g18992">
+            <use
+               xlink:href="#tiling4"
+               transform="scale(0.5)"
+               id="use18994" />
+          </g>
+        </g>
+      </g>
+    </g>
+  </g>
+  <!-- end of tiling -->
+</svg>

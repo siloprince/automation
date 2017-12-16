@@ -1,0 +1,135 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg 
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+<!-- edge -->
+  <g transform="translate(100,200)">
+   <g transform="scale(0.6)">
+   <g id="0">
+    <path id="1" d="M 100,-25 173.20508,-100 346.41016,0"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+         <use xlink:href="#1" transform="scale(1,-1)"/>
+
+   <g id="2">
+    <path id="3" d="M 173.20508,0 246.41016,-25 "  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+    <path id="4" d="M 246.41016,-25  346.41016,0"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+       <g transform="translate(173.20508,0)">
+        <g transform="scale(-1,1)">
+         <use xlink:href="#3" transform="translate(-173.20508,0)"/>
+        </g>
+       </g>
+      </g>
+     <use xlink:href="#4" transform="rotate(180,173.20508,0)"/>
+    </g> <!-- end of id="0" -->
+
+   <g id="5">
+     <g transform="rotate(120,346.41016,0)">
+      <g id="6">
+       <use xlink:href="#3" transform="scale(1,-1)"/>
+       <use xlink:href="#4" transform="scale(1,-1)"/>
+       <g transform="rotate(180,173.20508,0)">
+        <use xlink:href="#3" transform="scale(1,-1)"/>
+        <use xlink:href="#4" transform="scale(1,-1)"/>
+       </g>
+       <path id="3" d="M 0,0 346.41016,0"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+     </g> <!--end of id="6" -->
+    </g>
+   </g>  <!-- end of id="5" -->
+   </g> <!-- end of id="0" -->
+   </g>
+
+
+<!-- tile -->
+<g transform="translate(150,350)">
+ <g transform="scale(0.2)">
+    <g transform="translate(173.20508,300)">
+    <g id="tile">
+    <g transform="rotate(-30)">
+    <g transform="translate(-173.20508,-300)">
+    <use xlink:href="#0"/>
+ 
+    <g transform="rotate(60,346.41016,0)">
+     <g transform="translate(692.82032,0)">
+      <use xlink:href="#0" transform="scale(-1,1)" />
+     </g>
+    </g>
+
+  <g transform="rotate(-60,0,0)">
+  <g transform="translate(-346.41016,0)">
+      <use xlink:href="#0" />
+  </g>
+  </g>
+
+  <g transform="translate(173.20508,300)">
+  <g transform="rotate(120,346.41016,0)">
+  <g transform="translate(692.82032,0)">
+      <use xlink:href="#0" transform="scale(-1,1)" />
+  </g>
+  </g>
+  </g>
+
+  <g transform="rotate(180,173.20508,300)">
+      <use xlink:href="#0" />
+  </g>
+
+  <g transform="translate(-173.20508,300)">
+  <g transform="rotate(-120)">
+      <use xlink:href="#0" transform="scale(-1,1)" />
+  </g>
+  </g>
+
+      <use xlink:href="#5" />
+      <g transform="rotate(60,173.20508,300)">
+         <use xlink:href="#5" />
+      </g>
+      <g transform="rotate(-120,173.20508,300)">
+         <use xlink:href="#5" />
+      </g>
+
+      <g transform="rotate(-120)">
+       <use xlink:href="#6" transform="scale(1,-1)"/>
+      </g>
+ 
+      <g transform="rotate(-120,173.20508,300)">
+       <g transform="rotate(-120)">
+        <use xlink:href="#6" transform="scale(1,-1)"/>
+       </g>
+      </g>
+
+      <g transform="rotate(180,173.20508,300)">
+       <g transform="rotate(-120)">
+        <use xlink:href="#6" transform="scale(1,-1)"/>
+       </g>
+       </g>
+      </g>
+     </g>
+    </g>
+   </g>
+  </g> <!-- end of tile -->
+ </g>
+
+  <!-- tiling -->
+
+  <g transform="translate(400,350)">
+   <g transform="scale(0.15)">
+     
+      <use xlink:href="#tile"/>
+      <use xlink:href="#tile" transform="translate(600,0)"/>
+      <use xlink:href="#tile" transform="translate(1200,0)"/>
+      <g transform="translate(300,-519.61524)">
+       <use xlink:href="#tile" transform="rotate(60)"/>
+      </g>
+      <g transform="translate(900,-519.61524)">
+       <use xlink:href="#tile" transform="rotate(-60)"/>
+      </g>
+      <g transform="translate(300,519.61524)">
+       <use xlink:href="#tile" transform="rotate(120)"/>
+      </g>
+      <g transform="translate(900,519.61524)">
+       <use xlink:href="#tile" transform="rotate(-120)"/>
+      </g>
+   </g>
+ </g>
+  <!-- end of tiling -->
+</svg>
+

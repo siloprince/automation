@@ -1,0 +1,86 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<svg 
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+>
+<!-- edge -->
+  <g transform="translate(100,200)">
+   <g transform="scale(2)">
+   <g id="0">
+    <path id="1" d="M 0,0 100,0"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+   </g> <!-- end of id="0" -->
+   </g>
+   </g>
+
+
+<!-- tile -->
+<g transform="translate(50,350)">
+ <g transform="scale(1.5)">
+  <g id="tile">
+    <use xlink:href="#0"/>
+    <use xlink:href="#0" transform="rotate(-90,100,0)"/>
+    <g id="tile0" transform="scale(0.70710678)">
+    <use xlink:href="#0" transform="rotate(45)"/>
+    </g>
+    <use xlink:href="#tile0" transform="rotate(180,50,50)"/>
+
+  <circle cx="45" cy="20" r="5"
+         fill="none" stroke="#000000" stroke-width="1"  />
+
+    <path id="1" d="M 65,20 90,20"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+    <path id="1" d="M 65,30 90,30"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+    <path id="1" d="M 65,40 90,40"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+   <path id="1" d="M 65,50 90,50"  style="fill:none;stroke:#000000;stroke-width:1px;stroke-linecap:butt;stroke-linejoin:miter;stroke-opacity:1"/>
+
+   </g> <!-- end of tile -->
+  </g>
+ </g>
+
+  <!-- tiling -->
+
+  <g transform="translate(300,350)">
+   <g transform="scale(2)">
+
+    <g id="tiling2">
+      <g id="tiling0">     
+        <use xlink:href="#tile"/>
+        <g id="tiling1" transform="scale(0.70710678)">
+          <use xlink:href="#tile" transform="rotate(45)"/> 
+        </g>
+        <use xlink:href="#tiling1" transform="rotate(-90,50,50)"/>
+      </g>
+      <use xlink:href="#tiling0" transform="rotate(-90,100,0)"/>
+     </g>
+     
+     <g transform="translate(0,100)">
+      <g id="tiling3">
+       <use xlink:href="#tiling2" transform="scale(0.5)"/>
+       <g transform="translate(100,0)">
+        <use xlink:href="#tiling2"  transform="scale(0.5)"/>
+       </g>
+      </g>
+     </g>
+
+     <g transform="translate(0,150)">
+      <g id="tiling4">
+       <use xlink:href="#tiling3" transform="scale(0.5)"/>
+       <g transform="translate(100,0)">
+        <use xlink:href="#tiling3"  transform="scale(0.5)"/>
+       </g>
+      </g>
+     </g>
+
+     <g transform="translate(0,175)">
+      <g id="tiling5">
+       <use xlink:href="#tiling4" transform="scale(0.5)"/>
+       <g transform="translate(100,0)">
+        <use xlink:href="#tiling4"  transform="scale(0.5)"/>
+       </g>
+      </g>
+     </g>
+
+   </g>
+ </g>
+  <!-- end of tiling -->
+</svg>
+
