@@ -1,0 +1,91 @@
+<html>
+<body>
+
+<div style="margin:10px;">
+<svg id="red" class="draw" width="200" height="100" style="border: 1px solid #ffaaaa;"/>
+<svg id="blue" class="draw" width="200" height="100" style="border: 1px solid #aaaaff;"/>
+ <br/>
+ <input id="divide" type="range" min="1" value="3" max="6"/>: Divide<br/>
+ <input id="slide" type="range" min="0" value="1" max="5"/>: Slide<br/>
+ <input id="extrude" type="range" min="0" value="0" max="5"/>: Extrude<br/>
+</div>
+<script type="text/javascript" src="draw.js"></script>
+<script type="text/javascript">
+'use strict';
+(function(console,document){
+
+let div = 12;
+let angle = Math.PI*2/div;
+let len1 = 1;
+let len2 = 2 * Math.sin(angle/2);
+let ang = 30;
+let rot = 180-(180-ang)/2;
+let bx = 200;
+let cx = bx*Math.cos(angle);
+let cy = bx*Math.sin(angle);
+let defs = `
+<defs>
+<g id="match1">
+    <use xlink:href="#curve_red" transform="translate(${bx},0)rotate(180)"/>
+    <use xlink:href="#curve_red" transform="rotate(0)"/>
+ <g>
+</defs>
+<defs>
+<g id="match2">
+    <g transform="translate(${bx},0)rotate(${rot})scale(${len2},${len2})">
+      <use xlink:href="#curve_blue" transform="translate(${bx},0)rotate(180)"/>
+      <use xlink:href="#curve_blue" transform="rotate(0)"/>
+    </g>
+</g>
+<g id="match3">
+   <use xlink:href="#match1" transform="rotate(${ang})"/>
+   <use xlink:href="#match1"/>
+   <use xlink:href="#match2"/>
+</g>
+</defs>
+<defs>
+<g id="match4">
+   <use xlink:href="#match3"/>
+   <use xlink:href="#match3" transform="translate(${bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${cx},${cy})"/>
+   
+   <use xlink:href="#match3" transform="translate(${2*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${bx+cx},${cy})"/>
+   <use xlink:href="#match3" transform="translate(${2*cx},${2*cy})"/>
+
+   <use xlink:href="#match3" transform="translate(${3*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${2*bx+cx},${cy})"/>
+   <use xlink:href="#match3" transform="translate(${bx+2*cx},${2*cy})"/>
+   <use xlink:href="#match3" transform="translate(${3*cx},${3*cy})"/>
+</g>
+</defs>
+`;
+let match1list = ['<defs><g id="up">'];
+for (let mi=0;mi<6+1;mi++) {
+    let rotangle = 360/div*mi;
+    match1list.push(`
+    <use xlink:href="#match1" stroke-width="3" transform="rotate(${rotangle})"/>
+    `);
+    if (mi<6) {
+        match1list.push(`
+        <use xlink:href="#match4" stroke-width="3" transform="rotate(${rotangle})"/>
+        `);
+    }
+    //if (mi===0) { break; }
+}
+match1list.push('</g></defs>');
+document.currentScript.insertAdjacentHTML('afterend',`
+  <svg width="1000" height="1000">
+    ${defs}
+    <g transform="translate(500,500)scale(0.5,0.5)">
+    ${match1list.join('')}
+    <use xlink:href="#up" />
+    <use xlink:href="#up" transform="translate(200,0)rotate(180)"/>
+    </g>
+  </svg>
+  `); 
+
+})(console,document);
+</script>
+</body>
+</html>

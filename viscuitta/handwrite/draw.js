@@ -1,6 +1,6 @@
 
 const containerList = document.querySelectorAll('svg.draw');
-const offset = 10;
+const offset = 40;
 
 function clear(container) {
     while (container.firstChild) {
@@ -21,16 +21,15 @@ const defaultPathStyle = {
     strokeWidth: "3px",
     stroke: "#000",
     fill: "none",
+    vectorEffect: "non-scaling-stroke",
 };
 
 for (let ci = 0; ci < containerList.length; ci++) {
     let container = containerList[ci];
-    clear(container);
+    mousedown(container);
+    mouseup(container);
     container.addEventListener('mousedown', function (e) {
-        clear(container);
-        isDrawing = true;
-        let cy = parseInt(container.getAttribute('height'),10)/2;
-        drawingPoints = [{x:offset,y:cy}];
+        mousedown(container);
     });
 
     container.addEventListener('mousemove', function (e) {
@@ -49,6 +48,16 @@ for (let ci = 0; ci < containerList.length; ci++) {
     });
 
     container.addEventListener('mouseup', function (e) {
+        mouseup(container);
+    });
+}
+function mousedown(container){
+        clear(container);
+        isDrawing = true;
+        let cy = parseInt(container.getAttribute('height'),10)/2;
+        drawingPoints = [{x:offset,y:cy}];
+}
+function mouseup(container) {
         isDrawing = false;
         if (!drawingPath) {
             return;
@@ -56,32 +65,17 @@ for (let ci = 0; ci < containerList.length; ci++) {
         let cx = parseInt(container.getAttribute('width'),10)-offset;
         let cy = parseInt(container.getAttribute('height'),10)/2;
         drawingPoints.push({x:cx,y:cy});
-        
         container.removeChild(drawingPath);
         drawingPath = null;
-        console.log('drawingPoints', JSON.stringify(drawingPoints.map(point => [point.x, point.y])));
         drawingPoints = simplify(drawingPoints, parseFloat(8), true);
         let path;
         path = createPathWithBezier(drawingPoints,cx,cy);
-        console.log(path);
         Object.assign(path.style, defaultPathStyle);
-        container.appendChild(path);
-    });
+        let scale = 100/(cx-offset);
+        container.insertAdjacentHTML('beforeend',`<g transform="translate(${offset},${cy})scale(${1/scale},1)"><g transform="scale(${scale},1)translate(${-offset},${-cy})" id="curve_${container.id}"></g></g>`);
+        let group = container.querySelector(`g#curve_${container.id}`);
+        group.appendChild(path);    
 }
-function createPath(points) {
-    const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
-    let attribute = '';
-    points.forEach((point, index) => {
-        if (index === 0) {
-            attribute += `M${point.x}, ${point.y}`;
-        } else {
-            attribute += `L${point.x}, ${point.y}`;
-        }
-    });
-    path.setAttributeNS(null, 'd', attribute);
-    return path;
-}
-
 function createPathWithBezier(points,cx,cy) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     const cubics = catmullRom2bezier(points);
