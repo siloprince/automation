@@ -1,4 +1,7 @@
 
+(function () {
+    'use strict';
+
 const containerList = document.querySelectorAll('svg.draw');
 const offset = 40;
 
@@ -6,12 +9,12 @@ function clear(container) {
     while (container.firstChild) {
         container.removeChild(container.firstChild);
     }
-    let cx = parseInt(container.getAttribute('width'),10)-offset;
-    let cy = parseInt(container.getAttribute('height'),10)/2;
-    let style = window.getComputedStyle(container,null);
+    let cx = parseInt(container.getAttribute('width'), 10) - offset;
+    let cy = parseInt(container.getAttribute('height'), 10) / 2;
+    let style = window.getComputedStyle(container, null);
     let color = style.borderColor;
-    container.insertAdjacentHTML('beforeend',`<circle r="10" cx="${offset}" cy="${cy}" fill="${color}" />`);
-    container.insertAdjacentHTML('beforeend',`<circle r="10" cx="${cx}" cy="${cy}" fill="${color}" />`);
+    container.insertAdjacentHTML('beforeend', `<circle r="10" cx="${offset}" cy="${cy}" fill="${color}" />`);
+    container.insertAdjacentHTML('beforeend', `<circle r="10" cx="${cx}" cy="${cy}" fill="${color}" />`);
 
 }
 let isDrawing = false;
@@ -27,62 +30,66 @@ const defaultPathStyle = {
 for (let ci = 0; ci < containerList.length; ci++) {
     let container = containerList[ci];
     mousedown(container);
+    mousemove(container,100,50);
     mouseup(container);
     container.addEventListener('mousedown', function (e) {
         mousedown(container);
     });
 
     container.addEventListener('mousemove', function (e) {
-        if (isDrawing) {
-            let dim = container.getBoundingClientRect();
-            let x = e.clientX - dim.left;
-            let y = e.clientY - dim.top;
-            drawingPoints.push({ x: x, y: y });
-            if (drawingPath) {
-                container.removeChild(drawingPath);
-            }
-            drawingPath = createPathWithBezier(drawingPoints,x,y);
-            Object.assign(drawingPath.style, defaultPathStyle);
-            container.appendChild(drawingPath);
-        }
+        let dim = container.getBoundingClientRect();
+        let x = e.clientX - dim.left;
+        let y = e.clientY - dim.top;
+        mousemove(container, x, y);
     });
 
     container.addEventListener('mouseup', function (e) {
         mouseup(container);
     });
 }
-function mousedown(container){
-        clear(container);
-        isDrawing = true;
-        let cy = parseInt(container.getAttribute('height'),10)/2;
-        drawingPoints = [{x:offset,y:cy}];
+function mousedown(container) {
+    clear(container);
+    isDrawing = true;
+    let cy = parseInt(container.getAttribute('height'), 10) / 2;
+    drawingPoints = [{ x: offset, y: cy }];
+}
+function mousemove(container, x, y) {
+    if (isDrawing) {
+        drawingPoints.push({ x: x, y: y });
+        if (drawingPath) {
+            container.removeChild(drawingPath);
+        }
+        drawingPath = createPathWithBezier(drawingPoints, x, y);
+        Object.assign(drawingPath.style, defaultPathStyle);
+        container.appendChild(drawingPath);
+    }
 }
 function mouseup(container) {
-        isDrawing = false;
-        if (!drawingPath) {
-            return;
-        }
-        let cx = parseInt(container.getAttribute('width'),10)-offset;
-        let cy = parseInt(container.getAttribute('height'),10)/2;
-        drawingPoints.push({x:cx,y:cy});
-        container.removeChild(drawingPath);
-        drawingPath = null;
-        drawingPoints = simplify(drawingPoints, parseFloat(8), true);
-        let path;
-        path = createPathWithBezier(drawingPoints,cx,cy);
-        Object.assign(path.style, defaultPathStyle);
-        let scale = 100/(cx-offset);
-        container.insertAdjacentHTML('beforeend',`<g transform="translate(${offset},${cy})scale(${1/scale},1)"><g transform="scale(${scale},1)translate(${-offset},${-cy})" id="curve_${container.id}"></g></g>`);
-        let group = container.querySelector(`g#curve_${container.id}`);
-        group.appendChild(path);    
+    isDrawing = false;
+    if (!drawingPath) {
+        return;
+    }
+    let cx = parseInt(container.getAttribute('width'), 10) - offset;
+    let cy = parseInt(container.getAttribute('height'), 10) / 2;
+    drawingPoints.push({ x: cx, y: cy });
+    container.removeChild(drawingPath);
+    drawingPath = null;
+    drawingPoints = simplify(drawingPoints, parseFloat(8), true);
+    let path;
+    path = createPathWithBezier(drawingPoints, cx, cy);
+    Object.assign(path.style, defaultPathStyle);
+    let scale = 100 / (cx - offset);
+    container.insertAdjacentHTML('beforeend', `<g transform="translate(${offset},${cy})scale(${1 / scale},1)"><g transform="scale(${scale},1)translate(${-offset},${-cy})" id="curve_${container.id}"></g></g>`);
+    let group = container.querySelector(`g#curve_${container.id}`);
+    group.appendChild(path);
 }
-function createPathWithBezier(points,cx,cy) {
+function createPathWithBezier(points, cx, cy) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');
     const cubics = catmullRom2bezier(points);
     let attribute = `M${points[0].x}, ${points[0].y}`;
     for (let i = 0; i < cubics.length; i++) {
         attribute += `C${cubics[i][0]},${cubics[i][1]} ${cubics[i][2]},${cubics[i][3]} ${cubics[i][4]},${cubics[i][5]}`;
-        if (cubics[i][2]===cx && cubics[i][3]===cy && cubics[i][4]===cx && cubics[i][5]===cy) {
+        if (cubics[i][2] === cx && cubics[i][3] === cy && cubics[i][4] === cx && cubics[i][5] === cy) {
             break;
         }
     }
@@ -134,9 +141,6 @@ function catmullRom2bezier(pts) {
     return cubics;
 }
 
-
-(function () {
-    'use strict';
 
     // to suit your point format, run search/replace for '.x' and '.y';
     // for 3D version, see 3d branch (configurability would draw significant performance overhead)
