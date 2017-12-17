@@ -5,16 +5,20 @@
 <svg id="red" class="draw" width="200" height="150" style="border: 1px solid #ffaaaa;"/>
 <svg id="blue" class="draw" width="200" height="150" style="border: 1px solid #aaaaff;"/>
  <br/>
- <input id="slide" type="range" min="0" value="0" max="150" step="1"/>: Slide<br/>
- <input id="extrude" type="range" min="0" value="0" max="100" step="1"/>: Extrude<br/>
+ <input id="slide" type="range" min="0" value="0" max="150" step="1"/>: スライド<br/>
+ <input id="extrude" type="range" min="-50" value="0" max="100" step="1"/>: 引き伸ばし<br/>
 </div>
 <script type="text/javascript" src="draw.js"></script>
+<div id="draw"></div>
 <script type="text/javascript">
 'use strict';
 (function(window,document,console){
 let width = 100;
 let height = 100;
-update();
+update();document.querySelector('input#slide').addEventListener('change',update);
+document.querySelector('input#extrude').addEventListener('change',update);
+
+
 
 function update() {
 let slide = parseFloat(document.querySelector('input#slide').value);
@@ -23,7 +27,6 @@ let extrude = parseFloat(document.querySelector('input#extrude').value);
 let scaled = width + extrude;
 let scale = scaled/width;
 
-slide = 30;
 let theta = Math.atan2(height,slide);
 let rot = theta*180/Math.PI;
 let slided = 1/Math.sin(theta);
@@ -97,7 +100,7 @@ let svgstr = `
  
   <!-- end of tiling -->
 </svg>`;
-document.currentScript.insertAdjacentHTML('afterend',svgstr);
+document.querySelector('div#draw').innerHTML = svgstr;
 }
 
 })(window,document,console);
