@@ -12,7 +12,7 @@
 <div id="draw"></div>
 <script type="text/javascript">
 'use strict';
-(function(window,document,console){
+(function(console,document){
 let width = 100;
 let height = 100;
 update();
@@ -103,7 +103,7 @@ let svgstr = `
 document.querySelector('div#draw').innerHTML = svgstr;
 }
 
-})(window,document,console);
+})(console,document);
 </script>
 </body>
 </html>

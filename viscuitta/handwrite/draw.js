@@ -22,7 +22,7 @@ let isDrawing = false;
 let drawingPoints;
 let drawingPath;
 const defaultPathStyle = {
-    strokeWidth: "3px",
+    strokeWidth: "1.5px",
     stroke: "#000",
     fill: "none",
     vectorEffect: "non-scaling-stroke",

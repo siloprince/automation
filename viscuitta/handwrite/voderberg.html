@@ -25,6 +25,8 @@ let divide = parseFloat(document.querySelector('input#divide').value);
 let slide = parseFloat(document.querySelector('input#slide').value);
 let extrude = parseFloat(document.querySelector('input#extrude').value);
 
+let extluded = 100*extrude;
+
 let div = divide*4;
 let angle = Math.PI*2/div;
 let len1 = 1;
@@ -57,6 +59,7 @@ let defs = `
 <defs>
 <g id="match4">
    <use xlink:href="#match3"/>
+
    <use xlink:href="#match3" transform="translate(${bx},0)"/>
    <use xlink:href="#match3" transform="translate(${cx},${cy})"/>
    
@@ -68,16 +71,46 @@ let defs = `
    <use xlink:href="#match3" transform="translate(${2*bx+cx},${cy})"/>
    <use xlink:href="#match3" transform="translate(${bx+2*cx},${2*cy})"/>
    <use xlink:href="#match3" transform="translate(${3*cx},${3*cy})"/>
+
+   <use xlink:href="#match3" transform="translate(${4*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${3*bx+cx},${cy})"/>
+   <use xlink:href="#match3" transform="translate(${2*bx+2*cx},${2*cy})"/>
+   <use xlink:href="#match3" transform="translate(${bx+3*cx},${3*cy})"/>
+   <use xlink:href="#match3" transform="translate(${4*cx},${4*cy})"/>
+
+   <use xlink:href="#match3" transform="translate(${5*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${4*bx+cx},${cy})"/>
+   <use xlink:href="#match3" transform="translate(${3*bx+2*cx},${2*cy})"/>
+   <use xlink:href="#match3" transform="translate(${2*bx+3*cx},${3*cy})"/>
+   <use xlink:href="#match3" transform="translate(${bx+4*cx},${4*cy})"/>
+   <use xlink:href="#match3" transform="translate(${5*cx},${5*cy})"/>
+
+</g>
+<g id="belt">
+   <use xlink:href="#match3" transform="translate(${-7*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${-6*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${-5*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${-4*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${-3*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${-2*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${-1*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${0*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${1*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${2*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${3*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${4*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${5*bx},0)"/>
+   <use xlink:href="#match3" transform="translate(${6*bx},0)"/>
 </g>
 </defs>
 `;
 let match1list = ['<defs><g id="up">'];
-for (let mi=0;mi<6+1;mi++) {
+for (let mi=0;mi<divide*2+1;mi++) {
     let rotangle = 360/div*mi;
     match1list.push(`
     <use xlink:href="#match1" stroke-width="3" transform="rotate(${rotangle})"/>
     `);
-    if (mi<6) {
+    if (mi<divide*2) {
         match1list.push(`
         <use xlink:href="#match4" stroke-width="3" transform="rotate(${rotangle})"/>
         `);
@@ -85,16 +118,20 @@ for (let mi=0;mi<6+1;mi++) {
     //if (mi===0) { break; }
 }
 match1list.push('</g></defs>');
-document.querySelector('div#draw').innerHTML = `
-  <svg width="1000" height="1000">
+    let svglist = 
+  [`<svg width="2000" height="2000">
     ${defs}
-    <g transform="translate(500,500)scale(0.5,0.5)">
+    <g transform="translate(500,400)scale(0.25)">
     ${match1list.join('')}
-    <use xlink:href="#up" />
-    <use xlink:href="#up" transform="translate(200,0)rotate(180)"/>
-    </g>
-  </svg>
-  `; 
+    <use xlink:href="#up" transform="translate(${extrude*(cx-200)},${extrude*cy})"/>
+    <use xlink:href="#up" transform="translate(${200*slide},0)rotate(180)"/>
+`];
+    for(let ai=0;ai<extrude;ai++) {
+       svglist.push(`<use xlink:href="#belt" transform="translate(${ai*(cx-200)},${ai*cy})"/>`); 
+    }
+    svglist.push(`</g></svg>`); 
+
+    document.querySelector('div#draw').innerHTML = svglist.join('');
 }
 })(console,document);
 </script>

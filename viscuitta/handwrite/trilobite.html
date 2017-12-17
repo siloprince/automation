@@ -1,0 +1,102 @@
+<html>
+<body>
+
+<div style="margin:10px;">
+<svg id="red" class="draw" width="200" height="250" style="border: 1px solid #ffaaaa;"/>
+<svg id="blue" class="draw" width="200" height="250" style="border: 1px solid #aaaaff;"/>
+ <br/>
+ <input id="extrude" type="range" min="50" value="100" max="400" step="1"/>: 引き伸ばし<br/>
+</div>
+<script type="text/javascript" src="draw.js"></script>
+<div id="draw"></div>
+<script type="text/javascript">
+'use strict';
+(function(console,document){
+let base = 100;
+
+update();
+document.querySelector('input#extrude').addEventListener('change',update);
+
+function update() {
+let extrude = parseFloat(document.querySelector('input#extrude').value);
+
+let len = base+extrude;
+let move = base/Math.sqrt(2);
+let scale =extrude/Math.sqrt(2)/base;
+
+let svgstr = `
+<?xml version="1.0" encoding="UTF-8"?>
+<svg width="2000" height="2000">
+<defs>
+  <use id="0" xlink:href="#curve_red" transform="translate(-100,0)scale(2,1)"/>
+  <use id="1" xlink:href="#curve_blue" transform="translate(-100,0)scale(2,1)"/>
+
+  <g id="atile">
+    <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+    <use xlink:href="#0" transform="translate(${len},0)rotate(90)"/>
+    <use xlink:href="#0" transform="translate(0,${len})rotate(0)"/>
+    <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+
+    <g transform="rotate(-90)">
+    <g id="acap" transform="translate(${-len},${-len})scale(${scale})">
+    <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+    </g>
+    </g>
+    <g transform="rotate(0)">
+      <use xlink:href="#acap"/>
+    </g>
+    <g transform="rotate(90)">
+      <use xlink:href="#acap"/>
+    </g>
+    <g transform="rotate(180)">
+      <use xlink:href="#acap"/>
+    </g>
+   </g> 
+  <g id="tile">
+    <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+    <use xlink:href="#0" transform="translate(${len},0)rotate(-90)"/>
+    <use xlink:href="#0" transform="translate(0,${len})rotate(180)"/>
+    <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+
+    <g transform="rotate(-90)">
+    <g id="cap" transform="translate(${-len},${-len})scale(${scale})">
+    <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+    </g>
+    </g>
+    <g transform="rotate(0)">
+    <g id="small" transform="translate(${-len},${-len})scale(${scale})">
+    <use xlink:href="#1" transform="translate(${-move},${move})rotate(225)"/>
+    <use xlink:href="#1" transform="translate(${-move},${-move})rotate(-45)"/>
+    <use xlink:href="#1" transform="translate(${move},${-move})rotate(45)"/>
+    </g>
+    </g>
+    <g transform="rotate(90)">
+      <use xlink:href="#small"/>
+    </g>
+    <g transform="rotate(180)">
+      <use xlink:href="#small"/>
+    </g>
+    </g>
+   </g> 
+   </defs>
+
+<g transform="translate(350,200)scale(${1/4/scale})">
+
+<use xlink:href="#tile" transform="translate(${-len*2},0)rotate(-90)"/>
+<use xlink:href="#atile" transform="translate(${-len*2},${len*2})"/>
+<use xlink:href="#atile" transform="translate(0,0)"/>
+<use xlink:href="#tile" transform="translate(${len*2},0)"/>
+<use xlink:href="#tile" transform="translate(${0},${len*2})"/>
+<use xlink:href="#atile" transform="translate(${len*2},${len*2})rotate(180)"/>
+<use xlink:href="#tile" transform="translate(${-len*2},${len*4})"/>
+<use xlink:href="#atile" transform="translate(${0},${len*4})rotate(180)"/>
+<use xlink:href="#tile" transform="translate(${len*2},${len*4})rotate(90)"/>
+
+ </g>
+</svg>`;
+document.querySelector('div#draw').innerHTML = svgstr;
+}
+})(console,document);
+</script>
+  </body>
+  </html>
