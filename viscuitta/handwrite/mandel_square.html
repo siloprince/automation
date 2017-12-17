@@ -1,0 +1,105 @@
+<html>
+<body>
+
+<div style="margin:10px;">
+<svg id="red" class="draw" width="200" height="150" style="border: 1px solid #ffaaaa;"/>
+<svg id="blue" class="draw" width="200" height="150" style="border: 1px solid #aaaaff;"/>
+ <br/>
+ <input id="slide" type="range" min="0" value="0" max="150" step="1"/>: Slide<br/>
+ <input id="extrude" type="range" min="0" value="0" max="100" step="1"/>: Extrude<br/>
+</div>
+<script type="text/javascript" src="draw.js"></script>
+<script type="text/javascript">
+'use strict';
+(function(window,document,console){
+let width = 100;
+let height = 100;
+update();
+
+function update() {
+let slide = parseFloat(document.querySelector('input#slide').value);
+let extrude = parseFloat(document.querySelector('input#extrude').value);
+
+let scaled = width + extrude;
+let scale = scaled/width;
+
+slide = 30;
+let theta = Math.atan2(height,slide);
+let rot = theta*180/Math.PI;
+let slided = 1/Math.sin(theta);
+let svgstr = `
+<svg 
+   xmlns="http://www.w3.org/2000/svg"
+   xmlns:xlink="http://www.w3.org/1999/xlink"
+   width="2000" height="2000"
+>
+
+<!-- tile -->
+ <defs>
+  <g id="tile">
+    <use xlink:href="#curve_red" transform="scale(${scale},1)"/>
+    <use xlink:href="#curve_blue" transform="translate(${scaled},0)rotate(${rot})scale(${slided},1)"/>
+    <use xlink:href="#curve_blue" transform="translate(0,0)rotate(${rot})scale(${slided},1)"/>
+    <g id="tile0">
+    <g transform="translate(${slide},100)scale(0.5)">
+    <use xlink:href="#curve_red" transform="scale(${scale},1)"/>
+    </g>
+    <g transform="translate(${slide+scaled/2},100)scale(0.5)">
+    <use xlink:href="#curve_red" transform="scale(${scale},1)"/>
+    </g>
+    </g>
+   </g> <!-- end of tile -->
+  </g>
+ </defs>
+
+  <!-- tiling -->
+
+  <g transform="translate(${scaled},100)">
+   <g transform="scale(2)">
+
+    <g id="tiling2">
+      <g id="tiling0">     
+        <use xlink:href="#tile"/>
+      </g>
+      <use xlink:href="#tiling0" transform="translate(${scaled},0)"/>
+     </g>
+     
+     <g transform="translate(${slide},100)">
+      <g id="tiling3">
+       <use xlink:href="#tiling2" transform="scale(0.5)"/>
+       <g transform="translate(${scaled},0)">
+        <use xlink:href="#tiling2"  transform="scale(0.5)"/>
+       </g>
+      </g>
+     </g>
+     
+
+     <g transform="translate(${slide*1.5},150)">
+      <g id="tiling4">
+       <use xlink:href="#tiling3" transform="scale(0.5)"/>
+       <g transform="translate(${scaled},0)">
+        <use xlink:href="#tiling3"  transform="scale(0.5)"/>
+       </g>
+      </g>
+     </g>
+
+     <g transform="translate(${slide*1.75},175)">
+      <g id="tiling5">
+       <use xlink:href="#tiling4" transform="scale(0.5)"/>
+       <g transform="translate(${scaled},0)">
+        <use xlink:href="#tiling4"  transform="scale(0.5)"/>
+       </g>
+      </g>
+     </g>
+
+   </g>
+ 
+  <!-- end of tiling -->
+</svg>`;
+document.currentScript.insertAdjacentHTML('afterend',svgstr);
+}
+
+})(window,document,console);
+</script>
+</body>
+</html>
