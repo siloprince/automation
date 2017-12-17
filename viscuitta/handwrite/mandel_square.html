@@ -15,9 +15,9 @@
 (function(window,document,console){
 let width = 100;
 let height = 100;
-update();document.querySelector('input#slide').addEventListener('change',update);
+update();
+document.querySelector('input#slide').addEventListener('change',update);
 document.querySelector('input#extrude').addEventListener('change',update);
-
 
 
 function update() {

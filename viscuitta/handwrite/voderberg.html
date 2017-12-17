@@ -5,20 +5,31 @@
 <svg id="red" class="draw" width="200" height="150" style="border: 1px solid #ffaaaa;"/>
 <svg id="blue" class="draw" width="200" height="150" style="border: 1px solid #aaaaff;"/>
  <br/>
- <input id="divide" type="range" min="1" value="3" max="6" step="1"/>: Divide<br/>
- <input id="slide" type="range" min="0" value="1" max="5" step="1"/>: Slide<br/>
- <input id="extrude" type="range" min="0" value="0" max="5" step="1"/>: Extrude<br/>
+ <input id="divide" type="range" min="1" value="3" max="6" step="1"/>: 分割<br/>
+ <input id="slide" type="range" min="0" value="1" max="5" step="1"/>: スライド<br/>
+ <input id="extrude" type="range" min="0" value="0" max="5" step="1"/>: 引き伸ばし<br/>
 </div>
 <script type="text/javascript" src="draw.js"></script>
+<div id="draw"></div>
 <script type="text/javascript">
 'use strict';
 (function(console,document){
 
-let div = 12;
+update();
+document.querySelector('input#divide').addEventListener('change',update);
+document.querySelector('input#slide').addEventListener('change',update);
+document.querySelector('input#extrude').addEventListener('change',update);
+
+function update() {
+let divide = parseFloat(document.querySelector('input#divide').value);
+let slide = parseFloat(document.querySelector('input#slide').value);
+let extrude = parseFloat(document.querySelector('input#extrude').value);
+
+let div = divide*4;
 let angle = Math.PI*2/div;
 let len1 = 1;
 let len2 = 2 * Math.sin(angle/2);
-let ang = 30;
+let ang = 360/div;
 let rot = 180-(180-ang)/2;
 let bx = 200;
 let cx = bx*Math.cos(angle);
@@ -74,7 +85,7 @@ for (let mi=0;mi<6+1;mi++) {
     //if (mi===0) { break; }
 }
 match1list.push('</g></defs>');
-document.currentScript.insertAdjacentHTML('afterend',`
+document.querySelector('div#draw').innerHTML = `
   <svg width="1000" height="1000">
     ${defs}
     <g transform="translate(500,500)scale(0.5,0.5)">
@@ -83,8 +94,8 @@ document.currentScript.insertAdjacentHTML('afterend',`
     <use xlink:href="#up" transform="translate(200,0)rotate(180)"/>
     </g>
   </svg>
-  `); 
-
+  `; 
+}
 })(console,document);
 </script>
 </body>

@@ -1,5 +1,6 @@
 
 (function () {
+    // https://qiita.com/kwst/items/16e4877890a19826ba7f
     'use strict';
 
 const containerList = document.querySelectorAll('svg.draw');
