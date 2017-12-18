@@ -21,11 +21,12 @@
         const float bailout = exp(ratiopi2);
         const float speed = -0.5;
         const float scale = 1.4;
-            
-        void main(void){
+        
+
+        void mainImage(out vec4 fragColor, vec2 fragCoord) {
+
             vec2 iResolution = resolution;
             vec2 iMouse = mouse;
-        
             float iter=0.;
             vec2 z =  scale*(2.*gl_FragCoord.xy /iResolution.y-vec2(iResolution.x/iResolution.y,1.));
             vec2 uv=2.*iMouse.xy /iResolution.y-vec2(iResolution.x/iResolution.y,1.);
@@ -59,8 +60,11 @@
             vec4 smpColor0 = texture2D(texture0, texCoord);
             vec4 smpColor1 = texture2D(texture1, texCoord);
             vec4 smpColor2 = texture2D(texture2, texCoord);
-            gl_FragColor   = smpColor0 * smpColor1 * smpColor2;
-            //gl_FragColor   = smpColor0;
+
+            fragColor   = smpColor0 * smpColor1 * smpColor2;
+        }
+        void main(void){
+            mainImage(gl_FragColor, gl_FragCoord.xy);
         }
     </script><!-- /fragment shader -->
     
