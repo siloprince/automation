@@ -25,7 +25,7 @@ let mx, my, gl, run;
 let startTime;
 let time = 0.0;
 let tempTime = 0.0;
-const FPS = 1000 / 30;
+let FPS = 1000 / 30;
 let uniLocation = [];
 // カウンタの宣言
 let count = 0;
@@ -34,6 +34,7 @@ let index;
 let texture2 = null;
 let video;
 
+(function(console,document,window){
 // onload
 window.addEventListener('load', function () {
 	// canvas エレメントを取得
@@ -158,7 +159,7 @@ function mouseMove(e) {
 	my = e.offsetY / canvas.height;
 }
 // 恒常ループ
-function render() {
+function render(flag) {
 
 	// フラグチェック
 	if (!run) { return; }
@@ -204,7 +205,9 @@ function render() {
 	gl.flush();
 
 	// 再帰
-	setTimeout(render, FPS);
+	if (!flag) {
+		setTimeout(render, FPS);
+	}
 }
 
 // シェーダを生成する関数
@@ -429,7 +432,7 @@ function canWebcam() {
 					gl.texParameteri(gl.TEXTURE_2D, gl.TEXTURE_WRAP_T, gl.CLAMP_TO_EDGE);
 
 					// レンダリング関数を呼ぶ
-					render();
+					render(true);
 				}, true);
 				// video エレメントのソースにウェブカメラを渡す
 				video.src = url.createObjectURL(localMediaStream);
@@ -452,3 +455,5 @@ function canWebcam() {
 		alert('not supported getUserMedia');
 	}
 }
+
+})(console,document,window);
