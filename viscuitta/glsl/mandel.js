@@ -10,9 +10,9 @@
 // ・シェーダのコンパイルに失敗した場合は auto run を無効にします
 // ・auto run は 30fps になっているので環境と負荷に応じて適宜変更しましょう
 // ・uniform 変数は以下のようにシェーダへ送られます 
-//     ・iTime: 経過時間を秒単位(ミリ秒は小数点以下)で送る(float)
-//     ・iMouse: マウス座標を canvas 左上原点で 0 ～ 1 の範囲で送る(vec2)
-//     ・iResolution: スクリーンの縦横の幅をピクセル単位で送る(vec2)
+//     ・time: 経過時間を秒単位(ミリ秒は小数点以下)で送る(float)
+//     ・mouse: マウス座標を canvas 左上原点で 0 ～ 1 の範囲で送る(vec2)
+//     ・resolution: スクリーンの縦横の幅をピクセル単位で送る(vec2)
 // ・シェーダのコンパイルに失敗した場合エラー内容をアラートとコンソールに出力
 // ・シェーダのエラーで表示される行番号は一致するように HTML を書いてあります
 // 
@@ -20,11 +20,12 @@
 
 // global
 let g_videoEnabled = false;
-let cw, ch, mx, my, gl, run;
+let canvas;
+let mx, my, gl, run;
 let startTime;
 let time = 0.0;
 let tempTime = 0.0;
-let fps = 1000 / 30;
+const FPS = 1000 / 30;
 let uniLocation = [];
 // カウンタの宣言
 let count = 0;
@@ -36,11 +37,32 @@ let video;
 // onload
 window.addEventListener('load', function () {
 	// canvas エレメントを取得
-	let c = document.querySelector('canvas#canvas');
-
-	// canvas サイズ
-	cw = 1024; ch = 1024;
-	c.width = cw; c.height = ch;
+	canvas = document.querySelector('canvas#canvas');
+	let c  = canvas;
+	let cw, ch;
+	// canvas サイズ調整
+	for (let si=8;si<14;si++){
+		let less = Math.pow(2,si);
+		if (c.width <= less) {
+			cw = less; 
+			break;
+		}
+	}
+	for (let si=8;si<14;si++){
+		let less = Math.pow(2,si);
+		if (c.height <= less) {
+			ch = less;
+			break; 
+		}
+	}
+	if (c.width > Math.pow(2,13)){
+		cw = Math.pow(2,13);
+	}
+	if (c.height > Math.pow(2,13)){
+		ch = Math.pow(2,13);
+	}
+	c.width = cw;
+	c.height = ch;
 
 	canWebcam();
 
@@ -54,10 +76,9 @@ window.addEventListener('load', function () {
 	var prg = create_program(create_shader('vs'), create_shader('fs'));
 	run = (prg != null);
 
-	uniLocation.push(gl.getUniformLocation(prg, 'iTime'));
-	uniLocation.push(gl.getUniformLocation(prg, 'iMouse'));
-	uniLocation.push(gl.getUniformLocation(prg, 'iResolution'));
-	uniLocation.push(gl.getUniformLocation(prg, 'mvpMatrix'));
+	uniLocation.push(gl.getUniformLocation(prg, 'time'));
+	uniLocation.push(gl.getUniformLocation(prg, 'mouse'));
+	uniLocation.push(gl.getUniformLocation(prg, 'resolution'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture0'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture1'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture2'));
@@ -133,8 +154,8 @@ window.addEventListener('load', function () {
 });
 // mouse
 function mouseMove(e) {
-	mx = e.offsetX / cw;
-	my = e.offsetY / ch;
+	mx = e.offsetX / canvas.width;
+	my = e.offsetY / canvas.height;
 }
 // 恒常ループ
 function render() {
@@ -156,12 +177,12 @@ function render() {
 	// テクスチャユニットを指定してバインドし登録する
 	gl.activeTexture(gl.TEXTURE0);
 	gl.bindTexture(gl.TEXTURE_2D, texture0);
-	gl.uniform1i(uniLocation[1 + 3], 0);
+	gl.uniform1i(uniLocation[3], 0);
 
 	// テクスチャユニットを指定してバインドし登録する
 	gl.activeTexture(gl.TEXTURE1);
 	gl.bindTexture(gl.TEXTURE_2D, texture1);
-	gl.uniform1i(uniLocation[2 + 3], 1);
+	gl.uniform1i(uniLocation[4], 1);
 
 
 	// テクスチャユニットを指定してバインドし登録する
@@ -169,21 +190,21 @@ function render() {
 		gl.activeTexture(gl.TEXTURE2);
 		gl.texImage2D(gl.TEXTURE_2D, 0, gl.RGBA, gl.RGBA, gl.UNSIGNED_BYTE, video);
 		gl.bindTexture(gl.TEXTURE_2D, texture2);
-		gl.uniform1i(uniLocation[3 + 3], 2);
+		gl.uniform1i(uniLocation[5], 2);
 	}
 
 	// テクスチャを更新する
 	// uniform変数の登録と描画
 	gl.uniform1f(uniLocation[0], time + tempTime);
 	gl.uniform2fv(uniLocation[1], [mx, my]);
-	gl.uniform2fv(uniLocation[2], [cw, ch]);
+	gl.uniform2fv(uniLocation[2], [canvas.width, canvas.height]);
 	gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
 	// コンテキストの再描画
 	gl.flush();
 
 	// 再帰
-	setTimeout(render, fps);
+	setTimeout(render, FPS);
 }
 
 // シェーダを生成する関数
@@ -192,29 +213,36 @@ function create_shader(id) {
 	var shader;
 
 	// HTMLからscriptタグへの参照を取得
-	var scriptElement = document.getElementById(id);
-
+	let scriptElement = document.querySelector('script#'+id);
+	let scriptText = '';
 	// scriptタグが存在しない場合は抜ける
-	if (!scriptElement) { return; }
-
-	// scriptタグのtype属性をチェック
-	switch (scriptElement.type) {
-
-		// 頂点シェーダの場合
-		case 'x-shader/x-vertex':
-			shader = gl.createShader(gl.VERTEX_SHADER);
-			break;
-
-		// フラグメントシェーダの場合
-		case 'x-shader/x-fragment':
-			shader = gl.createShader(gl.FRAGMENT_SHADER);
-			break;
-		default:
+	if (!scriptElement) {
+		if (id!=='vs') {
 			return;
+		} else {
+			shader = gl.createShader(gl.VERTEX_SHADER);
+			scriptText = `
+        attribute vec3 position;
+        void main(void){
+            gl_Position   = vec4(position, 1.0);
+        }`;
+		}
+	} else {
+		// scriptタグのtype属性をチェック
+		if (scriptElement.type==='x-shader/x-vertex') {
+			shader = gl.createShader(gl.VERTEX_SHADER);
+			scriptText = scriptElement.text;
+		} else if (scriptElement.type==='x-shader/x-fragment') {
+			shader = gl.createShader(gl.FRAGMENT_SHADER);	
+			scriptText = `precision mediump float;
+			`+ scriptElement.text;
+		} else {
+			return;
+		}
 	}
 
 	// 生成されたシェーダにソースを割り当てる
-	gl.shaderSource(shader, scriptElement.text);
+	gl.shaderSource(shader, scriptText);
 
 	// シェーダをコンパイルする
 	gl.compileShader(shader);
