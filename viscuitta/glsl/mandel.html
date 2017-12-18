@@ -1,11 +1,7 @@
 
 <html>
-    <head>
-        <meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
-    <!-- fragment shader -->
     <script id="fs" type="x-shader/x-fragment">
 uniform float time;uniform vec2 mouse, resolution;uniform vec3 spectrum;uniform sampler2D texture0, texture1, texture2, texture3, prevFrame;
-//out vec4 fragColor;
 #define iResolution resolution
 #define iTime time
 #define iMouse mouse
@@ -67,12 +63,8 @@ uniform float time;uniform vec2 mouse, resolution;uniform vec3 spectrum;uniform 
             mainImage(fragColor, gl_FragCoord.xy);
             gl_FragColor = fragColor;
         }
-    </script><!-- /fragment shader -->
-    
-    <script src="./mandel.js" type="text/javascript"></script>
-    </head>
-    <body>
-        <canvas id="canvas" width="1024" height="1024"></canvas>
-    </body>
+    </script>
+    <script src="./fragment.js" type="text/javascript"></script>
+    <canvas id="canvas" width="256" height="256"></canvas>
 </html>
     
