@@ -38,7 +38,6 @@ uniform float time;uniform vec2 mouse, resolution;uniform vec3 spectrum;uniform 
 #endif
 
 
-
 const float maxiter=256.;
 const float pi = 4.0*atan(1.,1.);
 const float pi2 = pi*2.;
@@ -69,48 +68,37 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
     float time = 0.;iTime;
     float iter=0.;
-    vec2 z = vec2(0);
-	vec2 c =  (2.*fragCoord.xy /iResolution.y-vec2(iResolution.x/iResolution.y,1.)+vec2(0.11,0))*scale;
+	vec2 z =  scale*(2.*fragCoord.xy /iResolution.y-vec2(iResolution.x/iResolution.y,1.));
+    vec2 uv=2.*iMouse.xy /iResolution.y-vec2(iResolution.x/iResolution.y,1.);
+    if(iMouse.xy==vec2(0.))
+        uv=vec2(-1.,0.);
     bool bailed=false;
     for(float i = 0.;i<maxiter;i++)
     {
         iter=i;
-        if (degree==2.) {
-          z=z*mat2(z*vec2(1,-1),z.yx)+c;
-        } else if (degree==3.) {
-           // TODO:
-        }
+        z=z*mat2(z*vec2(1,-1),z.yx)+uv;
+
         if(length(z)>bailout) {
             bailed = true;
             break;
         }
     }
     if (bailed==false) {
-        fragColor = vec4(0.,0.,0.,1.);
+        fragColor = vec4(0);
         return;
     }
+    
     float cx = atan(z.y,z.x);
     float cy = log(length(z));
-
 
     float red = mod((cy-ratiopi2)/(ratiopi2),1.);
 
     float green = 0.;
-    float blue  = mod(cx/(2.*pi),1.); 
+    float blue  = mod(cx/(2.*pi),1.);    
 
 #if SHADER == SHADER_HTML
-//fragColor = getNyanCatColor(vec2(blue,1.-red),time);
-    float xx = 2.*red;
-    if (xx>1.) {
-        xx = 2.-xx;
-    }
-    float yy = 2.*blue;
-    if (yy>1.) {
-        yy = 2.-yy;
-    }
-    float zz = sqrt(sqrt(sqrt(xx * yy)));  
-fragColor  = vec4(zz,zz,zz,1.0);
-
+//fragColor = getNyanCatColor(vec2(blue,1.-red),time);  
+    fragColor  = vec4(red,red,red,1.0);
 #elif SHADER == SHADER_SHADERTOY
 //    fragColor = vec4(red,0.,blue,1.0);
         fragColor = getNyanCatColor(vec2(blue,red),time);    

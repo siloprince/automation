@@ -5,7 +5,7 @@ let mx, my, gl, run;
 let startTime;
 let time = 0.0;
 let tempTime = 0.0;
-let FPS = 1000 / 30;
+let FPS = 1000 * 30;
 let uniLocation = [];
 // カウンタの宣言
 let count = 0;
