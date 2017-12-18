@@ -121,20 +121,7 @@ window.onload = function(){
 	// VBOとIBOの登録
 	set_attribute(VBOList, attLocation, attStride);
 	gl.bindBuffer(gl.ELEMENT_ARRAY_BUFFER, iIndex);
-	
-	// 各種行列の生成と初期化
-	m = new matIV();
-	mMatrix   = m.identity(m.create());
-	var vMatrix   = m.identity(m.create());
-	var pMatrix   = m.identity(m.create());
-	tmpMatrix = m.identity(m.create());
-	mvpMatrix = m.identity(m.create());
-	
-	// ビュー×プロジェクション座標変換行列
-	m.lookAt([0.0, 2.0, 5.0], [0, 0, 0], [0, 1, 0], vMatrix);
-	m.perspective(45, c.width / c.height, 0.1, 100, pMatrix);
-	m.multiply(pMatrix, vMatrix, tmpMatrix);
-	
+
 	// 深度テストを有効にする
 	gl.enable(gl.DEPTH_TEST);
 	gl.depthFunc(gl.LEQUAL);
@@ -204,18 +191,10 @@ function mouseMove(e){
 		}
 
 		// テクスチャを更新する
-		
-		// モデル座標変換行列の生成
-		m.identity(mMatrix);
-		m.rotate(mMatrix, rad, [0, 1, 0], mMatrix);
-		m.multiply(tmpMatrix, mMatrix, mvpMatrix);
-		
 		// uniform変数の登録と描画
 		gl.uniform1f(uniLocation[0], time + tempTime);
 		gl.uniform2fv(uniLocation[1], [mx, my]);
 		gl.uniform2fv(uniLocation[2], [cw, ch]);
-		gl.uniformMatrix4fv(uniLocation[0+3], false, mvpMatrix);
-
 		gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 		
 		// コンテキストの再描画
