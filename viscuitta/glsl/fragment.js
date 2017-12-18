@@ -1,23 +1,3 @@
-// sample_015
-//
-// WebGLで複数のテクスチャを利用し合成処理する
-// sample_068
-//
-// GLSL だけでレンダリングする
-
-// GLSL サンプルの(ほぼ)共通仕様 =============================================
-// 
-// ・シェーダのコンパイルに失敗した場合は auto run を無効にします
-// ・auto run は 30fps になっているので環境と負荷に応じて適宜変更しましょう
-// ・uniform 変数は以下のようにシェーダへ送られます 
-//     ・time: 経過時間を秒単位(ミリ秒は小数点以下)で送る(float)
-//     ・mouse: マウス座標を canvas 左上原点で 0 ～ 1 の範囲で送る(vec2)
-//     ・resolution: スクリーンの縦横の幅をピクセル単位で送る(vec2)
-// ・シェーダのコンパイルに失敗した場合エラー内容をアラートとコンソールに出力
-// ・シェーダのエラーで表示される行番号は一致するように HTML を書いてあります
-// 
-// ============================================================================
-
 // global
 let g_videoEnabled = false;
 let canvas;
@@ -197,7 +177,7 @@ function render(flag) {
 	// テクスチャを更新する
 	// uniform変数の登録と描画
 	gl.uniform1f(uniLocation[0], time + tempTime);
-	gl.uniform2fv(uniLocation[1], [mx, my]);
+	gl.uniform2fv(uniLocation[1], [mx*canvas.width, my*canvas.height]);
 	gl.uniform2fv(uniLocation[2], [canvas.width, canvas.height]);
 	gl.drawElements(gl.TRIANGLES, index.length, gl.UNSIGNED_SHORT, 0);
 
