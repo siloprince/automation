@@ -198,7 +198,7 @@ vec3 getCircleFromSphere(vec3 upper, vec3 lower){
 
 void mainImage( out vec4 fragColor, in vec2 fragCoord )
 {
- 	float time = iTime;  
+ 	float time = 0.;//iTime;  
     float range = mod(0.16*time,1.);
     if (range>.5) {
         range = 1.-range;
@@ -275,7 +275,7 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
 
 #if SHADER == SHADER_HTML
 	    //fragColor = vec4(red,0.,blue,1.0);
-        fragColor = getNyanCatColor(vec2(blue,red),time); 
+        fragColor = getNyanCatColor(vec2(red,blue),time); 
 #elif SHADER == SHADER_SHADERTOY
         fragColor = getNyanCatColor(vec2(blue,red),time);    
 #else
