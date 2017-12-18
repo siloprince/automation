@@ -10,9 +10,9 @@
 // ・シェーダのコンパイルに失敗した場合は auto run を無効にします
 // ・auto run は 30fps になっているので環境と負荷に応じて適宜変更しましょう
 // ・uniform 変数は以下のようにシェーダへ送られます 
-//     ・time: 経過時間を秒単位(ミリ秒は小数点以下)で送る(float)
-//     ・mouse: マウス座標を canvas 左上原点で 0 ～ 1 の範囲で送る(vec2)
-//     ・resolution: スクリーンの縦横の幅をピクセル単位で送る(vec2)
+//     ・iTime: 経過時間を秒単位(ミリ秒は小数点以下)で送る(float)
+//     ・iMouse: マウス座標を canvas 左上原点で 0 ～ 1 の範囲で送る(vec2)
+//     ・iResolution: スクリーンの縦横の幅をピクセル単位で送る(vec2)
 // ・シェーダのコンパイルに失敗した場合エラー内容をアラートとコンソールに出力
 // ・シェーダのエラーで表示される行番号は一致するように HTML を書いてあります
 // 
@@ -58,9 +58,9 @@ window.onload = function(){
 	var prg = create_program(create_shader('vs'), create_shader('fs'));
 	run = (prg != null); if(!run){eCheck.checked = false;}
 	
-	uniLocation.push(gl.getUniformLocation(prg, 'time'));
-	uniLocation.push(gl.getUniformLocation(prg, 'mouse'));
-	uniLocation.push(gl.getUniformLocation(prg, 'resolution'));
+	uniLocation.push(gl.getUniformLocation(prg, 'iTime'));
+	uniLocation.push(gl.getUniformLocation(prg, 'iMouse'));
+	uniLocation.push(gl.getUniformLocation(prg, 'iResolution'));
 	uniLocation.push(gl.getUniformLocation(prg, 'mvpMatrix'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture0'));
 	uniLocation.push(gl.getUniformLocation(prg, 'texture1'));
