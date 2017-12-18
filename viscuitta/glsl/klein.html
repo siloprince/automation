@@ -16,10 +16,14 @@
 #define SHADER SHADER_KODELIFE
 #endif
 
-#if SHADER != SHADER_SHADERTOY
+#if SHADER == SHADER_VSCODE
 #define texture vec4(0);
 #endif
+#if SHADER == SHADER_HTML
+#define texture texture2D
+#endif
 #if SHADER == SHADER_KODELIFE
+#define texture vec4(0);
 out vec4 fragColor;
 #endif
 #if SHADER >= SHADER_HTML
@@ -270,8 +274,8 @@ void mainImage( out vec4 fragColor, in vec2 fragCoord )
         }
 
 #if SHADER == SHADER_HTML
-	    fragColor = vec4(red,0.,blue,1.0);
-        //fragColor = getNyanCatColor(vec2(blue,red),time); 
+	    //fragColor = vec4(red,0.,blue,1.0);
+        fragColor = getNyanCatColor(vec2(blue,red),time); 
 #elif SHADER == SHADER_SHADERTOY
         fragColor = getNyanCatColor(vec2(blue,red),time);    
 #else
