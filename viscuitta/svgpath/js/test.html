@@ -7,14 +7,16 @@
         'use strict';
         import { SvgPath, pathParse } from './svgpath.js';
         let pathes = [];
-        let linea = 'M-50 0 50 0';
-        let lineb = 'M-50 0 50 0';
+        let linea = 'M40, 50C47.833333333333336,52.166666666666664 67,63 87,63C107,63 160,50 160,50';
+        let lineb = 'M40, 50 160,50';
+        let linec = reverse(linea);
         let transformed = [];
         let hash = {};
 
-        transformed.push(SvgPath(linea).scale(1.).rotate( 0).translate(  0,-50).toString());
+        transformed.push(SvgPath(linea).translate(-100,-50).scale(1./1.2).rotate( 0).translate(  0,-50).toString());
 
         let pstate = pathParse(transformed.toString());
+        console.dir(pstate);
         let sx =  Math.floor(pstate.segments[0][0]);
         let sy =  Math.floor(pstate.segments[0][1]);
         let ss = `${sx},${sy}`;
@@ -22,14 +24,14 @@
         let ey =  Math.floor(pstate.segments[pstate.segments.length-1][1]);
         let ee = `${ex},${ey}`;
         if (ss!==ee) {
-            hash[ss] = {};
-            hash[ee] = {}
+            hash[ss] = {  };
+            hash[ee] = { }
         }
 
-        transformed.push(SvgPath(lineb).scale(1.).rotate(90).translate( 50,  0).toString());
-        transformed.push(SvgPath(linea).scale(1.).rotate( 0).translate(  0, 50).toString());
-        transformed.push(SvgPath(lineb).scale(1.).rotate(90).translate(-50,  0).toString());
-        pathes.push(`<path d="${transformed.toString()}" stroke="#000000" stroke-width="2"/>`);
+        transformed.push(SvgPath(lineb).translate(-100,-50).scale(1./1.2).scale(1.).rotate(90).translate( 50,  0).toString());
+        transformed.push(SvgPath(linec).translate(-100,-50).scale(1./1.2).scale(1.).rotate( 0).translate(  0, 50).toString());
+        transformed.push(SvgPath(lineb).translate(-100,-50).scale(1./1.2).scale(1.).rotate(90).translate(-50,  0).toString());
+        pathes.push(`<path d="${transformed.toString()}" fill="none" stroke="#000000" stroke-width="2"/>`);
 
         console.dir(transformed);
         let svgstr = `<svg width="800" height="800">
@@ -38,6 +40,33 @@
             </g>
         </svg>`;
         document.querySelector('div#svg').insertAdjacentHTML('afterend',svgstr);
+
+        function reverse(pathstr) {
+            let pstate = pathParse(pathstr);
+            let segments = pstate.segments;
+            let ret = [];
+            if (segments[0][0]!=='M') {
+                throw 'invalid path:'+pathstr;
+            }
+            let cmd;
+            let data = ['M'];
+            for (let si=0;si<segments.length;si++) {
+                let sj=segments.length-1-si;
+                let seg = segments[sj];
+                cmd = seg[0];
+                let scount=0;
+                for (let sk=seg.length-2;sk>0;sk-=2) {
+                    let xx=seg[sk];
+                    let yy=seg[sk+1];
+                    if (sj!==0 && scount===1) {
+                       data.push(cmd); 
+                    }
+                    data.push(`${xx},${yy} `);
+                    scount++;
+                }
+            }
+            return data.join('');
+        }
         </script>
     </head>
     <body>
