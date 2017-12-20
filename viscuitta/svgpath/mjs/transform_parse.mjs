@@ -1,7 +1,7 @@
 'use strict';
 
 
-import { Matrix } from './matrix';
+import { Matrix } from './matrix.mjs';
 
 let operations = {
   matrix: true,

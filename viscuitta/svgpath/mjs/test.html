@@ -1,0 +1,18 @@
+<html>
+    <head>
+        <meta charset="UTF-8"/>
+        <script type="module" src="./svgpath.mjs">
+        </script>
+        <script type="module">
+        'use strict';
+        import { SvgPath } from './svgpath.mjs';
+        let transformed = SvgPath('M0 0 100 0')
+                            .scale(0.5)
+                            .translate(100,200)
+                            .rel()
+                            .round(1)
+                            .toString();
+        console.dir(transformed);
+        </script>
+    </head>
+</html>

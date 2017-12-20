@@ -13,11 +13,11 @@
 'use strict';
 
 
-import { pathParse } from './path_parse';
-import { transformParse } from './transform_parse';
-import { Matrix } from './matrix';
-import { a2c } from './a2c';
-import { Ellipse } from './ellipse';
+import { pathParse } from './path_parse.mjs';
+import { transformParse } from './transform_parse.mjs';
+import { Matrix } from './matrix.mjs';
+import { a2c } from './a2c.mjs';
+import { Ellipse } from './ellipse.mjs';
 
 // Class constructor
 //
