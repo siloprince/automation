@@ -15,7 +15,8 @@
 
         transformed.push(SvgPath(linea).translate(-100,-50).scale(1./1.2).rotate( 0).translate(  0,-50).toString());
 
-        let pstate = pathParse(transformed.toString());
+        let pathstr = transformed.toString();
+        let pstate = pathParse(pathstr);
         console.dir(pstate);
         let sx =  Math.floor(pstate.segments[0][0]);
         let sy =  Math.floor(pstate.segments[0][1]);
@@ -24,8 +25,8 @@
         let ey =  Math.floor(pstate.segments[pstate.segments.length-1][1]);
         let ee = `${ex},${ey}`;
         if (ss!==ee) {
-            hash[ss] = {  };
-            hash[ee] = { }
+            hash[ss] = { path: pathstr  };
+            hash[ee] = { path: reverse(pathstr)};
         }
 
         transformed.push(SvgPath(lineb).translate(-100,-50).scale(1./1.2).scale(1.).rotate(90).translate( 50,  0).toString());
