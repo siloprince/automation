@@ -5,18 +5,37 @@
         </script>
         <script type="module">
         'use strict';
-        import { SvgPath } from './svgpath.js';
+        import { SvgPath, pathParse } from './svgpath.js';
         let pathes = [];
-        let linea = 'M0 0 100 0';
-        let transformed = SvgPath(linea)
-                            .scale(1.)
-                            .translate(10,100)
-                            .toString();
-        pathes.push(`<path d="${transformed}" stroke="#000000" stroke-width="2"/>`);
+        let linea = 'M-50 0 50 0';
+        let lineb = 'M-50 0 50 0';
+        let transformed = [];
+        let hash = {};
+
+        transformed.push(SvgPath(linea).scale(1.).rotate( 0).translate(  0,-50).toString());
+
+        let pstate = pathParse(transformed.toString());
+        let sx =  Math.floor(pstate.segments[0][0]);
+        let sy =  Math.floor(pstate.segments[0][1]);
+        let ss = `${sx},${sy}`;
+        let ex =  Math.floor(pstate.segments[pstate.segments.length-1][0]);
+        let ey =  Math.floor(pstate.segments[pstate.segments.length-1][1]);
+        let ee = `${ex},${ey}`;
+        if (ss!==ee) {
+            hash[ss] = {};
+            hash[ee] = {}
+        }
+
+        transformed.push(SvgPath(lineb).scale(1.).rotate(90).translate( 50,  0).toString());
+        transformed.push(SvgPath(linea).scale(1.).rotate( 0).translate(  0, 50).toString());
+        transformed.push(SvgPath(lineb).scale(1.).rotate(90).translate(-50,  0).toString());
+        pathes.push(`<path d="${transformed.toString()}" stroke="#000000" stroke-width="2"/>`);
 
         console.dir(transformed);
         let svgstr = `<svg width="800" height="800">
+            <g transform="translate(200,200)">
             ${pathes.join('')}
+            </g>
         </svg>`;
         document.querySelector('div#svg').insertAdjacentHTML('afterend',svgstr);
         </script>
