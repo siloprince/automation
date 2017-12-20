@@ -1,7 +1,6 @@
 'use strict';
 
 
-(function() {
 let paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
 
 let SPECIAL_SPACES = [
@@ -256,7 +255,7 @@ function scanSegment(state) {
  *   [ command, coord1, coord2, ... ]
  * ]
  */
-module.exports = function pathParse(svgPath) {
+export const pathParse = function (svgPath) {
   let state = new State(svgPath);
   let max = state.max;
 
@@ -284,5 +283,3 @@ module.exports = function pathParse(svgPath) {
     segments: state.result
   };
 };
-
-})();

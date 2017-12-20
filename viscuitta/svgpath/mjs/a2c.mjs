@@ -2,7 +2,6 @@
 //
 'use strict';
 
-(function() {
 
 let TAU = Math.PI * 2;
 
@@ -112,7 +111,7 @@ function approximate_unit_arc(theta1, delta_theta) {
   return [ x1, y1, x1 - y1*alpha, y1 + x1*alpha, x2 + y2*alpha, y2 - x2*alpha, x2, y2 ];
 }
 
-module.exports = function a2c(x1, y1, x2, y2, fa, fs, rx, ry, phi) {
+export const a2c = function (x1, y1, x2, y2, fa, fs, rx, ry, phi) {
   let sin_phi = Math.sin(phi * TAU / 360);
   let cos_phi = Math.cos(phi * TAU / 360);
 
@@ -187,5 +186,3 @@ module.exports = function a2c(x1, y1, x2, y2, fa, fs, rx, ry, phi) {
     return curve;
   });
 };
-
-})();

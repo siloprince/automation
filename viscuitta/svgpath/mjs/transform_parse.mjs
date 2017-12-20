@@ -1,9 +1,7 @@
 'use strict';
 
 
-(function() {
-
-let Matrix = require('./matrix');
+import { Matrix } from './matrix';
 
 let operations = {
   matrix: true,
@@ -18,7 +16,7 @@ let CMD_SPLIT_RE    = /\s*(matrix|translate|scale|rotate|skewX|skewY)\s*\(\s*(.+
 let PARAMS_SPLIT_RE = /[\s,]+/;
 
 
-module.exports = function transformParse(transformString) {
+export const transformParse = function transformParse(transformString) {
   let matrix = new Matrix();
   let cmd, params;
 
@@ -87,5 +85,3 @@ module.exports = function transformParse(transformString) {
 
   return matrix;
 };
-
-})();

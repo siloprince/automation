@@ -1,6 +1,5 @@
 'use strict';
 
-(function() {
 /* eslint-disable space-infix-ops */
 
 // The precision used to consider an ellipse as a circle
@@ -14,7 +13,7 @@ let torad = Math.PI / 180;
 // Class constructor :
 //  an ellipse centred at 0 with radii rx,ry and x - axis - angle ax.
 //
-function Ellipse(rx, ry, ax) {
+export const Ellipse = function (rx, ry, ax) {
   if (!(this instanceof Ellipse)) { return new Ellipse(rx, ry, ax); }
   this.rx = rx;
   this.ry = ry;
@@ -100,6 +99,4 @@ Ellipse.prototype.isDegenerate = function () {
   return (this.rx < epsilon * this.ry || this.ry < epsilon * this.rx);
 };
 
-module.exports = Ellipse;
 
-})();

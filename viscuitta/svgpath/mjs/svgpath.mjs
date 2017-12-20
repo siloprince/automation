@@ -12,18 +12,16 @@
 
 'use strict';
 
-(function() {
 
-let pathParse      = require('./path_parse');
-let transformParse = require('./transform_parse');
-let matrix         = require('./matrix');
-let a2c            = require('./a2c');
-let ellipse        = require('./ellipse');
-
+import { pathParse } from './path_parse';
+import { transformParse } from './transform_parse';
+import { Matrix } from './matrix';
+import { a2c } from './a2c';
+import { Ellipse } from './ellipse';
 
 // Class constructor
 //
-function SvgPath(path) {
+export const SvgPath = function (path) {
   if (!(this instanceof SvgPath)) { return new SvgPath(path); }
 
   let pstate = pathParse(path);
@@ -84,7 +82,7 @@ SvgPath.prototype.__matrix = function (m) {
 
         // Transform rx, ry and the x-axis-rotation
         let ma = m.toArray();
-        let e = ellipse(s[1], s[2], s[3]).transform(ma);
+        let e = Ellipse(s[1], s[2], s[3]).transform(ma);
 
         // flip sweep-flag if matrix is not orientation-preserving
         if (ma[0] * ma[3] - ma[1] * ma[2] < 0) {
@@ -153,7 +151,7 @@ SvgPath.prototype.__evaluateStack = function () {
     return;
   }
 
-  m = matrix();
+  m = Matrix();
   i = this.__stack.length;
 
   while (--i >= 0) {
@@ -194,7 +192,7 @@ SvgPath.prototype.toString = function () {
 // Translate path to (x [, y])
 //
 SvgPath.prototype.translate = function (x, y) {
-  this.__stack.push(matrix().translate(x, y || 0));
+  this.__stack.push(Matrix().translate(x, y || 0));
   return this;
 };
 
@@ -203,7 +201,7 @@ SvgPath.prototype.translate = function (x, y) {
 // sy = sx if not defined
 //
 SvgPath.prototype.scale = function (sx, sy) {
-  this.__stack.push(matrix().scale(sx, (!sy && (sy !== 0)) ? sx : sy));
+  this.__stack.push(Matrix().scale(sx, (!sy && (sy !== 0)) ? sx : sy));
   return this;
 };
 
@@ -212,7 +210,7 @@ SvgPath.prototype.scale = function (sx, sy) {
 // sy = sx if not defined
 //
 SvgPath.prototype.rotate = function (angle, rx, ry) {
-  this.__stack.push(matrix().rotate(angle, rx || 0, ry || 0));
+  this.__stack.push(Matrix().rotate(angle, rx || 0, ry || 0));
   return this;
 };
 
@@ -220,7 +218,7 @@ SvgPath.prototype.rotate = function (angle, rx, ry) {
 // Skew path along the X axis by `degrees` angle
 //
 SvgPath.prototype.skewX = function (degrees) {
-  this.__stack.push(matrix().skewX(degrees));
+  this.__stack.push(Matrix().skewX(degrees));
   return this;
 };
 
@@ -228,7 +226,7 @@ SvgPath.prototype.skewX = function (degrees) {
 // Skew path along the Y axis by `degrees` angle
 //
 SvgPath.prototype.skewY = function (degrees) {
-  this.__stack.push(matrix().skewY(degrees));
+  this.__stack.push(Matrix().skewY(degrees));
   return this;
 };
 
@@ -236,7 +234,7 @@ SvgPath.prototype.skewY = function (degrees) {
 // Apply matrix transform (array of 6 elements)
 //
 SvgPath.prototype.matrix = function (m) {
-  this.__stack.push(matrix().matrix(m));
+  this.__stack.push(Matrix().matrix(m));
   return this;
 };
 
@@ -627,6 +625,3 @@ SvgPath.prototype.unshort = function () {
 };
 
 
-module.exports = SvgPath;
-
-})();

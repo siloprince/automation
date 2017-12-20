@@ -1,8 +1,6 @@
+import { SvgPath } from './svgpath';
 
-(function() {
-    let svgpath = require('./svgpath');
-
-let transformed = svgpath('M0 0 100 0')
+let transformed = SvgPath('M0 0 100 0')
                     .scale(0.5)
                     .translate(100,200)
                     .rel()
@@ -10,5 +8,3 @@ let transformed = svgpath('M0 0 100 0')
                     .toString();
 
 console.log(transformed);
-
-})();

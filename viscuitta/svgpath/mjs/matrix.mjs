@@ -1,6 +1,5 @@
 'use strict';
 
-(function() {
 // combine 2 matrixes
 // m1, m2 - [a, b, c, d, e, g]
 //
@@ -16,7 +15,8 @@ function combine(m1, m2) {
 }
 
 
-function Matrix() {
+
+export const Matrix = function () {
   if (!(this instanceof Matrix)) { return new Matrix(); }
   this.queue = [];   // list of matrixes to apply
   this.cache = null; // combined matrix cache
@@ -141,7 +141,3 @@ Matrix.prototype.calc = function (x, y, isRelative) {
   ];
 };
 
-
-module.exports = Matrix;
-
-})();
