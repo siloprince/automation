@@ -10,5 +10,5 @@ let transformed = svgpath('M0 0 100 0')
                     .toString();
 
 console.log(transformed);
-
+console.log();
 })();
