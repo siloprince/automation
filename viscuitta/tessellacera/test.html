@@ -2,11 +2,14 @@
 
 <head>
     <meta charset="UTF-8" />
-    <script type="module" src="./svgpath.js">
+    <script type="text/javascript" src="./svgpath.js">
     </script>
-    <script type="module">
+</head>
+
+<body>
+    <div id="svg" style="margin:10"></div>
+    <script type="text/javascript">
         'use strict';
-        import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
         let pathes = [];
         let linea = 'M40, 50 160,50';//'M40, 50C47.833333333333336,52.166666666666664 67,63 87,63C107,63 160,50 160,50';
         let lineb = 'M40, 50 160,50';
@@ -29,10 +32,6 @@
         document.querySelector('div#svg').insertAdjacentHTML('afterend', svgstr);
 
     </script>
-</head>
-
-<body>
-    <div id="svg" style="margin:100"></div>
 </body>
 
 </html>

@@ -12,12 +12,11 @@
         <input id="extrude" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
     </div>
-    <script type="module" src="./svgpath.js"></script>
-    <script type="module" src="draw.js"></script>
-    <script type="module">
+    <div id="svg" style="margin:5"></div>
+    <script type="text/javascript" src="./svgpath.js"></script>
+    <script type="text/javascript" src="draw.js"></script>
+    <script type="text/javascript">
         'use strict';
-        import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
-
         (function (console, document) {
             let base = 100;
             update();
@@ -52,6 +51,5 @@
             }
         })(console, document);
     </script>
-    <div id="svg" style="margin:5"></div>
 </body>
 </html>

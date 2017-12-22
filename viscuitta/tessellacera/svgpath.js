@@ -1,5 +1,5 @@
 'use strict';
-export const Matrix = (function () {
+const Matrix = (function () {
   // combine 2 matrixes
   // m1, m2 - [a, b, c, d, e, g]
   //
@@ -144,7 +144,7 @@ export const Matrix = (function () {
 })();
 
 'use strict';
-export const pathParse = (function () {
+const pathParse = (function () {
 
 
   let paramCounts = { a: 7, c: 6, h: 1, l: 2, m: 2, r: 4, q: 4, s: 4, t: 2, v: 1, z: 0 };
@@ -433,7 +433,7 @@ export const pathParse = (function () {
 })();
 
 'use strict';
-export const transformParse = (function () {
+const transformParse = (function () {
 
   let operations = {
     matrix: true,
@@ -522,7 +522,7 @@ export const transformParse = (function () {
 
 
 'use strict';
-export const a2c = (function () {
+const a2c = (function () {
 
   let TAU = Math.PI * 2;
 
@@ -713,7 +713,7 @@ export const a2c = (function () {
 })();
 
 'use strict';
-export const Ellipse = (function () {
+const Ellipse = (function () {
 
   /* eslint-disable space-infix-ops */
 
@@ -831,7 +831,7 @@ export const Ellipse = (function () {
 })();
 
 'use strict';
-export const SvgPath = (function () {
+const SvgPath = (function () {
 
   // Class constructor
   //
@@ -1442,7 +1442,7 @@ export const SvgPath = (function () {
 })();
 
 
-export const pathListMerge = function (transformed) {
+const pathListMerge = function (transformed) {
   let hash = {};
   let idHash = {};
   for (let ti = 0; ti < transformed.length; ti++) {

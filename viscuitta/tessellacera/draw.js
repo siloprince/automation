@@ -1,6 +1,5 @@
 
 'use strict';
-import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
 (function () {
     // https://codepen.io/kwst/pen/vgGgqN?editors=1000
 
