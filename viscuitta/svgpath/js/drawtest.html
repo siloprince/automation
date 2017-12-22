@@ -1,0 +1,55 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+</head>
+
+<body>
+    <div style="margin:10px;">
+        <svg id="red" class="draw" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw" width="200" height="100" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="extrude" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
+        <br/>
+    </div>
+    <script type="module" src="./svgpath.js"></script>
+    <script type="module" src="draw.js"></script>
+
+    <script type="module">
+        'use strict';
+        import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
+
+        (function (console, document) {
+            let base = 100;
+            update();
+            document.querySelector('input#extrude').addEventListener('change', update);
+
+            function update() {
+                let extrude = parseFloat(document.querySelector('input#extrude').value);
+
+                let len = base + extrude;
+                let move = base / Math.sqrt(2);
+                let scale = extrude / Math.sqrt(2) / base;
+
+                let pathes = [];
+                let linea = document.querySelector('g#curve_red path').getAttribute('d');
+                let lineb = document.querySelector('g#curve_blue path').getAttribute('d');
+                let transformed = [];
+                transformed.push(SvgPath(linea).rotate(0).translate(0, -50).toString());
+                transformed.push(SvgPath(lineb).rotate(90).translate(50, 0).toString());
+                transformed.push(SvgPath(linea).rotate(0).translate(0, 50).toString());
+                transformed.push(SvgPath(lineb).rotate(90).translate(-50, 0).toString());
+        
+        
+                let path = pathListMerge(transformed);
+        
+                pathes.push(`<path d="${path}" fill="none" stroke="#000000" stroke-width="2"/>`);
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(100,100)">${pathes.join('')}</g></svg>`;
+                document.querySelector('div#svg').innerHTML = svgstr;
+            }
+        })(console, document);
+    </script>
+    <div id="svg" style="margin:5"></div>
+</body>
+</html>

@@ -1,7 +1,8 @@
 
+'use strict';
+import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
 (function () {
     // https://codepen.io/kwst/pen/vgGgqN?editors=1000
-    'use strict';
 
 const containerList = document.querySelectorAll('svg.draw');
 const offset = 40;
@@ -80,7 +81,11 @@ function mouseup(container) {
     path = createPathWithBezier(drawingPoints, cx, cy);
     Object.assign(path.style, defaultPathStyle);
     let scale = 100 / (cx - offset);
-    container.insertAdjacentHTML('beforeend', `<g transform="translate(${offset},${cy})scale(${1 / scale},1)"><g transform="scale(${scale},1)translate(${-offset},${-cy})" id="curve_${container.id}"></g></g>`);
+    let pathData = path.getAttribute('d');
+    let pathModData = SvgPath(pathData).translate(-offset,-cy).scale(scale).translate(-50,0);
+    path.setAttribute('d',pathModData.toString());
+    //transform="scale(${scale},1)translate(${-offset},${-cy})" 
+    container.insertAdjacentHTML('beforeend', `<g transform="translate(${offset},${cy})scale(${1 / scale},1)translate(50,0)"><g id="curve_${container.id}"></g></g>`);
     let group = container.querySelector(`g#curve_${container.id}`);
     group.appendChild(path);
 }
