@@ -1458,7 +1458,6 @@ const pathListMerge = function (transformed) {
   return path.join('');
 
   function findNear(body, hash, idHash, path) {
-      console.dir(body);
       path.push(body.data);
       idHash[body.id] = true;
       let candidate = null;
@@ -1482,7 +1481,6 @@ const pathListMerge = function (transformed) {
               }
           }
       }
-      console.log(minXy);
       if (minXy !== null) {
           let nextBody;
           for (let hi = 0; hi < hash[minXy].length; hi++) {

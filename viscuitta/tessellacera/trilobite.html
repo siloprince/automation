@@ -1,41 +1,36 @@
 <html>
-<meta charset="UTF-8" /></head>
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./svgpath.js"></script>
+    <script type="text/javascript" src="draw.js"></script>
+    <script type="text/javascript" src="update.js"></script>
+</head>
 <body>
 
     <div style="margin:10px;">
-        <svg id="red" class="draw" width="200" height="250" style="border: 1px solid #ffaaaa;" />
-        <svg id="blue" class="draw" width="200" height="250" style="border: 1px solid #aaaaff;" />
+        <svg id="red" class="draw update" width="200" height="250" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="250" style="border: 1px solid #aaaaff;" />
         <br/>
-        <input id="extrude" class="ctrl" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
+        <input id="extrude" class="update" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
     </div>
     <div id="svg"></div>
-    <script type="text/javascript" src="./svgpath.js"></script>
-    <script type="text/javascript" src="draw.js"></script>
     <script type="text/javascript">
         'use strict';
         (function (console, document) {
             let base = 100;
 
-            update();
-            let inputs = document.querySelectorAll('input.ctrl');
-            for (let ii=0;ii<inputs.length;ii++) {
-                inputs[ii].addEventListener('change', update);
-            }
-            let draws = document.querySelectorAll('svg.draw');
-            for (let di=0;di<draws.length;di++) {
-                draws[di].addEventListener('mouseup', update);
-            }
-            function update() {
-                let extrude = parseFloat(document.querySelector('input#extrude').value);
+            Update.update=update;
+            function update(param) {
+                let extrude = param.extrude;
 
                 let len = base + extrude;
                 let move = base / Math.sqrt(2);
                 let scale = extrude / Math.sqrt(2) / base;
 
         let pathes = [];
-        let linea = document.querySelector('path#curve_red').getAttribute('d');
-        let lineb = document.querySelector('path#curve_blue').getAttribute('d');
+        let linea = Draw.getData('red');//document.querySelector('path#curve_red').getAttribute('d');
+        let lineb = Draw.getData('blue');//document.querySelector('path#curve_blue').getAttribute('d');
         let l0 = SvgPath(linea).scale(2).toString();
         let l1 = SvgPath(lineb).scale(2).toString();
 
@@ -73,7 +68,6 @@
         tile.push(SvgPath(small).rotate( 180).toString());
         
         let atile_d = pathListMerge(atile);
-        console.log(atile_d);
         let tile_d = pathListMerge(tile);
         pathes.push(getPath( tile_d, -90, -len*2,     0));
         pathes.push(getPath(atile_d,   0, -len*2, len*2));
