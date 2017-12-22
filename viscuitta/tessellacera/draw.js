@@ -83,10 +83,11 @@ function mouseup(container) {
     let pathData = path.getAttribute('d');
     let pathModData = SvgPath(pathData).translate(-offset,-cy).scale(scale).translate(-50,0);
     path.setAttribute('d',pathModData.toString());
-    //transform="scale(${scale},1)translate(${-offset},${-cy})" 
-    container.insertAdjacentHTML('beforeend', `<g transform="translate(${offset},${cy})scale(${1 / scale},1)translate(50,0)"><g id="curve_${container.id}"></g></g>`);
-    let group = container.querySelector(`g#curve_${container.id}`);
-    group.appendChild(path);
+    path.id = `curve_${container.id}`
+    let g = document.createElementNS('http://www.w3.org/2000/svg', 'g');
+    g.setAttributeNS(null,'transform',`translate(${offset},${cy})scale(${1 / scale},1)translate(50,0)`);
+    g.appendChild(path);
+    container.appendChild(g);
 }
 function createPathWithBezier(points, cx, cy) {
     const path = document.createElementNS('http://www.w3.org/2000/svg', 'path');

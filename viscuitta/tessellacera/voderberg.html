@@ -5,20 +5,26 @@
 <svg id="red" class="draw" width="200" height="150" style="border: 1px solid #ffaaaa;"/>
 <svg id="blue" class="draw" width="200" height="150" style="border: 1px solid #aaaaff;"/>
  <br/>
- <input id="divide" type="range" min="1" value="3" max="6" step="1"/>: 分割<br/>
- <input id="slide" type="range" min="0" value="1" max="5" step="1"/>: スライド<br/>
- <input id="extrude" type="range" min="0" value="0" max="5" step="1"/>: 引き伸ばし<br/>
+ <input id="divide" class="ctrl" type="range" min="1" value="3" max="6" step="1"/>: 分割<br/>
+ <input id="slide" class="ctrl" type="range" min="0" value="1" max="5" step="1"/>: スライド<br/>
+ <input id="extrude" class="ctrl" type="range" min="0" value="0" max="5" step="1"/>: 引き伸ばし<br/>
 </div>
+<div id="svg"></div>
+<script type="text/javascript" src="./svgpath.js"></script>
 <script type="text/javascript" src="draw.js"></script>
-<div id="draw"></div>
 <script type="text/javascript">
 'use strict';
 (function(console,document){
 
-update();
-document.querySelector('input#divide').addEventListener('change',update);
-document.querySelector('input#slide').addEventListener('change',update);
-document.querySelector('input#extrude').addEventListener('change',update);
+    update();
+    let inputs = document.querySelectorAll('input.ctrl');
+    for (let ii=0;ii<inputs.length;ii++) {
+        inputs[ii].addEventListener('change', update);
+    }
+    let draws = document.querySelectorAll('svg.draw');
+    for (let di=0;di<draws.length;di++) {
+        draws[di].addEventListener('mouseup', update);
+    }
 
 function update() {
 let divide = parseFloat(document.querySelector('input#divide').value);
@@ -36,6 +42,21 @@ let rot = 180-(180-ang)/2;
 let bx = 200;
 let cx = bx*Math.cos(angle);
 let cy = bx*Math.sin(angle);
+
+
+        let pathes = [];
+        let linea = document.querySelector('g#curve_red path').getAttribute('d');
+        let lineb = document.querySelector('g#curve_blue path').getAttribute('d');
+        let l0 = SvgPath(linea).scale(2).toString();
+        let l1 = SvgPath(lineb).scale(2).toString();
+
+        let atile = [];
+        atile.push(SvgPath(l0).rotate(   0).translate(   0,-len).toString());
+        atile.push(SvgPath(l0).rotate(  90).translate( len,   0).toString());
+        atile.push(SvgPath(l0).rotate(   0).translate(   0, len).toString());
+        atile.push(SvgPath(l0).rotate(  90).translate(-len,   0).toString());
+
+/*
 let defs = `
 <defs>
 <g id="match1">
@@ -133,6 +154,7 @@ match1list.push('</g></defs>');
 
     document.querySelector('div#draw').innerHTML = svglist.join('');
 }
+*/
 })(console,document);
 </script>
 </body>

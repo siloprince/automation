@@ -9,7 +9,7 @@
         <svg id="red" class="draw" width="200" height="100" style="border: 1px solid #ffaaaa;" />
         <svg id="blue" class="draw" width="200" height="100" style="border: 1px solid #aaaaff;" />
         <br/>
-        <input id="extrude" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
+        <input id="extrude" class="ctrl" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
     </div>
     <div id="svg" style="margin:5"></div>
@@ -20,7 +20,10 @@
         (function (console, document) {
             let base = 100;
             update();
-            document.querySelector('input#extrude').addEventListener('change', update);
+            let inputs = document.querySelectorAll('input.ctrl');
+            for (let ii=0;ii<inputs.length;ii++) {
+                inputs[ii].addEventListener('change', update);
+            }
             let draws = document.querySelectorAll('svg.draw');
             for (let di=0;di<draws.length;di++) {
                 draws[di].addEventListener('mouseup', update);
@@ -33,8 +36,8 @@
                 let scale = extrude / Math.sqrt(2) / base;
 
                 let pathes = [];
-                let linea = document.querySelector('g#curve_red path').getAttribute('d');
-                let lineb = document.querySelector('g#curve_blue path').getAttribute('d');
+                let linea = document.querySelector('path#curve_red').getAttribute('d');
+                let lineb = document.querySelector('path#curve_blue').getAttribute('d');
                 let transformed = [];
                 transformed.push(SvgPath(linea).rotate(0).translate(0, -50).toString());
                 transformed.push(SvgPath(lineb).rotate(90).translate(50, 0).toString());
