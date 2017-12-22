@@ -14,7 +14,6 @@
     </div>
     <script type="module" src="./svgpath.js"></script>
     <script type="module" src="draw.js"></script>
-
     <script type="module">
         'use strict';
         import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
@@ -23,7 +22,10 @@
             let base = 100;
             update();
             document.querySelector('input#extrude').addEventListener('change', update);
-
+            let draws = document.querySelectorAll('svg.draw');
+            for (let di=0;di<draws.length;di++) {
+                draws[di].addEventListener('mouseup', update);
+            }
             function update() {
                 let extrude = parseFloat(document.querySelector('input#extrude').value);
 
