@@ -1,0 +1,38 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="module" src="./svgpath.js">
+    </script>
+    <script type="module">
+        'use strict';
+        import { SvgPath, pathParse, pathListMerge } from './svgpath.js';
+        let pathes = [];
+        let linea = 'M40, 50 160,50';//'M40, 50C47.833333333333336,52.166666666666664 67,63 87,63C107,63 160,50 160,50';
+        let lineb = 'M40, 50 160,50';
+        let transformed = [];
+
+        transformed.push(SvgPath(linea).translate(-100, -50).scale(1. / 1.2).rotate(0).translate(0, -50).toString());
+        transformed.push(SvgPath(lineb).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(90).translate(50, 0).toString());
+        transformed.push(SvgPath(linea).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(0).translate(0, 50).toString());
+        transformed.push(SvgPath(lineb).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(90).translate(-50, 0).toString());
+        let path = pathListMerge(transformed);
+        console.log(path);
+        pathes.push(`<path d="${path}" fill="none" stroke="#000000" stroke-width="2"/>`);
+
+        //console.dir(transformed);
+        let svgstr = `<svg width="800" height="800">
+            <g transform="translate(200,200)">
+            ${pathes.join('')}
+            </g>
+        </svg>`;
+        document.querySelector('div#svg').insertAdjacentHTML('afterend', svgstr);
+
+    </script>
+</head>
+
+<body>
+    <div id="svg" style="margin:100"></div>
+</body>
+
+</html>
