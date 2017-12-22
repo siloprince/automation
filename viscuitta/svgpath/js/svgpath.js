@@ -1455,7 +1455,8 @@ export const pathListMerge = function (transformed) {
       findNear(body, hash, idHash, path);
       break;
   }
-  return path;
+  return path.join('');
+
   function findNear(body, hash, idHash, path) {
       console.dir(body);
       path.push(body.data);

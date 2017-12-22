@@ -43,9 +43,9 @@
         <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
     
         <g transform="rotate(-90)">
-        <g id="acap" transform="translate(${-len},${-len})scale(${scale})">
-        <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
-        </g>
+            <g id="acap" transform="translate(${-len},${-len})scale(${scale})">
+                <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+            </g>
         </g>
         <g transform="rotate(0)">
           <use xlink:href="#acap"/>
@@ -113,23 +113,150 @@
         //    let lineb = 'M40, 50 160,50';
         let linea = document.querySelector('g#curve_red path').getAttribute('d');
         let lineb = document.querySelector('g#curve_blue path').getAttribute('d');
-        let transformed = [];
 
-        transformed.push(SvgPath(linea).translate(-100, -50).scale(1. / 1.2).rotate(0).translate(0, -50).toString());
-        transformed.push(SvgPath(lineb).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(90).translate(50, 0).toString());
-        transformed.push(SvgPath(linea).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(0).translate(0, 50).toString());
-        transformed.push(SvgPath(lineb).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(90).translate(-50, 0).toString());
-        let path = pathListMerge(transformed);
-        console.log(path);
-        pathes.push(`<path d="${path.join('')}" fill="none" stroke="#000000" stroke-width="2"/>`);
 
-        console.dir(transformed);
-        let svgstr = `<svg width="800" height="800">
+        let l0 = SvgPath(linea).translate(-100, -50).scale(2. / 1.2);
+        let l1 = SvgPath(lineb).translate(-100, -50).scale(2. / 1.2);
+        let base = 100;
+        let extrude = 20;
+        let len = base + extrude;
+        let move = base / Math.sqrt(2);
+        let scale = extrude / Math.sqrt(2) / base;
+
+        let atile = [];
+        atile.push(l0.rotate(   0).translate(   0, -len).toString());
+        atile.push(l0.rotate(  -90).translate( len,    0).toString());
+        atile.push(l0.rotate(   0).translate(   0,  len).toString());
+        atile.push(l0.rotate(  90).translate(-len,    0).toString());
+
+        let acap = l1.rotate( 135).translate(move,move).scale(scale).translate(-len,-len);
+        atile.push(acap.rotate( -90).toString());
+        atile.push(acap.rotate(   0).toString());
+        atile.push(acap.rotate(  90).toString());
+        atile.push(acap.rotate( 180).toString());
+        console.log(atile);
+        /*
+
+        <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+        <use xlink:href="#0" transform="translate(${len},0)rotate(90)"/>
+        <use xlink:href="#0" transform="translate(0,${len})rotate(0)"/>
+        <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+
+        <g transform="rotate(-90)">
+            <g id="acap" transform="translate(${-len},${-len})scale(${scale})">
+                <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+            </g>
+        </g>
+        <g transform="rotate(0)">
+          <use xlink:href="#acap"/>
+        </g>
+        <g transform="rotate(90)">
+          <use xlink:href="#acap"/>
+        </g>
+        <g transform="rotate(180)">
+          <use xlink:href="#acap"/>
+        </g>
+        */
+        let tile = [];
+        tile.push(l0.rotate(   0).translate(   0, -len).toString());
+        tile.push(l0.rotate(  -90).translate( len,    0).toString());
+        tile.push(l0.rotate( 180).translate(   0,  len).toString());
+        tile.push(l0.rotate(  90).translate(-len,    0).toString());
+
+        let cap = l1.rotate( 135).translate(move,move).scale(scale).translate(-len,-len);
+        tile.push(cap.rotate( -90).toString());
+
+        let smallStrList = [];
+        smallStrList.push(l1.rotate( 225).translate(-move, move).toString());
+        smallStrList.push(l1.rotate( -45).translate(-move,-move).toString());
+        smallStrList.push(l1.rotate(  45).translate( move,-move).toString());
+        console.log(SvgPath(pathListMerge(smallStrList)));
+        let small = SvgPath(pathListMerge(smallStrList)).scale(scale).translate(-len,-len);
+    
+        tile.push(small.rotate(   0).toString());
+        tile.push(small.rotate(  90).toString());
+        tile.push(small.rotate( 180).toString());
+        console.log(tile);
+        /*
+
+        <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+        <use xlink:href="#0" transform="translate(${len},0)rotate(-90)"/>
+        <use xlink:href="#0" transform="translate(0,${len})rotate(180)"/>
+        <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+    
+        <g transform="rotate(-90)">
+        <g id="cap" transform="translate(${-len},${-len})scale(${scale})">
+        <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+        </g>
+        </g>
+        <g transform="rotate(0)">
+        <g id="small" transform="translate(${-len},${-len})scale(${scale})">
+        <use xlink:href="#1" transform="translate(${-move},${move})rotate(225)"/>
+        <use xlink:href="#1" transform="translate(${-move},${-move})rotate(-45)"/>
+        <use xlink:href="#1" transform="translate(${move},${-move})rotate(45)"/>
+        </g>
+        </g>
+        <g transform="rotate(90)">
+          <use xlink:href="#small"/>
+        </g>
+        <g transform="rotate(180)">
+          <use xlink:href="#small"/>
+        </g>
+        </g>
+        */
+
+        let atile_d = pathListMerge(atile);
+        let tile_d = pathListMerge(tile);
+        let atile_path = SvgPath(atile_d);
+        let tile_path = SvgPath(tile_d);
+        /*
+
+    <g transform="translate(350,200)scale(${1 / 4 / scale})">
+    
+    <use xlink:href="#tile" transform="translate(${-len * 2},0)rotate(-90)"/>
+    <use xlink:href="#atile" transform="translate(${-len * 2},${len * 2})"/>
+    <use xlink:href="#atile" transform="translate(0,0)"/>
+    <use xlink:href="#tile" transform="translate(${len * 2},0)"/>
+    <use xlink:href="#tile" transform="translate(${0},${len * 2})"/>
+    <use xlink:href="#atile" transform="translate(${len * 2},${len * 2})rotate(180)"/>
+    <use xlink:href="#tile" transform="translate(${-len * 2},${len * 4})"/>
+    <use xlink:href="#atile" transform="translate(${0},${len * 4})rotate(180)"/>
+    <use xlink:href="#tile" transform="translate(${len * 2},${len * 4})rotate(90)"/>
+    
+     </g>
+        */
+        console.log(atile_path);
+        pathes.push(getPath(atile_d,'0,100','#ff0000'));
+
+        console.log(tile_path);
+        pathes.push(getPath(tile_d,'600,100','#00ff00'));
+
+        pathes.push(getPath( tile_path.rotate( -90).translate(-len*2,     0)));
+        pathes.push(getPath(atile_path.rotate(   0).translate(-len*2, len*2)));
+        pathes.push(getPath(atile_path.rotate(   0).translate(     0,     0)));
+        pathes.push(getPath( tile_path.rotate(   0).translate( len*2,     0)));
+        pathes.push(getPath( tile_path.rotate(   0).translate(     0, len*2)));
+        pathes.push(getPath(atile_path.rotate( 180).translate( len*2, len*2)));
+        pathes.push(getPath( tile_path.rotate(   0).translate(-len*2, len*4)));
+        pathes.push(getPath(atile_path.rotate( 180).translate(     0, len*4)));
+        pathes.push(getPath( tile_path.rotate(  90).translate( len*2, len*4)));
+
+        let svgstr = `<svg width="1500" height="1500">
         <g transform="translate(200,200)">
         ${pathes.join('')}
         </g>
     </svg>`;
         document.querySelector('div#svg').insertAdjacentHTML('afterend', svgstr);
+
+        function getPath(data,translate,stroke) {
+            if (!translate) {
+                translate = '0,0';
+            }
+            if (!stroke) {
+                stroke = '#000000';
+            }
+            return `<path d="${data}" fill="none" stroke="${stroke}" stroke-width="2" transform="translate(${translate})"/>`;
+        }
     </script>
 </body>
 
