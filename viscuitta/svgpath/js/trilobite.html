@@ -1,0 +1,269 @@
+<html>
+<meta charset="UTF-8" />
+<script type="module" src="./svgpath.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <svg id="red" class="draw" width="200" height="250" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw" width="200" height="250" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="extrude" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
+        <br/>
+    </div>
+    <script type="text/javascript" src="draw.js"></script>
+    <div id="draw"></div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document) {
+            let base = 100;
+
+            update();
+            document.querySelector('input#extrude').addEventListener('change', update);
+
+            function update() {
+                let extrude = parseFloat(document.querySelector('input#extrude').value);
+
+                let len = base + extrude;
+                let move = base / Math.sqrt(2);
+                let scale = extrude / Math.sqrt(2) / base;
+
+                let svgstr = `
+    <?xml version="1.0" encoding="UTF-8"?>
+    <svg width="2000" height="2000">
+    <defs>
+      <use id="0" xlink:href="#curve_red" transform="translate(-100,0)scale(2,1)"/>
+      <use id="1" xlink:href="#curve_blue" transform="translate(-100,0)scale(2,1)"/>
+    
+      <g id="atile">
+        <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+        <use xlink:href="#0" transform="translate(${len},0)rotate(90)"/>
+        <use xlink:href="#0" transform="translate(0,${len})rotate(0)"/>
+        <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+    
+        <g transform="rotate(-90)">
+        <g id="acap" transform="translate(${-len},${-len})scale(${scale})">
+        <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+        </g>
+        </g>
+        <g transform="rotate(0)">
+          <use xlink:href="#acap"/>
+        </g>
+        <g transform="rotate(90)">
+          <use xlink:href="#acap"/>
+        </g>
+        <g transform="rotate(180)">
+          <use xlink:href="#acap"/>
+        </g>
+       </g> 
+      <g id="tile">
+        <use xlink:href="#0" transform="translate(0,${-len})rotate(0)"/>
+        <use xlink:href="#0" transform="translate(${len},0)rotate(-90)"/>
+        <use xlink:href="#0" transform="translate(0,${len})rotate(180)"/>
+        <use xlink:href="#0" transform="translate(${-len},0)rotate(90)"/>
+    
+        <g transform="rotate(-90)">
+        <g id="cap" transform="translate(${-len},${-len})scale(${scale})">
+        <use xlink:href="#1" transform="translate(${move},${move})rotate(135)"/>
+        </g>
+        </g>
+        <g transform="rotate(0)">
+        <g id="small" transform="translate(${-len},${-len})scale(${scale})">
+        <use xlink:href="#1" transform="translate(${-move},${move})rotate(225)"/>
+        <use xlink:href="#1" transform="translate(${-move},${-move})rotate(-45)"/>
+        <use xlink:href="#1" transform="translate(${move},${-move})rotate(45)"/>
+        </g>
+        </g>
+        <g transform="rotate(90)">
+          <use xlink:href="#small"/>
+        </g>
+        <g transform="rotate(180)">
+          <use xlink:href="#small"/>
+        </g>
+        </g>
+       </g> 
+       </defs>
+    
+    <g transform="translate(350,200)scale(${1 / 4 / scale})">
+    
+    <use xlink:href="#tile" transform="translate(${-len * 2},0)rotate(-90)"/>
+    <use xlink:href="#atile" transform="translate(${-len * 2},${len * 2})"/>
+    <use xlink:href="#atile" transform="translate(0,0)"/>
+    <use xlink:href="#tile" transform="translate(${len * 2},0)"/>
+    <use xlink:href="#tile" transform="translate(${0},${len * 2})"/>
+    <use xlink:href="#atile" transform="translate(${len * 2},${len * 2})rotate(180)"/>
+    <use xlink:href="#tile" transform="translate(${-len * 2},${len * 4})"/>
+    <use xlink:href="#atile" transform="translate(${0},${len * 4})rotate(180)"/>
+    <use xlink:href="#tile" transform="translate(${len * 2},${len * 4})rotate(90)"/>
+    
+     </g>
+    </svg>`;
+                document.querySelector('div#draw').innerHTML = svgstr;
+            }
+        })(console, document);
+    </script>
+
+    <div id="svg" style="margin:100"></div>
+    <script type="module">
+        'use strict';
+        import { SvgPath, pathParse } from './svgpath.js';
+        let pathes = [];
+        //    let linea = 'M40, 50C47.833333333333336,52.166666666666664 67,63 87,63C107,63 160,50 160,50';
+        //    let lineb = 'M40, 50 160,50';
+        let linea = document.querySelector('g#curve_red path').getAttribute('d');
+        let lineb = document.querySelector('g#curve_blue path').getAttribute('d');
+        let transformed = [];
+
+        transformed.push(SvgPath(linea).translate(-100, -50).scale(1. / 1.2).rotate(0).translate(0, -50).toString());
+        transformed.push(SvgPath(lineb).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(90).translate(50, 0).toString());
+        transformed.push(SvgPath(linea).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(0).translate(0, 50).toString());
+        transformed.push(SvgPath(lineb).translate(-100, -50).scale(1. / 1.2).scale(1.).rotate(90).translate(-50, 0).toString());
+        let path = combine(transformed);
+        console.log(path);
+        pathes.push(`<path d="${path.join('')}" fill="none" stroke="#000000" stroke-width="2"/>`);
+
+        console.dir(transformed);
+        let svgstr = `<svg width="800" height="800">
+        <g transform="translate(200,200)">
+        ${pathes.join('')}
+        </g>
+    </svg>`;
+        document.querySelector('div#svg').insertAdjacentHTML('afterend', svgstr);
+
+
+        function combine(transformed) {
+            let hash = {};
+            let idHash = {};
+            for (let ti = 0; ti < transformed.length; ti++) {
+                register(transformed[ti], hash, ti);
+            }
+            let path = [];
+            for (let xy in hash) {
+                path.push('M ' + xy);
+                let body = hash[xy][0];
+                findNear(body, hash, idHash, path);
+                break;
+            }
+            return path;
+            function findNear(body, hash, idHash, path) {
+                console.dir(body);
+                path.push(body.data);
+                idHash[body.id] = true;
+                let candidate = null;
+                let minXy = null;
+                if (body.dest in hash && hash[body.dest].length > 1) {
+                    minXy = body.dest;
+                } else {
+                    let min = -1;
+                    for (let xy in hash) {
+                        if (xy !== body.dest) {
+                            let tmp = distance2(xy, body.dest);
+                            if (min === -1) {
+                                min = tmp;
+                                minXy = xy;
+                            } else {
+                                if (min > tmp) {
+                                    min = tmp;
+                                    minXy = xy;
+                                }
+                            }
+                        }
+                    }
+                }
+                console.log(minXy);
+                if (minXy !== null) {
+                    let nextBody;
+                    for (let hi = 0; hi < hash[minXy].length; hi++) {
+                        if (!(hash[minXy][hi].id in idHash)) {
+                            nextBody = hash[minXy][hi];
+                            break;
+                        }
+                    }
+                    if (nextBody) {
+                        findNear(nextBody, hash, idHash, path);
+                    }
+                }
+            }
+        }
+        function distance2(xystr1, xystr2) {
+            let xy1 = xystr1.split(',');
+            let xy2 = xystr2.split(',');
+            let x1 = parseFloat(xy1[0]);
+            let y1 = parseFloat(xy1[1]);
+            let x2 = parseFloat(xy2[0]);
+            let y2 = parseFloat(xy2[1]);
+            return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+        }
+        function register(transformed, hash, idx) {
+            let pathstr = transformed.toString();
+            let pstate = pathParse(pathstr);
+            let sx = Math.round(pstate.segments[0][1]);
+            let sy = Math.round(pstate.segments[0][2]);
+            let ss = `${sx},${sy}`;
+            let end = pstate.segments[pstate.segments.length - 1];
+            let ex = Math.round(end[end.length - 2]);
+            let ey = Math.round(end[end.length - 1]);
+            let ee = `${ex},${ey}`;
+            if (ss !== ee) {
+                if (!(ss in hash)) {
+                    hash[ss] = [];
+                }
+                hash[ss].push({ data: headless(pathstr), dest: ee, id: idx });
+                if (!(ee in hash)) {
+                    hash[ee] = [];
+                }
+                hash[ee].push({ data: headless(reverse(pathstr)), dest: ss, id: idx });
+            }
+        }
+        function headless(pathstr) {
+            let pstate = pathParse(pathstr);
+            let segments = pstate.segments;
+            segments.shift();
+            let ret = [];
+            for (let si = 0; si < segments.length; si++) {
+                let seg = segments[si];
+                for (let sk = 0; sk < seg.length; sk++) {
+                    if (sk === 0) {
+                        ret.push(' ' + seg[sk]);
+                    } else {
+                        if (sk % 2 === 1) {
+                            ret.push(seg[sk]);
+                        } else {
+                            ret.push(',' + seg[sk]);
+                        }
+                    }
+                }
+            }
+            return ret.join(' ');
+        }
+        function reverse(pathstr) {
+            let pstate = pathParse(pathstr);
+            let segments = pstate.segments;
+            let ret = [];
+            if (segments[0][0] !== 'M') {
+                throw 'invalid path:' + pathstr;
+            }
+            let cmd;
+            let data = ['M'];
+            for (let si = 0; si < segments.length; si++) {
+                let sj = segments.length - 1 - si;
+                let seg = segments[sj];
+                cmd = seg[0];
+                let scount = 0;
+                for (let sk = seg.length - 2; sk > 0; sk -= 2) {
+                    let xx = seg[sk];
+                    let yy = seg[sk + 1];
+                    if (sj !== 0 && scount === 1) {
+                        data.push(cmd);
+                    }
+                    data.push(`${xx},${yy} `);
+                    scount++;
+                }
+            }
+            return data.join('');
+        }
+    </script>
+</body>
+
+</html>

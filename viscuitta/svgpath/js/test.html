@@ -8,7 +8,7 @@
         'use strict';
         import { SvgPath, pathParse } from './svgpath.js';
         let pathes = [];
-        let linea = 'M40, 50C47.833333333333336,52.166666666666664 67,63 87,63C107,63 160,50 160,50';
+        let linea = 'M40, 50 160,50';//'M40, 50C47.833333333333336,52.166666666666664 67,63 87,63C107,63 160,50 160,50';
         let lineb = 'M40, 50 160,50';
         let transformed = [];
 
@@ -20,7 +20,7 @@
         console.log(path);
         pathes.push(`<path d="${path.join('')}" fill="none" stroke="#000000" stroke-width="2"/>`);
 
-        console.dir(transformed);
+        //console.dir(transformed);
         let svgstr = `<svg width="800" height="800">
             <g transform="translate(200,200)">
             ${pathes.join('')}
@@ -43,17 +43,18 @@
             }
             return path;
             function findNear(body,hash,idHash,path) {
+                console.dir(body);
                 path.push(body.data);
                 idHash[body.id]=true;
-                let candidates=null;
-                if (body.dest in hash) {
-                    candidates = hash[body.dest];
+                let candidate=null;
+                let minXy = null;
+                if (body.dest in hash && hash[body.dest].length >1) {
+                    minXy = body.dest;
                 } else {
                     let min = -1;
-                    let minXy = null;
                     for (let xy in hash) {
-                        if (!(xy in idHash)){
-                            let tmp = distnace2(xy,body.dest);
+                        if (xy !== body.dest){
+                            let tmp = distance2(xy,body.dest);
                             if (min===-1) {
                                 min = tmp;
                                 minXy = xy;
@@ -65,18 +66,18 @@
                             }
                         }
                     }
-                    if (minXy===null) {
-                        return;
-                    } else {
-                        candidates = hash[minXy];         
-                    }
                 }
-                if(candidates!==null && candidates.length>1) {
-                    for (let ci=0;ci<candidates.length;ci++) {
-                       if (!(candidates[ci].id in idHash)) {
-                            findNear(candidates[ci],hash,idHash,path);
-                             break;
+                console.log(minXy);
+                if(minXy!==null) {
+                    let nextBody;
+                    for (let hi=0; hi<hash[minXy].length; hi++) {
+                        if (!(hash[minXy][hi].id in idHash)) {
+                            nextBody = hash[minXy][hi];
+                            break;
                         }
+                    }
+                    if (nextBody) {
+                        findNear(nextBody,hash,idHash,path);
                     }
                 }
             }
@@ -93,12 +94,12 @@
         function register(transformed,hash,idx) {
             let pathstr = transformed.toString();
             let pstate = pathParse(pathstr);
-            let sx = Math.floor(pstate.segments[0][1]);
-            let sy = Math.floor(pstate.segments[0][2]);
+            let sx = Math.round(pstate.segments[0][1]);
+            let sy = Math.round(pstate.segments[0][2]);
             let ss = `${sx},${sy}`;
             let end = pstate.segments[pstate.segments.length - 1];
-            let ex = Math.floor(end[end.length-2]);
-            let ey = Math.floor(end[end.length-1]);
+            let ex = Math.round(end[end.length-2]);
+            let ey = Math.round(end[end.length-1]);
             let ee = `${ex},${ey}`;
             if (ss !== ee) {
                 if (!(ss in hash)) {
