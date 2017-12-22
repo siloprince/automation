@@ -1440,3 +1440,137 @@ export const SvgPath = (function () {
   return SvgPath;
 
 })();
+
+
+export const pathListMerge = function (transformed) {
+  let hash = {};
+  let idHash = {};
+  for (let ti = 0; ti < transformed.length; ti++) {
+      register(transformed[ti], hash, ti);
+  }
+  let path = [];
+  for (let xy in hash) {
+      path.push('M ' + xy);
+      let body = hash[xy][0];
+      findNear(body, hash, idHash, path);
+      break;
+  }
+  return path;
+  function findNear(body, hash, idHash, path) {
+      console.dir(body);
+      path.push(body.data);
+      idHash[body.id] = true;
+      let candidate = null;
+      let minXy = null;
+      if (body.dest in hash && hash[body.dest].length > 1) {
+          minXy = body.dest;
+      } else {
+          let min = -1;
+          for (let xy in hash) {
+              if (xy !== body.dest) {
+                  let tmp = distance2(xy, body.dest);
+                  if (min === -1) {
+                      min = tmp;
+                      minXy = xy;
+                  } else {
+                      if (min > tmp) {
+                          min = tmp;
+                          minXy = xy;
+                      }
+                  }
+              }
+          }
+      }
+      console.log(minXy);
+      if (minXy !== null) {
+          let nextBody;
+          for (let hi = 0; hi < hash[minXy].length; hi++) {
+              if (!(hash[minXy][hi].id in idHash)) {
+                  nextBody = hash[minXy][hi];
+                  break;
+              }
+          }
+          if (nextBody) {
+              findNear(nextBody, hash, idHash, path);
+          }
+      }
+  }
+
+  function distance2(xystr1, xystr2) {
+      let xy1 = xystr1.split(',');
+      let xy2 = xystr2.split(',');
+      let x1 = parseFloat(xy1[0]);
+      let y1 = parseFloat(xy1[1]);
+      let x2 = parseFloat(xy2[0]);
+      let y2 = parseFloat(xy2[1]);
+      return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
+  }
+  function register(transformed, hash, idx) {
+      let pathstr = transformed.toString();
+      let pstate = pathParse(pathstr);
+      let sx = Math.round(pstate.segments[0][1]);
+      let sy = Math.round(pstate.segments[0][2]);
+      let ss = `${sx},${sy}`;
+      let end = pstate.segments[pstate.segments.length - 1];
+      let ex = Math.round(end[end.length - 2]);
+      let ey = Math.round(end[end.length - 1]);
+      let ee = `${ex},${ey}`;
+      if (ss !== ee) {
+          if (!(ss in hash)) {
+              hash[ss] = [];
+          }
+          hash[ss].push({ data: headless(pathstr), dest: ee, id: idx });
+          if (!(ee in hash)) {
+              hash[ee] = [];
+          }
+          hash[ee].push({ data: headless(reverse(pathstr)), dest: ss, id: idx });
+      }
+  }
+  function headless(pathstr) {
+      let pstate = pathParse(pathstr);
+      let segments = pstate.segments;
+      segments.shift();
+      let ret = [];
+      for (let si = 0; si < segments.length; si++) {
+          let seg = segments[si];
+          for (let sk = 0; sk < seg.length; sk++) {
+              if (sk === 0) {
+                  ret.push(' ' + seg[sk]);
+              } else {
+                  if (sk % 2 === 1) {
+                      ret.push(seg[sk]);
+                  } else {
+                      ret.push(',' + seg[sk]);
+                  }
+              }
+          }
+      }
+      return ret.join(' ');
+  }
+  function reverse(pathstr) {
+      let pstate = pathParse(pathstr);
+      let segments = pstate.segments;
+      let ret = [];
+      if (segments[0][0] !== 'M') {
+          throw 'invalid path:' + pathstr;
+      }
+      let cmd;
+      let data = ['M'];
+      for (let si = 0; si < segments.length; si++) {
+          let sj = segments.length - 1 - si;
+          let seg = segments[sj];
+          cmd = seg[0];
+          let scount = 0;
+          for (let sk = seg.length - 2; sk > 0; sk -= 2) {
+              let xx = seg[sk];
+              let yy = seg[sk + 1];
+              if (sj !== 0 && scount === 1) {
+                  data.push(cmd);
+              }
+              data.push(`${xx},${yy} `);
+              scount++;
+          }
+      }
+      return data.join('');
+  }
+}
