@@ -6,8 +6,6 @@
 
     function downloadInit() {
         let downloads = document.querySelectorAll('a.download');
-        let content = getSvgContent();
-        let blob = new Blob([content], { 'type': 'image/svg+xml' });
         let filename = getFileName();
         for (let di = 0; di < downloads.length; di++) {
             let download = downloads[di];
@@ -21,6 +19,8 @@
             return '<svg>'+symbols+contents+'</svg>';
         }
         function click(ev) {
+            let content = getSvgContent();
+            let blob = new Blob([content], { 'type': 'image/svg+xml' });
             ev.target.href = window.URL.createObjectURL(blob);
         }
         function getFileName() {

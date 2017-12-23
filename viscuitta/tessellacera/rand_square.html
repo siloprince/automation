@@ -32,7 +32,7 @@
                 transformed.push(SvgPath(red).scale(1,1).rotate(-90).translate(-unit/2, 0).toString());
         
                 Tess.init();
-                Tess.register('rect',Tess.makePath(transformed,'#000000',null,'#ff0000',0.4));
+                Tess.register('rect',Tess.makePath(transformed,'#000000',2,'#ff0000',0.4));
                 for (let xi=0;xi<10;xi++) {
                     for (let yi=0;yi<10;yi++) {
                         let rot = 0;
