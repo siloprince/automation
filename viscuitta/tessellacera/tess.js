@@ -37,10 +37,14 @@ let Tess = (function (console, document) {
             delete useHash[key];
         }
         if (!(document.querySelector('svg.symbols'))) {
-            document.body.insertAdjacentHTML('beforeend','<svg class="symbols"></svg>')
+            document.body.insertAdjacentHTML('beforeend','<svg class="symbols"></svg>');
+        } else {
+            document.querySelector('svg.symbols').innerHTML = '';
         }
         if (!(document.querySelector('svg.tmp'))) {
-            document.body.insertAdjacentHTML('beforeend','<svg class="tmp"></svg>')
+            document.body.insertAdjacentHTML('beforeend','<svg class="tmp"></svg>');
+        } else {
+            document.querySelector('svg.tmp').innerHTML = '';
         }
     }
     function makePath(pathStrList,stroke,width,fill) {
@@ -103,7 +107,7 @@ let Tess = (function (console, document) {
         */
         console.log(bbox);
         tmp.innerHTML = '';
-        let eps = 10;
+        let eps = 0;
         bbox.x += -eps;
         bbox.y += -eps;
         bbox.width += 2*eps;

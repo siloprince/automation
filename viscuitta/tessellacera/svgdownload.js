@@ -16,8 +16,9 @@
             download.addEventListener('click', click);
         }
         function getSvgContent() {
-            let svgdiv = document.querySelector('div.svg');
-            return svgdiv.innerHTML;
+            let symbols = document.querySelector('svg.symbols').innerHTML;
+            let contents = document.querySelector('div.svg svg').innerHTML;
+            return '<svg>'+symbols+contents+'</svg>';
         }
         function click(ev) {
             ev.target.href = window.URL.createObjectURL(blob);
