@@ -5,6 +5,7 @@
     <script type="text/javascript" src="./svgpath.js"></script>
     <script type="text/javascript" src="draw.js"></script>
     <script type="text/javascript" src="update.js"></script>
+    <script type="text/javascript" src="svgdownload.js"></script>
 </head>
 
 <body>
@@ -15,11 +16,11 @@
         <br/>
         <input id="extrude" class="update" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
+        <a class="download">ダウンロード</a>
     </div>
-    <div id="svg" style="margin:5"></div>
     <script type="text/javascript">
         'use strict';
-        (function (console, document) {
+        (function (console, document,me,svgdiv) {
             let base = 100;
             Update.update=update;
             function update(param) {
@@ -29,7 +30,6 @@
                 let move = base / Math.sqrt(2);
                 let scale = extrude / Math.sqrt(2) / base;
 
-                let pathes = [];
                 let red = Draw.getData('red');
                 let blue = Draw.getData('blue');
                 let transformed = [];
@@ -38,15 +38,28 @@
                 transformed.push(SvgPath(red).rotate(0).translate(0, 50).toString());
                 transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).toString());
         
-        
-                let path = pathListMerge(transformed);
-        
-                pathes.push(`<path d="${path}" fill="none" stroke="#000000" stroke-width="2"/>`);
-                let svgstr = `<svg width="2000" height="2000">
+                let bbox = {};
+                let path = pathListMerge(transformed,bbox);
+
+                console.dir(bbox);
+                let svgsize = [2000,2000];
+                let symbols = [];
+                let pathes = [];
+                let rect = 'rect';
+                symbols.push(`<symbol id="${rect}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}"><path d="${path}" fill="none" stroke="#000000" stroke-width="2"/></symbol>`);
+                pathes.push(`<use xlink:href="#${rect}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}" transform="translate(100,100)">`);
+                let svgstr = `<svg width="${svgsize[0]}" height="${svgsize[1]}">
+                        ${symbols.join('')}
                         <g transform="translate(100,100)">${pathes.join('')}</g></svg>`;
-                document.querySelector('div#svg').innerHTML = svgstr;
+                
+                if (!svgdiv) {
+                    svgdiv = document.createElement('div');
+                    svgdiv.className = 'svg';
+                    me.parentElement.insertBefore(svgdiv, me.nextSibling);
+                }
+                svgdiv.innerHTML =  svgstr;
             }
-        })(console, document);
+        })(console, document, document.currentScript, null);
     </script>
 </body>
 </html>

@@ -1442,11 +1442,11 @@ const SvgPath = (function () {
 })();
 
 
-const pathListMerge = function (transformed) {
+const pathListMerge = function (transformed,bbox) {
   let hash = {};
   let idHash = {};
   for (let ti = 0; ti < transformed.length; ti++) {
-      register(transformed[ti], hash, ti);
+      register(transformed[ti], hash, ti,bbox);
   }
   let path = [];
   for (let xy in hash) {
@@ -1504,7 +1504,7 @@ const pathListMerge = function (transformed) {
       let y2 = parseFloat(xy2[1]);
       return (x2 - x1) * (x2 - x1) + (y2 - y1) * (y2 - y1);
   }
-  function register(transformed, hash, idx) {
+  function register(transformed, hash, idx,bbox) {
       let pathstr = transformed.toString();
       let pstate = pathParse(pathstr);
       let sx = Math.round(pstate.segments[0][1]);
@@ -1523,6 +1523,47 @@ const pathListMerge = function (transformed) {
               hash[ee] = [];
           }
           hash[ee].push({ data: headless(reverse(pathstr)), dest: ss, id: idx });
+      }
+      if (bbox){
+        for (let si=0;si<pstate.segments.length;si++) {
+          for (let sj=0;sj<pstate.segments[si].length;sj++) {
+            if (sj%2===0) {
+              continue;
+            }
+            let xx = pstate.segments[si][sj];
+            let yy = pstate.segments[si][sj+1];
+            if (!('minX' in bbox)) {
+              bbox.minX = xx;  
+            }
+            if (bbox.minX > xx) {
+              bbox.minX = xx;
+            }
+            if (!('minY' in bbox)) {
+              bbox.minY = yy;  
+            }
+            if (bbox.minY > yy) {
+              bbox.minY = yy;
+            }
+            if (!('maxX' in bbox)) {
+              bbox.maxX = xx;  
+            }
+            if (bbox.maxX < xx) {
+              bbox.maxX = xx;
+            }
+            if (!('maxY' in bbox)) {
+              bbox.maxY = yy;  
+            }
+            if (bbox.maxY < yy) {
+              bbox.maxY = yy;
+            }            
+          }
+        }
+        if (bbox) {
+          bbox.x = bbox.minX;
+          bbox.y = bbox.minY;
+          bbox.width = bbox.maxX-bbox.minX;
+          bbox.height = bbox.maxY-bbox.minY;
+        }
       }
   }
   function headless(pathstr) {

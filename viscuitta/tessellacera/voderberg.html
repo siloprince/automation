@@ -15,17 +15,19 @@
         <input id="divide" class="update" type="range" min="1" value="3" max="6" step="1" />: 分割<br/>
         <input id="slide" class="update" type="range" min="0" value="1" max="5" step="1" />: スライド<br/>
         <input id="extrude" class="update" type="range" min="0" value="0" max="5" step="1" />: 引き伸ばし<br/>
+        <input id="thick" class="update" type="range" min="1" value="3" max="5" step="1" />: 厚み<br/>
     </div>
     <div id="svg"></div>
     <script type="text/javascript">
         'use strict';
-        (function (console, document) {
+        (function (console, document, me, svgdiv) {
             Update.update = update;
 
             function update(param) {
                 let divide = param.divide;
                 let slide = param.slide;
                 let extrude = param.extrude;
+                let thick = param.thick;
 
                 let extluded = 100 * extrude;
 
@@ -44,81 +46,43 @@
                 let red = SvgPath(Draw.getData('red')).scale(2).toString();
                 let blue = SvgPath(Draw.getData('blue')).scale(2).toString();
 
-                let atile = [];
-                atile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
-                atile.push(SvgPath(l0).rotate(90).translate(len, 0).toString());
-                atile.push(SvgPath(l0).rotate(0).translate(0, len).toString());
-                atile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
+                let match1List = [];
+                match1List.push(SvgPath(red).rotate( 180).translate( bx,  0).toString());
+                match1List.push(SvgPath(red).rotate(   0).translate(  0,  0).toString());
+                let match1 = SvgPath(pathListMerge(match1List)).toString();
 
-                /*
-                let defs = `
-                <defs>
-                <g id="match1">
-                    <use xlink:href="#curve_red" transform="translate(${bx},0)rotate(180)"/>
-                    <use xlink:href="#curve_red" transform="rotate(0)"/>
-                 <g>
-                </defs>
-                <defs>
-                <g id="match2">
-                    <g transform="translate(${bx},0)rotate(${rot})scale(${len2},${len2})">
-                      <use xlink:href="#curve_blue" transform="translate(${bx},0)rotate(180)"/>
-                      <use xlink:href="#curve_blue" transform="rotate(0)"/>
-                    </g>
-                </g>
-                <g id="match3">
-                   <use xlink:href="#match1" transform="rotate(${ang})"/>
-                   <use xlink:href="#match1"/>
-                   <use xlink:href="#match2"/>
-                </g>
-                </defs>
-                <defs>
-                <g id="match4">
-                   <use xlink:href="#match3"/>
+                let match2List = [];
+                match2List.push(SvgPath(blue).rotate( 180).translate( bx,  0).toString());
+                match2List.push(SvgPath(blue).rotate(   0).translate(  0,  0).toString());
+                let match2 = SvgPath(pathListMerge(match2List)).scale(len2).rotate(rot).translate(bx,0).toString();
+
+                let match3List = [];
+                match3List.push(SvgPath(match1).rotate(angle).toString());
+                match3List.push(SvgPath(match1).rotate(    0).toString());
+                match3List.push(SvgPath(match2).rotate(    0).toString());
+                let match3 = SvgPath(pathListMerge(match3List)).toString();
+
+                let match4List = [];
+                for (let ti=0;ti<thick;ti++) {
+                    for (let tj=0;tj<ti+1;tj++) {
+                        let xx = bx*(ti-tj) + cx*tj;
+                        let yy = cy*tj;
+                        match4List.push(SvgPath(match3).translate(xx,yy).toString());
+                    }
+                }
+                let match4 = SvgPath(pathListMerge(match4List)).toString();
+
+                let beltList = [];
+                beltList.push(SvgPath(match3).translate(0,0).toString());
+                for (let ti=0;ti<thick+1;ti++) {
+                    let xx = bx*ti;
+                    let yy = 0;
+                    beltList.push(SvgPath(match3).translate( xx,yy).toString());
+                    beltList.push(SvgPath(match3).translate(-xx,yy).toString());
+                }
+                let belt = SvgPath(pathListMerge(beltList)).toString();
                 
-                   <use xlink:href="#match3" transform="translate(${bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${cx},${cy})"/>
-                   
-                   <use xlink:href="#match3" transform="translate(${2*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${bx+cx},${cy})"/>
-                   <use xlink:href="#match3" transform="translate(${2*cx},${2*cy})"/>
-                
-                   <use xlink:href="#match3" transform="translate(${3*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${2*bx+cx},${cy})"/>
-                   <use xlink:href="#match3" transform="translate(${bx+2*cx},${2*cy})"/>
-                   <use xlink:href="#match3" transform="translate(${3*cx},${3*cy})"/>
-                
-                   <use xlink:href="#match3" transform="translate(${4*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${3*bx+cx},${cy})"/>
-                   <use xlink:href="#match3" transform="translate(${2*bx+2*cx},${2*cy})"/>
-                   <use xlink:href="#match3" transform="translate(${bx+3*cx},${3*cy})"/>
-                   <use xlink:href="#match3" transform="translate(${4*cx},${4*cy})"/>
-                
-                   <use xlink:href="#match3" transform="translate(${5*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${4*bx+cx},${cy})"/>
-                   <use xlink:href="#match3" transform="translate(${3*bx+2*cx},${2*cy})"/>
-                   <use xlink:href="#match3" transform="translate(${2*bx+3*cx},${3*cy})"/>
-                   <use xlink:href="#match3" transform="translate(${bx+4*cx},${4*cy})"/>
-                   <use xlink:href="#match3" transform="translate(${5*cx},${5*cy})"/>
-                
-                </g>
-                <g id="belt">
-                   <use xlink:href="#match3" transform="translate(${-7*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${-6*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${-5*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${-4*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${-3*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${-2*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${-1*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${0*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${1*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${2*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${3*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${4*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${5*bx},0)"/>
-                   <use xlink:href="#match3" transform="translate(${6*bx},0)"/>
-                </g>
-                </defs>
-                `;
+              
                 let match1list = ['<defs><g id="up">'];
                 for (let mi=0;mi<divide*2+1;mi++) {
                     let rotangle = 360/div*mi;
@@ -147,9 +111,20 @@
                     svglist.push(`</g></svg>`); 
                 
                     document.querySelector('div#draw').innerHTML = svglist.join('');
+              
+                let path = pathListMerge(transformed);
+        
+                pathes.push(`<path d="${path}" fill="none" stroke="#000000" stroke-width="2"/>`);
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(100,100)">${pathes.join('')}</g></svg>`;
+
+                if (!svgdiv) {
+                    svgdiv = document.createElement('div');
+                    me.parentElement.insertBefore(svgdiv, me.nextSibling);
                 }
-                */
-            })(console, document);
+                svgdiv.innerHTML =  svgstr;
+            }
+        })(console, document, document.currentScript, null);
 
     </script>
 </body>

@@ -1,10 +1,13 @@
 <html>
+
 <head>
     <meta charset="UTF-8" />
     <script type="text/javascript" src="./svgpath.js"></script>
     <script type="text/javascript" src="draw.js"></script>
     <script type="text/javascript" src="update.js"></script>
+    <script type="text/javascript" src="svgdownload.js"></script>
 </head>
+
 <body>
 
     <div style="margin:10px;">
@@ -13,14 +16,13 @@
         <br/>
         <input id="extrude" class="update" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
+        <a class="download">ダウンロード</a>
     </div>
-    <div id="svg"></div>
     <script type="text/javascript">
         'use strict';
-        (function (console, document) {
+        (function (console, document, me, svgdiv) {
             let base = 100;
-
-            Update.update=update;
+            Update.update = update;
             function update(param) {
                 let extrude = param.extrude;
 
@@ -28,84 +30,102 @@
                 let move = base / Math.sqrt(2);
                 let scale = extrude / Math.sqrt(2) / base;
 
-        let pathes = [];
-        let linea = Draw.getData('red');//document.querySelector('path#curve_red').getAttribute('d');
-        let lineb = Draw.getData('blue');//document.querySelector('path#curve_blue').getAttribute('d');
-        let l0 = SvgPath(linea).scale(2).toString();
-        let l1 = SvgPath(lineb).scale(2).toString();
+                let pathes = [];
+                let linea = Draw.getData('red');
+                let lineb = Draw.getData('blue');
+                let l0 = SvgPath(linea).scale(2).toString();
+                let l1 = SvgPath(lineb).scale(2).toString();
 
-        let atile = [];
-        atile.push(SvgPath(l0).rotate(   0).translate(   0,-len).toString());
-        atile.push(SvgPath(l0).rotate(  90).translate( len,   0).toString());
-        atile.push(SvgPath(l0).rotate(   0).translate(   0, len).toString());
-        atile.push(SvgPath(l0).rotate(  90).translate(-len,   0).toString());
-
-
-        let acap = SvgPath(l1).rotate( 135).translate(move,move).scale(scale).translate(-len,-len).toString();
-        atile.push(SvgPath(acap).rotate( -90).toString());
-        atile.push(SvgPath(acap).rotate(   0).toString());
-        atile.push(SvgPath(acap).rotate(  90).toString());
-        atile.push(SvgPath(acap).rotate( 180).toString());
-        
-        let tile = [];
-        tile.push(SvgPath(l0).rotate(   0).translate(   0, -len).toString());
-        tile.push(SvgPath(l0).rotate( -90).translate( len,    0).toString());
-        tile.push(SvgPath(l0).rotate( 180).translate(   0,  len).toString());
-        tile.push(SvgPath(l0).rotate(  90).translate(-len,    0).toString());
-
-        let cap = SvgPath(l1).rotate( 135).translate(move,move).scale(scale).translate(-len,-len).toString();
-        tile.push(SvgPath(cap).rotate( -90).toString());
-
-        let smallStrList = [];
-        smallStrList.push(SvgPath(l1).rotate( 225).translate(-move, move).toString());
-        smallStrList.push(SvgPath(l1).rotate( -45).translate(-move,-move).toString());
-        smallStrList.push(SvgPath(l1).rotate(  45).translate( move,-move).toString());
-
-        let small = SvgPath(pathListMerge(smallStrList)).scale(scale).translate(-len,-len).toString();
-    
-        tile.push(SvgPath(small).rotate(   0).toString());
-        tile.push(SvgPath(small).rotate(  90).toString());
-        tile.push(SvgPath(small).rotate( 180).toString());
-        
-        let atile_d = pathListMerge(atile);
-        let tile_d = pathListMerge(tile);
-        pathes.push(getPath( tile_d, -90, -len*2,     0));
-        pathes.push(getPath(atile_d,   0, -len*2, len*2));
-        pathes.push(getPath(atile_d,   0,      0,     0));
-        pathes.push(getPath( tile_d,   0,  len*2,     0));
-        pathes.push(getPath( tile_d,   0,      0, len*2));
-        pathes.push(getPath(atile_d, 180,  len*2, len*2));
-        pathes.push(getPath( tile_d,   0, -len*2, len*4));
-        pathes.push(getPath(atile_d, 180,      0, len*4));
-        pathes.push(getPath( tile_d,  90,  len*2, len*4));
+                let atile = [];
+                atile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
+                atile.push(SvgPath(l0).rotate(90).translate(len, 0).toString());
+                atile.push(SvgPath(l0).rotate(0).translate(0, len).toString());
+                atile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
 
 
+                let acap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
+                atile.push(SvgPath(acap).rotate(-90).toString());
+                atile.push(SvgPath(acap).rotate(0).toString());
+                atile.push(SvgPath(acap).rotate(90).toString());
+                atile.push(SvgPath(acap).rotate(180).toString());
 
-        let svgstr = `<svg width="1500" height="1500">
-        <g transform="translate(400,200)scale(0.4)">
-        ${pathes.join('')}
-        </g>
-    </svg>`;
-        document.querySelector('div#svg').insertAdjacentHTML('afterend', svgstr);
+                let tile = [];
+                tile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
+                tile.push(SvgPath(l0).rotate(-90).translate(len, 0).toString());
+                tile.push(SvgPath(l0).rotate(180).translate(0, len).toString());
+                tile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
 
+                let cap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
+                tile.push(SvgPath(cap).rotate(-90).toString());
+
+                let smallStrList = [];
+                smallStrList.push(SvgPath(l1).rotate(225).translate(-move, move).toString());
+                smallStrList.push(SvgPath(l1).rotate(-45).translate(-move, -move).toString());
+                smallStrList.push(SvgPath(l1).rotate(45).translate(move, -move).toString());
+
+                let small = SvgPath(pathListMerge(smallStrList)).scale(scale).translate(-len, -len).toString();
+
+                tile.push(SvgPath(small).rotate(0).toString());
+                tile.push(SvgPath(small).rotate(90).toString());
+                tile.push(SvgPath(small).rotate(180).toString());
+
+                let svgsize = [2000, 2000];
+                let xx = -svgsize[0] / 2;
+                let yy = -svgsize[1] / 2;
+                let symbols = [];
+                let uses = [];
+                let useHash = {};
+
+                register('atile', atile);
+                register('tile', tile);
+
+                placeUse('tile', [-len * 2, 0], -90);
+                placeUse('atile', [-len * 2, len * 2], 0);
+                placeUse('atile', [0, 0], 0);
+                placeUse('tile', [len * 2, 0], 0);
+                placeUse('tile', [0, len * 2], 0);
+                placeUse('atile', [len * 2, len * 2], 180);
+                placeUse('tile', [-len * 2, len * 4], 0);
+                placeUse('atile', [0, len * 4], 180);
+                placeUse('tile', [len * 2, len * 4], 90);
+
+                let svgstr = `<svg width="${svgsize[0]}" height="${svgsize[1]}">
+                        ${symbols.join('')}
+                        <g transform="translate(400,200)scale(0.2)">${uses.join('')}</g></svg>`;
+
+
+                if (!svgdiv) {
+                    svgdiv = document.createElement('div');
+                    svgdiv.className = 'svg';
+                    me.parentElement.insertBefore(svgdiv, me.nextSibling);
+                }
+                svgdiv.innerHTML = svgstr;
+
+                return;
+
+                function register(name, pathStrList) {
+                    let bbox = {};
+                    let pathStr = pathListMerge(pathStrList, bbox);
+                    let path = `<path d="${pathStr}" fill="none" stroke="#000000" stroke-width="2"/>`;
+                    symbols.push(`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${path}</symbol>`);
+                    useHash[name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
+                }
+                function placeUse(name, translate, rotate, scale) {
+                    if (typeof(translate)==='undefined') {
+                        translate = [0,0];
+                    }
+                    if (typeof(rotate)==='undefined') {
+                        rotate = 0;
+                    }
+                    if (typeof(scale)==='undefined') {
+                        scale = 1;
+                    }
+                    if (name in useHash) {
+                        uses.push(useHash[name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale})" `));
+                    }
+                }
             }
-
-        function getPath(data,rot,tx,ty,stroke) {
-            if (rot===null) {
-                rot = 0;
-            }
-            if (tx===null) {
-                tx = 0;
-            }
-            if (ty===null) {
-                ty = 0;
-            }
-            if (!stroke) {
-                stroke = '#000000';
-            }
-            return `<path d="${data}" fill="none" stroke="${stroke}" stroke-width="2" transform="translate(${tx},${ty})rotate(${rot})"/>`;
-        }
-        })(console,document);
+        })(console, document, document.currentScript, null);
     </script>
 </body>
 
