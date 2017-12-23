@@ -1,13 +1,11 @@
 'use strict';
 let Tess = (function (console, document) {
 
-    let symbols = [];
     let uses = {};
     let useHash = {};
     let svgdiv = null;
     return {
         init: init,
-        getSymbols: function () { return symbols.join(''); },
         makePath: makePath,
         getUses: function (base) {
             if (typeof (base) === 'undefined') {
@@ -15,6 +13,9 @@ let Tess = (function (console, document) {
             }
             console.dir(uses);
             return uses[base].join('');
+        },
+        getUseFromHash: function (id) {
+            return useHash[id];
         },
         register: register,
         placeUse: placeUse,
@@ -28,13 +29,15 @@ let Tess = (function (console, document) {
         }
     };
     function init() {
-        symbols.length = 0;
         for (let key in uses) {
             uses[key].length = 0;
             delete uses[key];
         }
         for (let key in useHash) {
             delete useHash[key];
+        }
+        if (!(document.querySelector('svg.symbols'))) {
+            document.body.insertAdjacentHTML('beforeend','<svg class="symbols"></svg>')
         }
         if (!(document.querySelector('svg.tmp'))) {
             document.body.insertAdjacentHTML('beforeend','<svg class="tmp"></svg>')
@@ -51,19 +54,61 @@ let Tess = (function (console, document) {
             width = '2';
         }
         let pathStr = pathListMerge(pathStrList);
-        return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" vectorEffect: "non-scaling-stroke"/>`;
+        return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" vectorEffect="non-scaling-stroke"/>`;
     }
     function register(name, svgstr) {
+        let symbols = document.querySelector('svg.symbols');
         let tmp = document.querySelector('svg.tmp');
-        tmp.innerHTML = svgstr;
-        let bbox = tmp.querySelector('path').getBBox();
+        tmp.innerHTML = '<g class="bbox">'+svgstr+'</g>';
+        let bbox = tmp.querySelector('g.bbox').getBBox();
+        /*
+        let children = tmp.childNodes;
+        let bbox = {
+            x: null,
+            y: null,
+            mx: null,
+            my: null
+        };
+        for (let ci=0;ci<children.length;ci++) {
+            let bb = children[ci].getBBox();
+            if (bbox.x===null) {
+                bbox.x = bb.x;
+            }
+            if (bbox.y===null) {
+                bbox.y = bb.y;
+            }
+            let mx = bb.width+bb.x;
+            if (bbox.mx===null) {
+                bbox.mx = mx;
+            }
+            let my = bb.width+bb.x;
+            if (bbox.my===null) {
+                bbox.my = my;
+            }
+            if (bbox.x > bb.x ) {
+                bbox.x = bb.x;
+            }
+            if (bbox.y > bb.y ) {
+                bbox.y = bb.y;
+            }
+            if (bbox.mx < mx ) {
+                bbox.mx = mx;
+            }
+            if (bbox.my < my ) {
+                bbox.my = my;
+            }
+        }
+        bbox.width = bbox.mx-bbox.x;
+        bbox.height = bbox.my-bbox.y;
+        */
+        console.log(bbox);
         tmp.innerHTML = '';
         let eps = 10;
         bbox.x += -eps;
         bbox.y += -eps;
         bbox.width += 2*eps;
         bbox.height += 2*eps; 
-        symbols.push(`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${svgstr}</symbol>`);
+        symbols.insertAdjacentHTML('beforeend',`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${svgstr}</symbol>`);
         useHash[name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
     }
     function placeUse(name, translate, rotate, scale, base) {

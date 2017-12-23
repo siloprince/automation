@@ -22,79 +22,112 @@
     <script type="text/javascript">
         'use strict';
         (function (console, document, me) {
-            let base = 100;
+            let unit = 100;
             Update.update = update;
             function update(param) {
                 let extrude = param.extrude;
 
-                let len = base + extrude;
-                let move = base / Math.sqrt(2);
-                let scale = extrude / Math.sqrt(2) / base;
+                let len = unit + extrude;
+                let move = unit / Math.sqrt(2);
+                let scale = extrude / Math.sqrt(2) / unit;
 
                 let linea = Draw.getData('red');
                 let lineb = Draw.getData('blue');
 
                 Tess.init();
-                /*
+
                 let base;
-                base = 'atile';
-                Tess.register('l0', Tess.makePath([linea]));
-                Tess.register('l1', Tess.makePath([lineb]));
-
-                Tess.placeUse('l0',[   0,-len],   0,base);
-                Tess.placeUse('l0',[ len,   0],  90,base);
-                Tess.placeUse('l0',[   0, len],   0,base);
-                Tess.placeUse('l0',[-len,   0],  90,base);
-
-                let acap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
-                
-                Tess.register('acap',Tess.makePath([acap]));
-                Tess.placeUse('acap',[0,0], -90,base);
-                Tess.placeUse('acap',[0,0],   0,base);
-                Tess.placeUse('acap',[0,0],  90,base);
-                Tess.placeUse('acap',[0,0], 180,base);
-
-                Tess.register();
-
-                */
+                let mode = true;
+                if (mode) {
+                    Tess.register('l0', Tess.makePath([linea]));
+                    Tess.register('l1', Tess.makePath([lineb]));
+                }
                 let l0 = SvgPath(linea).scale(2).toString();
                 let l1 = SvgPath(lineb).scale(2).toString();
 
-                let atile = [];
-                atile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
-                atile.push(SvgPath(l0).rotate(90).translate(len, 0).toString());
-                atile.push(SvgPath(l0).rotate(0).translate(0, len).toString());
-                atile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
+                base = 'atile';
+                if (mode) {
+                    Tess.placeUse('l0', [0, -len], 0, 1, base);
+                    Tess.placeUse('l0', [len, 0], 90, 1, base);
+                    Tess.placeUse('l0', [0, len], 0, 1, base);
+                    Tess.placeUse('l0', [-len, 0], 90, 1, base);
 
+                    let acap = Tess.getUseFromHash('l1');
+                    acap = acap.replace(/^<use /,`<use transform="translate(${-len},${-len})scale(${scale})translate(${move},${move})rotate(135)" `);
 
-                let acap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
-                atile.push(SvgPath(acap).rotate(-90).toString());
-                atile.push(SvgPath(acap).rotate(0).toString());
-                atile.push(SvgPath(acap).rotate(90).toString());
-                atile.push(SvgPath(acap).rotate(180).toString());
+                    Tess.register('acap', acap);
+                    Tess.placeUse('acap', [0, 0], -90, 1, base);
+                    Tess.placeUse('acap', [0, 0], 0, 1, base);
+                    Tess.placeUse('acap', [0, 0], 90, 1, base);
+                    Tess.placeUse('acap', [0, 0], 180, 1, base);
 
-                let tile = [];
-                tile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
-                tile.push(SvgPath(l0).rotate(-90).translate(len, 0).toString());
-                tile.push(SvgPath(l0).rotate(180).translate(0, len).toString());
-                tile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
+                    Tess.register(base, Tess.getUses(base));
+                } else {
+                    let atile = [];
+                    atile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
+                    atile.push(SvgPath(l0).rotate(90).translate(len, 0).toString());
+                    atile.push(SvgPath(l0).rotate(0).translate(0, len).toString());
+                    atile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
 
-                let cap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
-                tile.push(SvgPath(cap).rotate(-90).toString());
+                    let acap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
+                    atile.push(SvgPath(acap).rotate(-90).toString());
+                    atile.push(SvgPath(acap).rotate(0).toString());
+                    atile.push(SvgPath(acap).rotate(90).toString());
+                    atile.push(SvgPath(acap).rotate(180).toString());
 
-                let smallStrList = [];
-                smallStrList.push(SvgPath(l1).rotate(225).translate(-move, move).toString());
-                smallStrList.push(SvgPath(l1).rotate(-45).translate(-move, -move).toString());
-                smallStrList.push(SvgPath(l1).rotate(45).translate(move, -move).toString());
+                    Tess.register(base, Tess.makePath(atile));
 
-                let small = SvgPath(pathListMerge(smallStrList)).scale(scale).translate(-len, -len).toString();
+                }
 
-                tile.push(SvgPath(small).rotate(0).toString());
-                tile.push(SvgPath(small).rotate(90).toString());
-                tile.push(SvgPath(small).rotate(180).toString());             
+                base = 'tile';
+                if (mode) {
+                    Tess.placeUse('l0', [0, -len], 0, 1, base);
+                    Tess.placeUse('l0', [len, 0], -90, 1, base);
+                    Tess.placeUse('l0', [0, len], 180, 1, base);
+                    Tess.placeUse('l0', [-len, 0], 90, 1, base);
 
-                Tess.register('atile', Tess.makePath(atile));
-                Tess.register('tile',  Tess.makePath(tile));
+                    let cap = Tess.getUseFromHash('l1');
+                    cap = cap.replace(/^<use /,`<use transform="translate(${-len},${-len})scale(${scale})translate(${move},${move})rotate(135)" `);
+                    Tess.register('cap', cap);
+                    Tess.placeUse('cap', [0, 0], -90, 1,base);
+
+                    let small = 'small';
+                    Tess.placeUse('l1', [-move, move], 225, 1, small);
+                    Tess.placeUse('l1', [-move, -move], -45, 1, small);
+                    Tess.placeUse('l1', [move, -move], 45, 1, small);
+
+                    let smallstr = `<g transform="translate(${-len},${-len})scale(${scale})">` + Tess.getUses(small) + `</g>`;
+                    Tess.register(small, smallstr);
+
+                    Tess.placeUse(small, [0, 0], 0, 1,base);
+                    Tess.placeUse(small, [0, 0], 90, 1,base);
+                    Tess.placeUse(small, [0, 0], 180, 1,base);
+
+                    Tess.register(base, Tess.getUses(base));
+                } else {
+
+                    let tile = [];
+                    tile.push(SvgPath(l0).rotate(0).translate(0, -len).toString());
+                    tile.push(SvgPath(l0).rotate(-90).translate(len, 0).toString());
+                    tile.push(SvgPath(l0).rotate(180).translate(0, len).toString());
+                    tile.push(SvgPath(l0).rotate(90).translate(-len, 0).toString());
+
+                    let cap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
+                    tile.push(SvgPath(cap).rotate(-90).toString());
+
+                    let smallStrList = [];
+                    smallStrList.push(SvgPath(l1).rotate(225).translate(-move, move).toString());
+                    smallStrList.push(SvgPath(l1).rotate(-45).translate(-move, -move).toString());
+                    smallStrList.push(SvgPath(l1).rotate(45).translate(move, -move).toString());
+
+                    let small = SvgPath(pathListMerge(smallStrList)).scale(scale).translate(-len, -len).toString();
+
+                    tile.push(SvgPath(small).rotate(0).toString());
+                    tile.push(SvgPath(small).rotate(90).toString());
+                    tile.push(SvgPath(small).rotate(180).toString());
+
+                    Tess.register(base, Tess.makePath(tile));
+                }
 
                 Tess.placeUse('tile', [-len * 2, 0], -90);
                 Tess.placeUse('atile', [-len * 2, len * 2], 0);
@@ -106,9 +139,8 @@
                 Tess.placeUse('atile', [0, len * 4], 180);
                 Tess.placeUse('tile', [len * 2, len * 4], 90);
                 let svgstr = `<svg width="2000" height="2000">
-                        ${Tess.getSymbols()}
                         <g transform="translate(400,200)scale(0.2)">${Tess.getUses()}</g></svg>`
-                Tess.svg(me,svgstr);
+                Tess.svg(me, svgstr);
                 return;
             }
         })(console, document, document.currentScript);
