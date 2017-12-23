@@ -17,34 +17,40 @@
         <br/>
         <input id="extrude" class="update" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
+        <input id="width" class="update" type="range" min="3" value="3" max="15" step="1" />: 横
+        <br/>
+        <input id="height" class="update" type="range" min="3" value="3" max="15" step="1" />: 縦
+        <br/>
         <a class="download">ダウンロード</a>
     </div>
     <script type="text/javascript">
         'use strict';
         (function (console, document,me) {
-            let base = 100;
+            let unit = 100;
             Update.update=update;
             function update(param) {
                 let extrude = param.extrude;
 
-                let len = base + extrude;
-                let move = base / Math.sqrt(2);
-                let scale = extrude / Math.sqrt(2) / base;
+                let len = unit + extrude;
+                let scale = len/unit/2;
 
                 let red = Draw.getData('red');
                 let blue = Draw.getData('blue');
                 let transformed = [];
-                transformed.push(SvgPath(red).rotate(0).translate(0, -50).toString());
-                transformed.push(SvgPath(blue).rotate(90).translate(50, 0).toString());
-                transformed.push(SvgPath(red).rotate(0).translate(0, 50).toString());
-                transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).toString());
+                transformed.push(SvgPath(red).rotate(0).scale(scale).translate(0, -50).toString());
+                transformed.push(SvgPath(blue).rotate(90).translate(len/4, 0).toString());
+                transformed.push(SvgPath(red).rotate(0).scale(scale).translate(0, 50).toString());
+                transformed.push(SvgPath(blue).rotate(90).translate(-len/4, 0).toString());
         
                 Tess.init();
                 Tess.register('rect',Tess.makePath(transformed));
-                Tess.placeUse('rect');
+                for (let xi=0;xi<param.width;xi++) {
+                    for (let yi=0;yi<param.height;yi++) {
+                        Tess.placeUse('rect',[ len/2*xi, unit*yi]);
+                    }
+                }
                 let svgstr = `<svg width="2000" height="2000">
-                        ${Tess.getSymbols()}
-                        <g transform="translate(200,200)">${Tess.getUses()}</g></svg>`;
+                        <g transform="translate(50,50)scale(0.4)">${Tess.getUses()}</g></svg>`;
                 
                 Tess.svg(me,svgstr);
             }

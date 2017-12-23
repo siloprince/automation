@@ -47,7 +47,7 @@ let Tess = (function (console, document) {
             document.querySelector('svg.tmp').innerHTML = '';
         }
     }
-    function makePath(pathStrList,stroke,width,fill) {
+    function makePath(pathStrList,stroke,width,fill,opacity) {
         if (typeof(fill)==='undefined') {
             fill = 'none';
         }
@@ -57,8 +57,11 @@ let Tess = (function (console, document) {
         if (typeof(width)==='undefined') {
             width = '2';
         }
+        if (typeof(opacity)==='undefined') {
+            opacity = '1';
+        }
         let pathStr = pathListMerge(pathStrList);
-        return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" vectorEffect="non-scaling-stroke"/>`;
+        return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" fill-opacity="${opacity}" vectorEffect="non-scaling-stroke"/>`;
     }
     function register(name, svgstr) {
         let symbols = document.querySelector('svg.symbols');
@@ -108,7 +111,7 @@ let Tess = (function (console, document) {
         */
         console.log(bbox);
         tmp.innerHTML = '';
-        let eps = 10;
+        let eps = 0;
         bbox.x += -eps;
         bbox.y += -eps;
         bbox.width += 2*eps;
@@ -124,7 +127,7 @@ let Tess = (function (console, document) {
             rotate = 0;
         }
         if (typeof (scale) === 'undefined') {
-            scale = 1;
+            scale = [1,1];
         }
         if (typeof (base) === 'undefined') {
             base = '_';
@@ -133,7 +136,7 @@ let Tess = (function (console, document) {
             if (!(base in uses)) {
                 uses[base] = [];
             }
-            uses[base].push(useHash[name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale})" `));
+            uses[base].push(useHash[name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale[0]},${scale[1]})" `));
         }
     }
 })(console, document);
