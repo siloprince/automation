@@ -10,7 +10,7 @@
 </head>
 
 <body>
-    
+
     <div style="margin:10px;">
         <svg id="red" class="draw update" width="200" height="250" style="border: 1px solid #ffaaaa;" />
         <svg id="blue" class="draw update" width="200" height="250" style="border: 1px solid #aaaaff;" />
@@ -38,8 +38,8 @@
                 /*
                 let base;
                 base = 'atile';
-                Tess.register('l0', [linea]);
-                Tess.register('l1', [lineb]);
+                Tess.register('l0', Tess.makePath([linea]));
+                Tess.register('l1', Tess.makePath([lineb]));
 
                 Tess.placeUse('l0',[   0,-len],   0,base);
                 Tess.placeUse('l0',[ len,   0],  90,base);
@@ -48,11 +48,13 @@
 
                 let acap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
                 
-                Tess.register('acap',[acap]);
+                Tess.register('acap',Tess.makePath([acap]));
                 Tess.placeUse('acap',[0,0], -90,base);
                 Tess.placeUse('acap',[0,0],   0,base);
                 Tess.placeUse('acap',[0,0],  90,base);
                 Tess.placeUse('acap',[0,0], 180,base);
+
+                Tess.register();
 
                 */
                 let l0 = SvgPath(linea).scale(2).toString();
@@ -91,8 +93,8 @@
                 tile.push(SvgPath(small).rotate(90).toString());
                 tile.push(SvgPath(small).rotate(180).toString());             
 
-                Tess.register('atile', atile);
-                Tess.register('tile', tile);
+                Tess.register('atile', Tess.makePath(atile));
+                Tess.register('tile',  Tess.makePath(tile));
 
                 Tess.placeUse('tile', [-len * 2, 0], -90);
                 Tess.placeUse('atile', [-len * 2, len * 2], 0);

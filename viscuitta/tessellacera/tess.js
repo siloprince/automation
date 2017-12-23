@@ -2,14 +2,13 @@
 let Tess = (function (console, document) {
 
     let symbols = [];
-    let data = {};
     let uses = {};
     let useHash = {};
     let svgdiv = null;
     return {
         init: init,
         getSymbols: function () { return symbols.join(''); },
-        getData: function (name) { return data[name]; },
+        makePath: makePath,
         getUses: function (base) {
             if (typeof (base) === 'undefined') {
                 base = '_';
@@ -37,29 +36,34 @@ let Tess = (function (console, document) {
         for (let key in useHash) {
             delete useHash[key];
         }
-        for (let key in data) {
-            delete data[key];
-        }
         if (!(document.querySelector('svg.tmp'))) {
             document.body.insertAdjacentHTML('beforeend','<svg class="tmp"></svg>')
         }
     }
-
-    function register(name, pathStrList) {
+    function makePath(pathStrList,stroke,width,fill) {
+        if (typeof(fill)==='undefined') {
+            fill = 'none';
+        }
+        if (typeof(stroke)==='undefined') {
+            stroke = '#000000';
+        }
+        if (typeof(width)==='undefined') {
+            width = '2';
+        }
         let pathStr = pathListMerge(pathStrList);
-        data[name] = pathStr;
-        let path = `<path d="${pathStr}" fill="none" stroke="none" stroke-width="2"/>`;
-
+        return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" vectorEffect: "non-scaling-stroke"/>`;
+    }
+    function register(name, svgstr) {
         let tmp = document.querySelector('svg.tmp');
-        tmp.innerHTML = path;
+        tmp.innerHTML = svgstr;
         let bbox = tmp.querySelector('path').getBBox();
+        tmp.innerHTML = '';
         let eps = 10;
         bbox.x += -eps;
         bbox.y += -eps;
         bbox.width += 2*eps;
         bbox.height += 2*eps; 
-        path = path.replace(/ stroke="none"/,'stroke="#000000"');
-        symbols.push(`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${path}</symbol>`);
+        symbols.push(`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${svgstr}</symbol>`);
         useHash[name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
     }
     function placeUse(name, translate, rotate, scale, base) {

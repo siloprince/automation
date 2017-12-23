@@ -40,7 +40,7 @@
                 transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).toString());
         
                 Tess.init();
-                Tess.register('rect',transformed);
+                Tess.register('rect',Tess.makePath(transformed));
                 Tess.placeUse('rect');
                 let svgstr = `<svg width="2000" height="2000">
                         ${Tess.getSymbols()}
