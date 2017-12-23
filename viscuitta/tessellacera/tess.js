@@ -64,6 +64,7 @@ let Tess = (function (console, document) {
         let symbols = document.querySelector('svg.symbols');
         let tmp = document.querySelector('svg.tmp');
         tmp.innerHTML = '<g class="bbox">'+svgstr+'</g>';
+        
         let bbox = tmp.querySelector('g.bbox').getBBox();
         /*
         let children = tmp.childNodes;
@@ -107,7 +108,7 @@ let Tess = (function (console, document) {
         */
         console.log(bbox);
         tmp.innerHTML = '';
-        let eps = 0;
+        let eps = 10;
         bbox.x += -eps;
         bbox.y += -eps;
         bbox.width += 2*eps;
