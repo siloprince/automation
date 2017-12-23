@@ -3,8 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <script type="text/javascript" src="./svgpath.js"></script>
-    <script type="text/javascript" src="draw.js"></script>
-    <script type="text/javascript" src="update.js"></script>
+    <script type="text/javascript" src="./draw.js"></script>
+    <script type="text/javascript" src="./update.js"></script>
+    <script type="text/javascript" src="./svgdownload.js"></script>
+    <script type="text/javascript" src="./tess.js"></script>
 </head>
 
 <body>
@@ -20,9 +22,8 @@
     <div id="svg"></div>
     <script type="text/javascript">
         'use strict';
-        (function (console, document, me, svgdiv) {
+        (function (console, document, me) {
             Update.update = update;
-
             function update(param) {
                 let divide = param.divide;
                 let slide = param.slide;
@@ -118,13 +119,9 @@
                 let svgstr = `<svg width="2000" height="2000">
                         <g transform="translate(100,100)">${pathes.join('')}</g></svg>`;
 
-                if (!svgdiv) {
-                    svgdiv = document.createElement('div');
-                    me.parentElement.insertBefore(svgdiv, me.nextSibling);
-                }
-                svgdiv.innerHTML =  svgstr;
+                Tess.svg(me,svgstr);
             }
-        })(console, document, document.currentScript, null);
+        })(console, document, document.currentScript);
 
     </script>
 </body>

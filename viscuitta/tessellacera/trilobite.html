@@ -10,7 +10,7 @@
 </head>
 
 <body>
-
+    
     <div style="margin:10px;">
         <svg id="red" class="draw update" width="200" height="250" style="border: 1px solid #ffaaaa;" />
         <svg id="blue" class="draw update" width="200" height="250" style="border: 1px solid #aaaaff;" />
@@ -38,15 +38,22 @@
                 /*
                 let base;
                 base = 'atile';
-                Tess.register('l0', [linea],base);
-                Tess.register('l1', [lineb],base);
+                Tess.register('l0', [linea]);
+                Tess.register('l1', [lineb]);
 
                 Tess.placeUse('l0',[   0,-len],   0,base);
                 Tess.placeUse('l0',[ len,   0],  90,base);
                 Tess.placeUse('l0',[   0, len],   0,base);
                 Tess.placeUse('l0',[-len,   0],  90,base);
 
-                Tess.register('acap', Tess.get,base);
+                let acap = SvgPath(l1).rotate(135).translate(move, move).scale(scale).translate(-len, -len).toString();
+                
+                Tess.register('acap',[acap]);
+                Tess.placeUse('acap',[0,0], -90,base);
+                Tess.placeUse('acap',[0,0],   0,base);
+                Tess.placeUse('acap',[0,0],  90,base);
+                Tess.placeUse('acap',[0,0], 180,base);
+
                 */
                 let l0 = SvgPath(linea).scale(2).toString();
                 let l1 = SvgPath(lineb).scale(2).toString();
@@ -98,7 +105,7 @@
                 Tess.placeUse('tile', [len * 2, len * 4], 90);
                 let svgstr = `<svg width="2000" height="2000">
                         ${Tess.getSymbols()}
-                        <g transform="translate(400,200)scale(0.2)">${Tess.getUses()}</g></svg>`;
+                        <g transform="translate(400,200)scale(0.2)">${Tess.getUses()}</g></svg>`
                 Tess.svg(me,svgstr);
                 return;
             }

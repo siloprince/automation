@@ -2,18 +2,20 @@
 let Tess = (function (console, document) {
 
     let symbols = [];
+    let data = {};
     let uses = {};
-    let useHashHash = {};
+    let useHash = {};
     let svgdiv = null;
     return {
         init: init,
-        getSymbols: function() { return symbols.join(''); },
-        getUses: function(base) { 
-            if (typeof(base)==='undefined'){
+        getSymbols: function () { return symbols.join(''); },
+        getData: function (name) { return data[name]; },
+        getUses: function (base) {
+            if (typeof (base) === 'undefined') {
                 base = '_';
             }
             console.dir(uses);
-            return uses[base].join(''); 
+            return uses[base].join('');
         },
         register: register,
         placeUse: placeUse,
@@ -26,34 +28,41 @@ let Tess = (function (console, document) {
             svgdiv.innerHTML = svgstr;
         }
     };
-    function init () {
+    function init() {
         symbols.length = 0;
         for (let key in uses) {
-            uses[key].length=0;
+            uses[key].length = 0;
             delete uses[key];
         }
-        for (let key in useHashHash) {
-            for (let key2 in useHashHash[key]) {
-                delete useHashHash[key][key2];
-            }
-            delete useHashHash[key];
+        for (let key in useHash) {
+            delete useHash[key];
+        }
+        for (let key in data) {
+            delete data[key];
+        }
+        if (!(document.querySelector('svg.tmp'))) {
+            document.body.insertAdjacentHTML('beforeend','<svg class="tmp"></svg>')
         }
     }
 
-    function register(name, pathStrList,base) {
-        if (typeof(base) === 'undefined') {
-            base = '_';
-        }
-        if (!(base in useHashHash)){
-            useHashHash[base] = {};
-        }
-        let bbox = {};
-        let pathStr = pathListMerge(pathStrList, bbox);
-        let path = `<path d="${pathStr}" fill="none" stroke="#000000" stroke-width="2"/>`;
+    function register(name, pathStrList) {
+        let pathStr = pathListMerge(pathStrList);
+        data[name] = pathStr;
+        let path = `<path d="${pathStr}" fill="none" stroke="none" stroke-width="2"/>`;
+
+        let tmp = document.querySelector('svg.tmp');
+        tmp.innerHTML = path;
+        let bbox = tmp.querySelector('path').getBBox();
+        let eps = 10;
+        bbox.x += -eps;
+        bbox.y += -eps;
+        bbox.width += 2*eps;
+        bbox.height += 2*eps; 
+        path = path.replace(/ stroke="none"/,'stroke="#000000"');
         symbols.push(`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${path}</symbol>`);
-        useHashHash[base][name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
+        useHash[name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
     }
-    function placeUse(name, translate, rotate, scale,base) {
+    function placeUse(name, translate, rotate, scale, base) {
         if (typeof (translate) === 'undefined') {
             translate = [0, 0];
         }
@@ -63,14 +72,14 @@ let Tess = (function (console, document) {
         if (typeof (scale) === 'undefined') {
             scale = 1;
         }
-        if (typeof(base) === 'undefined') {
+        if (typeof (base) === 'undefined') {
             base = '_';
         }
-        if (name in useHashHash[base]) {
+        if (name in useHash) {
             if (!(base in uses)) {
                 uses[base] = [];
             }
-            uses[base].push(useHashHash[base][name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale})" `));
+            uses[base].push(useHash[name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale})" `));
         }
     }
 })(console, document);
