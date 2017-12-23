@@ -21,7 +21,7 @@
     </div>
     <script type="text/javascript">
         'use strict';
-        (function (console, document,me,svgdiv) {
+        (function (console, document,me) {
             let base = 100;
             Update.update=update;
             function update(param) {
@@ -46,14 +46,9 @@
                         ${Tess.getSymbols()}
                         <g transform="translate(200,200)">${Tess.getUses()}</g></svg>`;
                 
-                if (!svgdiv) {
-                    svgdiv = document.createElement('div');
-                    svgdiv.className = 'svg';
-                    me.parentElement.insertBefore(svgdiv, me.nextSibling);
-                }
-                svgdiv.innerHTML =  svgstr;
+                Tess.svg(me,svgstr);
             }
-        })(console, document, document.currentScript, null);
+        })(console, document, document.currentScript);
     </script>
 </body>
 </html>

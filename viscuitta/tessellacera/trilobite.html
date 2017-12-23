@@ -21,7 +21,7 @@
     </div>
     <script type="text/javascript">
         'use strict';
-        (function (console, document, me, svgdiv) {
+        (function (console, document, me) {
             let base = 100;
             Update.update = update;
             function update(param) {
@@ -31,9 +31,23 @@
                 let move = base / Math.sqrt(2);
                 let scale = extrude / Math.sqrt(2) / base;
 
-                let pathes = [];
                 let linea = Draw.getData('red');
                 let lineb = Draw.getData('blue');
+
+                Tess.init();
+                /*
+                let base;
+                base = 'atile';
+                Tess.register('l0', [linea],base);
+                Tess.register('l1', [lineb],base);
+
+                Tess.placeUse('l0',[   0,-len],   0,base);
+                Tess.placeUse('l0',[ len,   0],  90,base);
+                Tess.placeUse('l0',[   0, len],   0,base);
+                Tess.placeUse('l0',[-len,   0],  90,base);
+
+                Tess.register('acap', Tess.get,base);
+                */
                 let l0 = SvgPath(linea).scale(2).toString();
                 let l1 = SvgPath(lineb).scale(2).toString();
 
@@ -68,10 +82,7 @@
 
                 tile.push(SvgPath(small).rotate(0).toString());
                 tile.push(SvgPath(small).rotate(90).toString());
-                tile.push(SvgPath(small).rotate(180).toString());
-
-                
-                Tess.init();
+                tile.push(SvgPath(small).rotate(180).toString());             
 
                 Tess.register('atile', atile);
                 Tess.register('tile', tile);
@@ -88,18 +99,10 @@
                 let svgstr = `<svg width="2000" height="2000">
                         ${Tess.getSymbols()}
                         <g transform="translate(400,200)scale(0.2)">${Tess.getUses()}</g></svg>`;
-
-
-                if (!svgdiv) {
-                    svgdiv = document.createElement('div');
-                    svgdiv.className = 'svg';
-                    me.parentElement.insertBefore(svgdiv, me.nextSibling);
-                }
-                svgdiv.innerHTML = svgstr;
-
+                Tess.svg(me,svgstr);
                 return;
             }
-        })(console, document, document.currentScript, null);
+        })(console, document, document.currentScript);
     </script>
 </body>
 
