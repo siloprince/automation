@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <script type="text/javascript" src="./svgpath.js"></script>
-    <script type="text/javascript" src="draw.js"></script>
-    <script type="text/javascript" src="update.js"></script>
-    <script type="text/javascript" src="svgdownload.js"></script>
+    <script type="text/javascript" src="./draw.js"></script>
+    <script type="text/javascript" src="./update.js"></script>
+    <script type="text/javascript" src="./svgdownload.js"></script>
+    <script type="text/javascript" src="./tess.js"></script>
 </head>
 
 <body>
@@ -38,19 +39,12 @@
                 transformed.push(SvgPath(red).rotate(0).translate(0, 50).toString());
                 transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).toString());
         
-                let bbox = {};
-                let path = pathListMerge(transformed,bbox);
-
-                console.dir(bbox);
-                let svgsize = [2000,2000];
-                let symbols = [];
-                let pathes = [];
-                let rect = 'rect';
-                symbols.push(`<symbol id="${rect}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}"><path d="${path}" fill="none" stroke="#000000" stroke-width="2"/></symbol>`);
-                pathes.push(`<use xlink:href="#${rect}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}" transform="translate(100,100)">`);
-                let svgstr = `<svg width="${svgsize[0]}" height="${svgsize[1]}">
-                        ${symbols.join('')}
-                        <g transform="translate(100,100)">${pathes.join('')}</g></svg>`;
+                Tess.init();
+                Tess.register('rect',transformed);
+                Tess.placeUse('rect');
+                let svgstr = `<svg width="2000" height="2000">
+                        ${Tess.getSymbols()}
+                        <g transform="translate(200,200)">${Tess.getUses()}</g></svg>`;
                 
                 if (!svgdiv) {
                     svgdiv = document.createElement('div');

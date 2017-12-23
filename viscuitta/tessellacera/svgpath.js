@@ -1559,10 +1559,11 @@ const pathListMerge = function (transformed,bbox) {
           }
         }
         if (bbox) {
-          bbox.x = bbox.minX;
-          bbox.y = bbox.minY;
-          bbox.width = bbox.maxX-bbox.minX;
-          bbox.height = bbox.maxY-bbox.minY;
+          let eps = 10;
+          bbox.x = bbox.minX -eps;
+          bbox.y = bbox.minY -eps;
+          bbox.width = bbox.maxX-bbox.minX + eps*2;
+          bbox.height = bbox.maxY-bbox.minY + eps*2;
         }
       }
   }

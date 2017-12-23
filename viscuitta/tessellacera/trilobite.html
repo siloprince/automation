@@ -3,9 +3,10 @@
 <head>
     <meta charset="UTF-8" />
     <script type="text/javascript" src="./svgpath.js"></script>
-    <script type="text/javascript" src="draw.js"></script>
-    <script type="text/javascript" src="update.js"></script>
-    <script type="text/javascript" src="svgdownload.js"></script>
+    <script type="text/javascript" src="./draw.js"></script>
+    <script type="text/javascript" src="./update.js"></script>
+    <script type="text/javascript" src="./svgdownload.js"></script>
+    <script type="text/javascript" src="./tess.js"></script>
 </head>
 
 <body>
@@ -69,29 +70,24 @@
                 tile.push(SvgPath(small).rotate(90).toString());
                 tile.push(SvgPath(small).rotate(180).toString());
 
-                let svgsize = [2000, 2000];
-                let xx = -svgsize[0] / 2;
-                let yy = -svgsize[1] / 2;
-                let symbols = [];
-                let uses = [];
-                let useHash = {};
+                
+                Tess.init();
 
-                register('atile', atile);
-                register('tile', tile);
+                Tess.register('atile', atile);
+                Tess.register('tile', tile);
 
-                placeUse('tile', [-len * 2, 0], -90);
-                placeUse('atile', [-len * 2, len * 2], 0);
-                placeUse('atile', [0, 0], 0);
-                placeUse('tile', [len * 2, 0], 0);
-                placeUse('tile', [0, len * 2], 0);
-                placeUse('atile', [len * 2, len * 2], 180);
-                placeUse('tile', [-len * 2, len * 4], 0);
-                placeUse('atile', [0, len * 4], 180);
-                placeUse('tile', [len * 2, len * 4], 90);
-
-                let svgstr = `<svg width="${svgsize[0]}" height="${svgsize[1]}">
-                        ${symbols.join('')}
-                        <g transform="translate(400,200)scale(0.2)">${uses.join('')}</g></svg>`;
+                Tess.placeUse('tile', [-len * 2, 0], -90);
+                Tess.placeUse('atile', [-len * 2, len * 2], 0);
+                Tess.placeUse('atile', [0, 0], 0);
+                Tess.placeUse('tile', [len * 2, 0], 0);
+                Tess.placeUse('tile', [0, len * 2], 0);
+                Tess.placeUse('atile', [len * 2, len * 2], 180);
+                Tess.placeUse('tile', [-len * 2, len * 4], 0);
+                Tess.placeUse('atile', [0, len * 4], 180);
+                Tess.placeUse('tile', [len * 2, len * 4], 90);
+                let svgstr = `<svg width="2000" height="2000">
+                        ${Tess.getSymbols()}
+                        <g transform="translate(400,200)scale(0.2)">${Tess.getUses()}</g></svg>`;
 
 
                 if (!svgdiv) {
@@ -102,28 +98,6 @@
                 svgdiv.innerHTML = svgstr;
 
                 return;
-
-                function register(name, pathStrList) {
-                    let bbox = {};
-                    let pathStr = pathListMerge(pathStrList, bbox);
-                    let path = `<path d="${pathStr}" fill="none" stroke="#000000" stroke-width="2"/>`;
-                    symbols.push(`<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${path}</symbol>`);
-                    useHash[name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
-                }
-                function placeUse(name, translate, rotate, scale) {
-                    if (typeof(translate)==='undefined') {
-                        translate = [0,0];
-                    }
-                    if (typeof(rotate)==='undefined') {
-                        rotate = 0;
-                    }
-                    if (typeof(scale)==='undefined') {
-                        scale = 1;
-                    }
-                    if (name in useHash) {
-                        uses.push(useHash[name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale})" `));
-                    }
-                }
             }
         })(console, document, document.currentScript, null);
     </script>
