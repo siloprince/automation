@@ -34,7 +34,6 @@
                 transformed.push(SvgPath(red).rotate( 180).translate(0, move).rotate(240).toString());
                 transformed.push(SvgPath(red).rotate( 0).translate(0, move).rotate(300).toString());
         
-                Tess.init();
                 Tess.register('rect',Tess.makePath(transformed,'#000000',null,'#ff0000',0.4));
                 for (let xi=0;xi<10;xi++) {
                     for (let yi=0;yi<10;yi++) {

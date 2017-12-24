@@ -11,7 +11,6 @@ let Tess = (function (console, document) {
             if (typeof (base) === 'undefined') {
                 base = '_';
             }
-            console.dir(uses);
             return uses[base].join('');
         },
         getUseFromHash: function (id) {
@@ -69,47 +68,7 @@ let Tess = (function (console, document) {
         tmp.innerHTML = '<g class="bbox">'+svgstr+'</g>';
         
         let bbox = tmp.querySelector('g.bbox').getBBox();
-        /*
-        let children = tmp.childNodes;
-        let bbox = {
-            x: null,
-            y: null,
-            mx: null,
-            my: null
-        };
-        for (let ci=0;ci<children.length;ci++) {
-            let bb = children[ci].getBBox();
-            if (bbox.x===null) {
-                bbox.x = bb.x;
-            }
-            if (bbox.y===null) {
-                bbox.y = bb.y;
-            }
-            let mx = bb.width+bb.x;
-            if (bbox.mx===null) {
-                bbox.mx = mx;
-            }
-            let my = bb.width+bb.x;
-            if (bbox.my===null) {
-                bbox.my = my;
-            }
-            if (bbox.x > bb.x ) {
-                bbox.x = bb.x;
-            }
-            if (bbox.y > bb.y ) {
-                bbox.y = bb.y;
-            }
-            if (bbox.mx < mx ) {
-                bbox.mx = mx;
-            }
-            if (bbox.my < my ) {
-                bbox.my = my;
-            }
-        }
-        bbox.width = bbox.mx-bbox.x;
-        bbox.height = bbox.my-bbox.y;
-        */
-        console.log(bbox);
+        
         tmp.innerHTML = '';
         let eps = 0;
         bbox.x += -eps;

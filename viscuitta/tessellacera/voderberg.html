@@ -17,7 +17,9 @@
         <input id="divide" class="update" type="range" min="1" value="3" max="6" step="1" />: 分割<br/>
         <input id="slide" class="update" type="range" min="0" value="1" max="5" step="1" />: スライド<br/>
         <input id="extrude" class="update" type="range" min="0" value="0" max="5" step="1" />: 引き伸ばし<br/>
-        <input id="thick" class="update" type="range" min="1" value="3" max="5" step="1" />: 厚み<br/>
+        <input id="thick" class="update" type="range" min="1" value="3" max="10" step="1" />: 厚み<br/>
+        <a class="download">ダウンロード</a>
+        <br/>
     </div>
     <div id="svg"></div>
     <script type="text/javascript">
@@ -25,6 +27,7 @@
         (function (console, document, me) {
             Update.update = update;
             function update(param) {
+
                 let divide = param.divide;
                 let slide = param.slide;
                 let extrude = param.extrude;
@@ -42,87 +45,79 @@
                 let cx = bx * Math.cos(angle);
                 let cy = bx * Math.sin(angle);
 
+                let red = SvgPath(Draw.getData('red')).translate(50,0).toString();
+                let blue = SvgPath(Draw.getData('blue')).translate(50,0).toString();
 
-                let pathes = [];
-                let red = SvgPath(Draw.getData('red')).scale(2).toString();
-                let blue = SvgPath(Draw.getData('blue')).scale(2).toString();
-
+                let tile = [];
                 let match1List = [];
-                match1List.push(SvgPath(red).rotate( 180).translate( bx,  0).toString());
-                match1List.push(SvgPath(red).rotate(   0).translate(  0,  0).toString());
+                match1List.push(SvgPath(red).rotate(180).translate(bx, 0).toString());
+                match1List.push(SvgPath(red).rotate(0).translate(0, 0).toString());
                 let match1 = SvgPath(pathListMerge(match1List)).toString();
 
                 let match2List = [];
-                match2List.push(SvgPath(blue).rotate( 180).translate( bx,  0).toString());
-                match2List.push(SvgPath(blue).rotate(   0).translate(  0,  0).toString());
-                let match2 = SvgPath(pathListMerge(match2List)).scale(len2).rotate(rot).translate(bx,0).toString();
+                match2List.push(SvgPath(blue).rotate(180).translate(bx, 0).toString());
+                match2List.push(SvgPath(blue).rotate(0).translate(0, 0).toString());
+                let match2 = SvgPath(pathListMerge(match2List)).scale(len2).rotate(rot).translate(bx, 0).toString();
 
-                let match3List = [];
-                match3List.push(SvgPath(match1).rotate(angle).toString());
-                match3List.push(SvgPath(match1).rotate(    0).toString());
-                match3List.push(SvgPath(match2).rotate(    0).toString());
-                let match3 = SvgPath(pathListMerge(match3List)).toString();
+                tile.push(SvgPath(match1).rotate(ang).toString());
+                tile.push(SvgPath(match1).rotate(0).toString());
+                tile.push(SvgPath(match2).rotate(0).toString());
 
-                let match4List = [];
-                for (let ti=0;ti<thick;ti++) {
-                    for (let tj=0;tj<ti+1;tj++) {
-                        let xx = bx*(ti-tj) + cx*tj;
-                        let yy = cy*tj;
-                        match4List.push(SvgPath(match3).translate(xx,yy).toString());
+            
+                let proto = 'tile';
+                Tess.register(proto, Tess.makePath(tile,'#000000',2,'#ff0000',0.4));
+
+                let name;
+                name = 'sword';
+                for (let ti = 0; ti < thick; ti++) {
+                    for (let tj = 0; tj < ti + 1; tj++) {
+                        let xx = bx * (ti - tj) + cx * tj;
+                        let yy = cy * tj;
+                        Tess.placeUse(proto, [xx, yy], 0, [1, 1], name);
+                        if (ti!==thick-1){
+                            Tess.placeUse(proto, [xx+bx+cx, yy+cy], 180, [1, 1], name);
+                        }
                     }
                 }
-                let match4 = SvgPath(pathListMerge(match4List)).toString();
+                Tess.register(name, Tess.getUses(name));
 
-                let beltList = [];
-                beltList.push(SvgPath(match3).translate(0,0).toString());
-                for (let ti=0;ti<thick+1;ti++) {
-                    let xx = bx*ti;
+                name = 'belt';
+                for (let ti = 0; ti < thick + slide; ti++) {
+                    let xx = bx * ti;
                     let yy = 0;
-                    beltList.push(SvgPath(match3).translate( xx,yy).toString());
-                    beltList.push(SvgPath(match3).translate(-xx,yy).toString());
-                }
-                let belt = SvgPath(pathListMerge(beltList)).toString();
-                
-              
-                let match1list = ['<defs><g id="up">'];
-                for (let mi=0;mi<divide*2+1;mi++) {
-                    let rotangle = 360/div*mi;
-                    match1list.push(`
-                    <use xlink:href="#match1" stroke-width="3" transform="rotate(${rotangle})"/>
-                    `);
-                    if (mi<divide*2) {
-                        match1list.push(`
-                        <use xlink:href="#match4" stroke-width="3" transform="rotate(${rotangle})"/>
-                        `);
+                    Tess.placeUse(proto, [xx, yy], 0, [1, 1], name);
+                    Tess.placeUse(proto, [cx+xx, cy+yy], 180, [1, 1], name);
+                    if (ti<thick) {
+                        Tess.placeUse(proto, [-bx-xx, -yy], 0, [1, 1], name);
+                        Tess.placeUse(proto, [-bx+cx-xx, cy-yy], 180, [1, 1], name);
                     }
-                    //if (mi===0) { break; }
                 }
-                match1list.push('</g></defs>');
-                    let svglist = 
-                  [`<svg width="2000" height="2000">
-                    ${defs}
-                    <g transform="translate(500,400)scale(0.25)">
-                    ${match1list.join('')}
-                    <use xlink:href="#up" transform="translate(${extrude*(cx-200)},${extrude*cy})"/>
-                    <use xlink:href="#up" transform="translate(${200*slide},0)rotate(180)"/>
-                `];
-                    for(let ai=0;ai<extrude;ai++) {
-                       svglist.push(`<use xlink:href="#belt" transform="translate(${ai*(cx-200)},${ai*cy})"/>`); 
-                    }
-                    svglist.push(`</g></svg>`); 
-                
-                    document.querySelector('div#draw').innerHTML = svglist.join('');
-              
-                let path = pathListMerge(transformed);
-        
-                pathes.push(`<path d="${path}" fill="none" stroke="#000000" stroke-width="2"/>`);
-                let svgstr = `<svg width="2000" height="2000">
-                        <g transform="translate(100,100)">${pathes.join('')}</g></svg>`;
+                Tess.register(name, Tess.getUses(name));
 
-                Tess.svg(me,svgstr);
+                proto = 'sword';
+                name = 'up';
+                for (let mi = 0; mi < divide * 2 + 1; mi++) {
+                    let rotangle = 360 / div * mi;
+
+                    if (mi < divide * 2) {
+                        Tess.placeUse(proto, [0, 0], rotangle, [1, 1], name);
+
+                    }
+                }
+                Tess.register(name, Tess.getUses(name));
+                Tess.placeUse('up', [extrude * (cx - 200), extrude * cy]);
+                Tess.placeUse('up', [200 * slide, 0], 180);
+
+
+                for (let ai = 0; ai < extrude; ai++) {
+                    Tess.placeUse('belt', [ai * (cx - 200), ai * cy]);
+                }
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(400,300)scale(0.4)">${Tess.getUses()}</g></svg>`;
+
+                Tess.svg(me, svgstr);
             }
         })(console, document, document.currentScript);
-
     </script>
 </body>
 

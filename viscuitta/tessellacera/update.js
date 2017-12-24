@@ -20,6 +20,7 @@ const Update = (function(console,document){
         update: (function(param) {})
     };
     function update () {
+        Tess.init();
         Update.update(getParam());
     }
     function getParam () {
