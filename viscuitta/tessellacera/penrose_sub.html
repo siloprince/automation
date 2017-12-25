@@ -38,15 +38,13 @@
                 transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).translate(50,50).toString());
         
                 let name = 'square';
-                let factor = 2;
-                let xy = [100,100];
                 let ex = [
                     { dx: 0, dy: 0, dr: 0 },
                     { dx: 0, dy: 1, dr: 0 },
                     { dx: 1, dy: 0, dr: 0 },
                     { dx: 1, dy: 1, dr: 0 }
                 ];
-                let last_name = Tess.substitute(size, name, Tess.makePath(transformed), ex, xy, factor);
+                let last_name = Tess.substitute(size, name, transformed, ex);
 
                 let svgstr = `<svg width="2000" height="2000">
                         <g transform="translate(100,100)scale(0.5)">${Tess.getUses(last_name)}</g></svg>`;

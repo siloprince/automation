@@ -99,16 +99,16 @@ let Tess = (function (console, document) {
             uses[base].push(useHash[name].replace(/^<use /, `<use transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale[0]},${scale[1]})" `));
         }
     }
-    function substitute(size, name, transformed, ex) {
+    function substitute(size, name, svgstr, ex, xy, factor) {
         let last_name;
         for (let si = 0; si < size; si++) {
             let level = 1 + si;
             let _name = name + '_' + level;
             if (si === 0) {
-                Tess.register(_name, Tess.makePath(transformed));
+                Tess.register(_name, svgstr);
                 Tess.placeUse(_name, [0, 0], 0, [1, 1], _name);
             } else {
-                expand({ level: level, len: 100, name: last_name, name2: _name, ex: ex });
+                expand({ level: level, xy: xy, name: last_name, name2: _name, ex: ex, factor: factor });
                 Tess.register(_name, Tess.getUses(_name));
             }
             last_name = _name;
@@ -134,11 +134,15 @@ let Tess = (function (console, document) {
             if (!('dr' in opt)) {
                 opt.dr = 0;
             }
+            if (!('factor' in opt)) {
+                opt.factor = 2;
+            }
 
-            let scale = Math.pow(2, opt.level - 2);
-            let len = opt.len * opt.scale;
-            let x = opt.x + len * opt.dx;
-            let y = opt.y + len * opt.dy;
+            let scale = Math.pow(opt.factor, opt.level - 2);
+            let xlen = opt.xy[0] * opt.scale;
+            let ylen = opt.xy[1] * opt.scale;
+            let x = opt.x + xlen * opt.dx;
+            let y = opt.y + ylen * opt.dy;
             let rot = opt.rot + opt.dr;
             if (_end) {
                 Tess.placeUse(opt.name, [x, y], rot, [1, 1], opt.name2);

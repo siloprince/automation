@@ -36,13 +36,15 @@
                 transformed.push(SvgPath(red).rotate(90).scale(1 / 2).translate(unit / 2, unit / 2).toString());
 
                 let name = 'Lshape';
+                let factor = 2;
+                let xy = [100,100];
                 let ex = [
                     { dx: 0, dy: 0, dr: 0 },
                     { dx: 0, dy: 2, dr: -90 },
                     { dx: 2, dy: 0, dr: 90 },
                     { dx: 1 / 2, dy: 1 / 2, dr: 0 }
                 ];
-                let last_name = Tess.substitute(size, name, transformed, ex);
+                let last_name = Tess.substitute(size, name, Tess.makePath(transformed), ex, xy, factor);
  
 
                 let svgstr = `<svg width="2000" height="2000">
