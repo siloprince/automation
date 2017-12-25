@@ -114,7 +114,14 @@
         let linea = document.querySelector('g#curve_red path').getAttribute('d');
         let lineb = document.querySelector('g#curve_blue path').getAttribute('d');
 
-
+//        linea = 'M';
+/*
+        let l0 = SvgPath(linea).translate(-100, 0).scale(2);
+        let l1 = SvgPath(lineb).translate(-100, 0).scale(2);
+      <use id="0" xlink:href="#curve_red" transform="translate(-100,0)scale(2,1)"/>
+      <use id="1" xlink:href="#curve_blue" transform="translate(-100,0)scale(2,1)"/>
+*/
+        
         let l0 = SvgPath(linea).translate(-100, -50).scale(2. / 1.2);
         let l1 = SvgPath(lineb).translate(-100, -50).scale(2. / 1.2);
         let base = 100;
@@ -240,6 +247,10 @@
         pathes.push(getPath( tile_path.rotate(   0).translate(-len*2, len*4)));
         pathes.push(getPath(atile_path.rotate( 180).translate(     0, len*4)));
         pathes.push(getPath( tile_path.rotate(  90).translate( len*2, len*4)));
+
+
+        pathes.push(getPath('M 100,0 200,0','600,600','#0000ff'));
+
 
         let svgstr = `<svg width="1500" height="1500">
         <g transform="translate(200,200)">
