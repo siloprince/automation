@@ -1,0 +1,91 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <br/>
+        <a class="download">ダウンロード</a>
+        <br/>
+        クリックしてタイルを回転/裏返しできます
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document,me) {
+            let unit = 100;
+            Update.update=update;
+            function update(param) {
+                let red = Draw.getData('red');
+                let transformed = [];
+                transformed.push(SvgPath(red).scale(1,1).rotate(0).translate(0, -unit/2).toString());
+                transformed.push(SvgPath(red).scale(-1,1).rotate(-90).translate(unit/2, 0).toString());
+                transformed.push(SvgPath(red).scale(-1,1).rotate(0).translate(0, unit/2).toString());
+                transformed.push(SvgPath(red).scale(1,1).rotate(-90).translate(-unit/2, 0).toString());
+        
+                Tess.register('rect',Tess.makePath(transformed,'#000000',2,'#ff0000',0.4));
+                for (let xi=0;xi<10;xi++) {
+                    for (let yi=0;yi<10;yi++) {
+                        let rot = 0;
+                        let scale = 1;
+                        if ((xi+yi)%2===0) {
+                            scale = 1;
+                        } else  {
+                            scale = -1;
+                        }
+                        if (xi%4===1) {
+                            rot = 180;
+                        } else if (xi%4===3) {
+                            if(yi%2===0) {
+                                rot = 270;
+                            } else {
+                                rot = 90;
+                            }
+                        }
+                        Tess.placeUse('rect',[ unit*xi, unit*yi],rot,[scale,1]);
+                    }
+                }
+                let svgstr = `<svg id="ev" width="2000" height="2000">
+                        <g transform="translate(100,100)scale(1)">${Tess.getUses()}</g></svg>`;
+
+                Tess.svg(me,svgstr);
+                document.querySelector('svg#ev').addEventListener('click',function(ev){
+                    
+                    let target = ev.target;
+                    if (/USE/i.test(target.tagName)) {
+
+                        let transform = target.getAttribute('transform');
+                        if (/rotate\(0\)scale\(1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(0\)scale\(1,1\)/,'rotate(90)scale(1,1)');
+                        } else if (/rotate\(90\)scale\(1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(90\)scale\(1,1\)/,'rotate(180)scale(1,1)');
+                        } else if (/rotate\(180\)scale\(1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(180\)scale\(1,1\)/,'rotate(270)scale(1,1)');
+                        } else if (/rotate\(270\)scale\(1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(270\)scale\(1,1\)/,'rotate(0)scale(-1,1)');
+                        } else if (/rotate\(0\)scale\(-1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(0\)scale\(-1,1\)/,'rotate(90)scale(-1,1)');
+                        } else if (/rotate\(90\)scale\(-1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(90\)scale\(-1,1\)/,'rotate(180)scale(-1,1)');
+                        } else if (/rotate\(180\)scale\(-1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(180\)scale\(-1,1\)/,'rotate(270)scale(-1,1)');
+                        } else if (/rotate\(270\)scale\(-1,1\)/.test(transform)) {
+                            transform = transform.replace(/rotate\(270\)scale\(-1,1\)/,'rotate(0)scale(1,1)');
+                        }
+                        target.setAttribute('transform',transform);
+                    }
+                }
+                );
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+</html>
