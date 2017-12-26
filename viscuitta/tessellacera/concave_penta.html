@@ -60,15 +60,17 @@
                     for (let tj = 0; tj < ti + 1; tj++) {
                         let xx = 2*cs2 * ti  + (-cs2+cs3 ) * tj;
                         let yy = (sn2+sn3) * tj;
+                        let xxx = 2*cs2 * (ti-1)  + (-cs2+cs3 ) * tj;
+                        let yyy = (sn2+sn3) * tj;
                         if (ti%2===0) {
                             Tess.placeUse(proto, [xx, yy], -15, [1, 1], name);
-                            if (ti!==thick-1){
-                                Tess.placeUse(proto, [xx+(4*cs2-cs4), yy+sn4], 180-15, [1, 1], name);
+                            if (tj!==ti){
+                                Tess.placeUse(proto, [xxx+(4*cs2-cs4), yyy+sn4], 45, [-1, 1], name);
                             }
                         } else {
                             Tess.placeUse(proto, [xx, yy], 180+45, [-1, 1], name);
-                            if (ti!==thick-1){
-                                Tess.placeUse(proto, [xx+(4*cs2-cs4), yy+sn4], 45, [-1, 1], name);
+                            if (tj!==ti){
+                                Tess.placeUse(proto, [xxx+(4*cs2-cs4), yyy+sn4], 180-15, [1, 1], name);
                             }
                         }
                     }
