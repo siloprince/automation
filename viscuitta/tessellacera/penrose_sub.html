@@ -1,0 +1,68 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="100" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="size" class="update" type="range" min="1" value="2" max="8" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document,me) {
+            let unit = 100;
+            Update.update=update;
+            function update(param) {
+
+                let size = param.size;
+
+                let red = Draw.getData('red');
+                let blue = Draw.getData('blue');
+
+                let cs36 = Math.cos(Math.PI/5);
+                let sn36 = Math.sin(Math.PI/5);
+                let cs72 = Math.cos(Math.PI*2/5);
+                let sn72 = Math.sin(Math.PI*2/5);
+                let acute = [];
+                acute.push(SvgPath(red).translate(50,0).rotate(0).translate(0, 0).toString());
+                acute.push(SvgPath(red).translate(50,0).rotate(180-36).translate(100, 0).toString());
+                acute.push(SvgPath(blue).translate(50,0).rotate(36).translate(0, 0).toString());
+                acute.push(SvgPath(blue).translate(50,0).rotate(180).translate(100*cs36, 100*sn36).toString());
+                let obtuse = [];
+                obtuse.push(SvgPath(red).translate(50,0).rotate(180).translate(100, 0).toString());
+                obtuse.push(SvgPath(red).translate(50,0).rotate(180-72).translate(100*cs72, 100*sn72).toString());
+                obtuse.push(SvgPath(blue).translate(50,0).rotate(72).translate(100, 0).toString());
+                obtuse.push(SvgPath(blue).translate(50,0).rotate(180).translate(100*cs36, 100*cs36).toString());
+              
+                let name = 'penrose';
+                let factor = 2;
+                let xy = [100,100];
+                let ex = [
+                    { dx: 0, dy: 0, dr: 0 },
+                    { dx: 0, dy: 1, dr: 0 },
+                    { dx: 1, dy: 0, dr: 0 },
+                    { dx: 1, dy: 1, dr: 0 }
+                ];
+                let last_name = Tess.substitute(size, name, Tess.makePath(accute), ex, xy, factor);
+
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(100,100)scale(0.5)">${Tess.getUses(last_name)}</g></svg>`;
+                
+                Tess.svg(me,svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+</html>

@@ -1,0 +1,59 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="100" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="size" class="update" type="range" min="1" value="2" max="8" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document,me) {
+            let unit = 100;
+            Update.update=update;
+            function update(param) {
+
+                let size = param.size;
+                let scale = 1;
+
+                let red = Draw.getData('red');
+                let blue = Draw.getData('blue');
+                let transformed = [];
+                transformed.push(SvgPath(red).rotate(0).scale(scale).translate(0, -50).translate(50,50).toString());
+                transformed.push(SvgPath(blue).rotate(90).translate(50, 0).translate(50,50).toString());
+                transformed.push(SvgPath(red).rotate(0).scale(scale).translate(0, 50).translate(50,50).toString());
+                transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).translate(50,50).toString());
+        
+                let name = 'square';
+                let factor = 2;
+                let xy = [100,100];
+                let ex = [
+                    { dx: 0, dy: 0, dr: 0 },
+                    { dx: 0, dy: 1, dr: 0 },
+                    { dx: 1, dy: 0, dr: 0 },
+                    { dx: 1, dy: 1, dr: 0 }
+                ];
+                let last_name = Tess.substitute(size, name, Tess.makePath(transformed), ex, xy, factor);
+
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(100,100)scale(0.5)">${Tess.getUses(last_name)}</g></svg>`;
+                
+                Tess.svg(me,svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+</html>
