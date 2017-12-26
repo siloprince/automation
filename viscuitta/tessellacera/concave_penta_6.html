@@ -1,0 +1,109 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+    <div style="margin:10px;">
+        <input id="thick" class="update" type="range" min="1" value="6" max="10" step="1" />: 厚み<br/>
+        <a class="download">ダウンロード</a>
+        <br/>
+    </div>
+    <div id="svg"></div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            Update.update = update;
+            function update(param) {
+                let unit = 100;
+                let thick = param.thick;
+
+                let div = 6;
+                let angle = Math.PI / div;
+                let rot = 180 / div;
+                let cs = unit * Math.cos(angle);
+                let sn = unit * Math.sin(angle);
+                let cs2 = unit * Math.cos(angle / 2);
+                let sn2 = unit * Math.sin(angle / 2);
+                let cs3 = unit * Math.cos(3 * angle / 2);
+                let sn3 = unit * Math.sin(3 * angle / 2);
+                let cs4 = unit * Math.cos(5 * angle / 2);
+                let sn4 = unit * Math.sin(5 * angle / 2);
+
+                let red = `M 0,0 ${unit},0`;
+
+                let tile = [];
+                tile.push(SvgPath(red).rotate(0).translate(0, 0).toString());
+                tile.push(SvgPath(red).rotate(rot).translate(0, 0).toString());
+                tile.push(SvgPath(red).rotate(rot).translate(100, 0).toString());
+                tile.push(SvgPath(red).rotate(0).translate(0, 0).toString());
+                tile.push(SvgPath(red).rotate(2 * rot).translate(cs, sn).toString());
+                tile.push(SvgPath(red).rotate(4 * rot).translate(cs + unit, sn).toString());
+
+                let proto = 'tile';
+                Tess.register(proto, Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4));
+
+                let name;
+                name = 'sword';
+                let xx, yy;
+                for (let ti = 0; ti < thick; ti++) {
+                    for (let tj = 0; tj <= ti; tj++) {
+                        if (tj === 0) {
+                            if (ti === 0) {
+                                Tess.placeUse(proto, [0, 0], -15, [1, 1], name);
+                                Tess.placeUse(proto, [0, 0], 30 - 15, [1, 1], name);
+                                continue;
+                            }
+                        }
+                        if (tj < ti) {
+                            if (tj === 0) {
+                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti - 1) * cs2], 90 - 15, [1, 1], name);
+                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti + 1) * cs2], 120 + 45, [-1, 1], name);
+                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti + 1) * cs2], 90 + 45, [-1, 1], name);
+                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit + (ti - 1) * cs2], 90 + 15, [1, 1], name);
+                                Tess.placeUse(proto, [ti * cs2 * 2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit], 90 + 15, [-1, 1], name);
+                                Tess.placeUse(proto, [ti * cs2 * 2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit], 60 + 15, [-1, 1], name);
+
+                            } else {
+
+                                xx = -sn2 * (tj - 1);
+                                yy = cs2 * (tj - 1);
+                                Tess.placeUse(proto, [xx + ti * cs2 * 2 + 2 * cs2 * cs / unit, yy + 2 * cs2 * sn / unit], 30 + 15, [-1, 1], name);
+                                Tess.placeUse(proto, [-xx + ti * cs2 * 2 - (ti - 1) * sn2, -yy + (ti - 1) * cs2], 0 - 15, [1, 1], name);
+                                Tess.placeUse(proto, [xx + ti * cs2 * 2 + 2 * cs2 * cs / unit, -yy + 2 * cs2 * sn / unit - cs2 * 2], 15, [-1, 1], name);
+                                Tess.placeUse(proto, [xx -2*cs2+ ti * cs2 * 2 + 2 * cs2 * cs / unit, -yy + 2 * cs2 * sn / unit - cs2 * 2],-60+ 15, [1, 1], name);
+                            }
+                        }
+                    }
+                }
+                Tess.register(name, Tess.getUses(name));
+
+                proto = 'sword';
+                name = 'up';
+                for (let mi = 0; mi < div; mi += 2) {
+                    let rotangle = 180 / div * mi;
+                    Tess.placeUse(proto, [0, 0], 180 + rotangle, [1, 1], name);
+
+                }
+                Tess.register(name, Tess.getUses(name));
+                Tess.placeUse('up', [0, 0]);
+                Tess.placeUse('up', [0, 0], 180);
+
+
+
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(400,400)scale(0.3)">${Tess.getUses()}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>
