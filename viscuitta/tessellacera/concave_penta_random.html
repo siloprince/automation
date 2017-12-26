@@ -52,7 +52,7 @@
 
                 let name;
                 name = 'sword';
-
+                let vari = 5;
                 for (let ti = 0; ti < thick; ti++) {
                     let rand = Math.random();
 
@@ -61,12 +61,12 @@
                         let yy = (sn2 + sn3) * tj;
                         let xxx = 2 * cs2 * (ti - 1) + (-cs2 + cs3) * tj;
                         let yyy = (sn2 + sn3) * tj;
-                        if (rand < 0.3333) {
+                        if (rand < 1 / 5) {
                             Tess.placeUse(proto, [xx, yy], -15, [1, 1], name);
                             if (tj !== ti) {
                                 Tess.placeUse(proto, [xxx + (4 * cs2 - cs4), yyy + sn4], 45, [-1, 1], name);
                             }
-                        } else if (rand > 0.6666) {
+                        } else if (rand > 4 / 5) {
                             Tess.placeUse(proto, [xx, yy], 180 + 45, [-1, 1], name);
                             if (tj !== ti) {
                                 Tess.placeUse(proto, [xxx + (4 * cs2 - cs4), yyy + sn4], 180 - 15, [1, 1], name);
@@ -78,15 +78,37 @@
                                 if (ti === 0) {
                                     Tess.placeUse(proto, [xx, yy], -15, [1, 1], name);
                                     continue;
-                                } else {
-                                    Tess.placeUse(proto, [xx, yy], -15 - 30, [1, 1], name);
                                 }
                             }
                             if (tj < ti) {
                                 let _xx = xx + sn2 * tj;
                                 let _yy = yy - cs2 * tj;
-                                Tess.placeUse(proto, [_xx, _yy], -15 - 60, [1, 1], name);
-                                Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 60 + 45, [-1, 1], name);
+                                if (rand < 2 / 5) {
+                                    if (tj === 0) {
+                                        Tess.placeUse(proto, [xx, yy], -15 - 30, [1, 1], name);
+                                    }
+                                    Tess.placeUse(proto, [_xx, _yy], -15 - 60, [1, 1], name);
+                                    Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 60 + 45, [-1, 1], name);
+                                } else if (rand > 3 / 5) {
+
+                                    if (tj === 0) {
+                                        Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 0 + 45, [-1, 1], name);
+                                        Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 30 + 45, [-1, 1], name);
+                                        Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 60 + 45, [-1, 1], name);
+                                    } else {
+                                        Tess.placeUse(proto, [_xx, _yy], -15 - 60, [1, 1], name);
+                                        Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 60 + 45, [-1, 1], name);
+                                    }
+                                } else {
+                                    if (tj === 0) {
+                                        Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti - 1) * cs2], -15, [1, 1], name);
+                                        Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti - 1) * cs2], -30 - 15, [1, 1], name);
+                                        Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 0 + 45, [-1, 1], name);
+                                    } else {
+                                        Tess.placeUse(proto, [_xx, _yy], -15 - 60, [1, 1], name);
+                                        Tess.placeUse(proto, [_xx + cs2 * 2, _yy], 60 + 45, [-1, 1], name);
+                                    }
+                                }
                             }
                         }
                     }
