@@ -63,12 +63,12 @@
 
                     for (let mi = 0; mi < 2 * div; mi++) {
 
+                        let rotangle = 180 / div * mi;
                         if (mi < div) {
                             extrude = 0;
                         } else {
                             extrude = param.extrude;
                         }
-                        let rotangle = 180 / div * mi;
                         for (let tj = 0; tj < ti + 1; tj++) {
                             let xx = 2 * cs2 * ti + (-cs2 + cs3) * tj;
                             let yy = (sn2 + sn3) * tj;
