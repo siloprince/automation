@@ -53,21 +53,20 @@
                 let proto = 'tile';
                 Tess.register(proto, Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4));
 
-                let name;
-                name = 'sword';
-
                 let randList = [];
                 for (let ti = 0; ti < thick; ti++) {
                     let res = (Math.random() > 0.5);
                     randList.push(res);
 
                     for (let mi = 0; mi < 2 * div; mi++) {
-
+                        let ptx,pty;
                         let rotangle = 180 / div * mi;
                         if (mi < div) {
-                            extrude = 0;
+                            ptx = 0;
+                            pty = 0;
                         } else {
-                            extrude = param.extrude;
+                            ptx = -cs4 * extrude;
+                            pty = sn4 * extrude;
                         }
                         for (let tj = 0; tj < ti + 1; tj++) {
                             let xx = 2 * cs2 * ti + (-cs2 + cs3) * tj;
@@ -76,7 +75,7 @@
                             let yyy = (sn2 + sn3) * tj;
                             if (res) {
                                 Tess.place(proto, {
-                                    translate: [-cs4 * extrude, sn4 * extrude],
+                                    translate: [ptx,pty],
                                     rotate: 180 + rotangle,
                                     transform: {
                                         translate: [xx, yy],
@@ -86,7 +85,7 @@
                                 });
                                 if (tj !== ti) {
                                     Tess.place(proto, {
-                                        translate: [-cs4 * extrude, sn4 * extrude],
+                                        translate: [ptx,pty],
                                         rotate: 180 + rotangle,
                                         transform: {
                                             translate: [xxx + (4 * cs2 - cs4), yyy + sn4],
@@ -97,7 +96,7 @@
                                 }
                             } else {
                                 Tess.place(proto, {
-                                    translate: [-cs4 * extrude, sn4 * extrude],
+                                    translate: [ptx,pty],
                                     rotate: 180 + rotangle,
                                     transform: {
                                         translate: [xx, yy],
@@ -107,7 +106,7 @@
                                 });
                                 if (tj !== ti) {
                                     Tess.place(proto, {
-                                        translate: [-cs4 * extrude, sn4 * extrude],
+                                        translate: [ptx,pty],
                                         rotate: 180 + rotangle,
                                         transform: {
                                             translate: [xxx + (4 * cs2 - cs4), yyy + sn4],
@@ -121,7 +120,6 @@
                     }
                 }
 
-                name = 'belt';
                 for (let ai = 0; ai < extrude; ai++) {
                     for (let ti = -thick; ti < thick; ti++) {
                         let xx = 2 * cs2 * ti;

@@ -45,7 +45,7 @@
                 Tess.register('rect',Tess.makePath(transformed));
                 for (let xi=0;xi<param.width;xi++) {
                     for (let yi=0;yi<param.height;yi++) {
-                        Tess.placeUse('rect',[ len/2*xi, unit*yi]);
+                        Tess.place('rect',{translate:[ len/2*xi, unit*yi]});
                     }
                 }
                 let svgstr = `<svg width="2000" height="2000">

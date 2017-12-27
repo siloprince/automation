@@ -50,7 +50,7 @@
                                 rot = 90;
                             }
                         }
-                        Tess.placeUse('rect',[ unit*xi, unit*yi],rot,[scale,1]);
+                        Tess.place('rect',{translate: [ unit*xi, unit*yi],rotate: rot,scale:[scale,1]});
                     }
                 }
                 let svgstr = `<svg id="ev" width="2000" height="2000">

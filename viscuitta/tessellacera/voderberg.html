@@ -33,8 +33,6 @@
                 let extrude = param.extrude;
                 let thick = param.thick;
 
-                let extluded = 100 * extrude;
-
                 let div = divide * 4;
                 let angle = Math.PI * 2 / div;
                 let len1 = 1;
@@ -45,8 +43,8 @@
                 let cx = bx * Math.cos(angle);
                 let cy = bx * Math.sin(angle);
 
-                let red = SvgPath(Draw.getData('red')).translate(50,0).toString();
-                let blue = SvgPath(Draw.getData('blue')).translate(50,0).toString();
+                let red = SvgPath(Draw.getData('red')).translate(50, 0).toString();
+                let blue = SvgPath(Draw.getData('blue')).translate(50, 0).toString();
 
                 let tile = [];
                 let match1List = [];
@@ -63,54 +61,65 @@
                 tile.push(SvgPath(match1).rotate(0).toString());
                 tile.push(SvgPath(match2).rotate(0).toString());
 
-            
-                let proto = 'tile';
-                Tess.register(proto, Tess.makePath(tile,'#000000',2,'#ff0000',0.4));
 
-                let name;
-                name = 'sword';
+                let proto = 'tile';
+                Tess.register(proto, Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4));
+
                 for (let ti = 0; ti < thick; ti++) {
-                    for (let tj = 0; tj < ti + 1; tj++) {
-                        let xx = bx * (ti - tj) + cx * tj;
-                        let yy = cy * tj;
-                        Tess.placeUse(proto, [xx, yy], 0, [1, 1], name);
-                        if (ti!==thick-1){
-                            Tess.placeUse(proto, [xx+bx+cx, yy+cy], 180, [1, 1], name);
+                    for (let mi = 0; mi < div; mi++) {
+                        let ptx, pty;
+                        let rotangle = 360 / div * mi;
+                        if (mi < div/2) {
+                            ptx = 200 * slide;
+                            pty = 0;
+                        } else {
+                            ptx = extrude * (cx - 200);
+                            pty = extrude * cy;
+                        }
+                        for (let tj = 0; tj < ti + 1; tj++) {
+                            let xx = bx * (ti - tj) + cx * tj;
+                            let yy = cy * tj;
+                            Tess.place(proto, {
+                                translate: [ptx, pty],
+                                rotate: 180 + rotangle,
+                                transform: { translate: [xx, yy], rotate: 0, scale: [1, 1] }
+                            });
+                            if (ti !== thick - 1) {
+                                Tess.place(proto,
+                                    {
+                                        translate: [ptx, pty],
+                                        rotate: 180 + rotangle,
+                                        transform: { translate: [xx + bx + cx, yy + cy], rotate: 180, scale: [1, 1] }
+                                    });
+                            }
                         }
                     }
                 }
-                Tess.register(name, Tess.getUses(name));
-
-                name = 'belt';
-                for (let ti = 0; ti < thick + slide; ti++) {
-                    let xx = bx * ti;
-                    let yy = 0;
-                    Tess.placeUse(proto, [xx, yy], 0, [1, 1], name);
-                    Tess.placeUse(proto, [cx+xx, cy+yy], 180, [1, 1], name);
-                    if (ti<thick) {
-                        Tess.placeUse(proto, [-bx-xx, -yy], 0, [1, 1], name);
-                        Tess.placeUse(proto, [-bx+cx-xx, cy-yy], 180, [1, 1], name);
-                    }
-                }
-                Tess.register(name, Tess.getUses(name));
-
-                proto = 'sword';
-                name = 'up';
-                for (let mi = 0; mi < divide * 2 + 1; mi++) {
-                    let rotangle = 360 / div * mi;
-
-                    if (mi < divide * 2) {
-                        Tess.placeUse(proto, [0, 0], rotangle, [1, 1], name);
-
-                    }
-                }
-                Tess.register(name, Tess.getUses(name));
-                Tess.placeUse('up', [extrude * (cx - 200), extrude * cy]);
-                Tess.placeUse('up', [200 * slide, 0], 180);
-
-
                 for (let ai = 0; ai < extrude; ai++) {
-                    Tess.placeUse('belt', [ai * (cx - 200), ai * cy]);
+                    let ptx = ai * (cx - 200);
+                    let pty = ai * cy;
+                    for (let ti = 0; ti < thick + slide; ti++) {
+                        let xx = bx * ti;
+                        let yy = 0;
+                        Tess.place(proto, {
+                            translate: [ptx, pty],
+                            transform: { translate: [xx, yy], rotate: 0, scale: [1, 1] }
+                        });
+                        Tess.place(proto, {
+                            translate: [ptx, pty],
+                            transform: { translate: [cx + xx, cy + yy], rotate: 180, scale: [1, 1] }
+                        });
+                        if (ti < thick) {
+                            Tess.place(proto, {
+                                translate: [ptx, pty],
+                                transform: { translate: [-bx - xx, -yy], rotate: 0, scale: [1, 1] }
+                            });
+                            Tess.place(proto, {
+                                translate: [ptx, pty],
+                                transform: { translate: [-bx + cx - xx, cy - yy], rotate: 180, scale: [1, 1] }
+                            });
+                        }
+                    }
                 }
                 let svgstr = `<svg width="2000" height="2000">
                         <g transform="translate(400,300)scale(0.4)">${Tess.getUses()}</g></svg>`;
