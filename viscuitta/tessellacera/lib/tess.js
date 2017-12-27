@@ -17,6 +17,7 @@ let Tess = (function (console, document) {
             return useHash[id];
         },
         register: register,
+        place: place,
         placeUse: placeUse,
         substitute: substitute,
         svg: function (me, svgstr) {
@@ -78,6 +79,95 @@ let Tess = (function (console, document) {
         bbox.height += 2 * eps;
         symbols.insertAdjacentHTML('beforeend', `<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${svgstr}</symbol>`);
         useHash[name] = `<use xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
+    }
+    function place(name, transform, base) {
+        if (!(name in useHash)) {
+            return;
+        }
+        let usestr = useHash[name];
+        if (typeof (base) === 'undefined') {
+            base = '_';
+        }
+        // TODO: transform to be recursive
+        let ctx, cty, cr, csx, csy;
+        let ptx, pty, pr, psx, psy;
+        let xform, pform;
+        if (typeof (transform) === 'undefined') {
+            trasform = {
+                translate: [0, 0],
+                rotate: 0,
+                scale: [1, 1]
+            };
+        }
+        if (!('transform' in transform)) {
+            if (!('translate' in transform)) {
+                ctx = 0;
+                cty = 0;
+            } else {
+                ctx = transform.translate[0];
+                cty = transform.translate[1];
+            }
+            if (!('rotate' in transform)) {
+                cr = 0;
+            } else {
+                cr = transform.rotate;
+            }
+            if (!('scale' in transform)) {
+                csx = 1;
+                csy = 1;
+            } else {
+                csx = transform.scale[0];
+                csy = transform.scale[1];
+            }
+        } else {
+            if (!('translate' in transform)) {
+                ptx = 0;
+                pty = 0;
+            } else {
+                ptx = transform.translate[0];
+                pty = transform.translate[1];
+            }
+            if (!('rotate' in transform)) {
+                pr = 0;
+            } else {
+                pr = transform.rotate;
+            }
+            if (!('scale' in transform)) {
+                psx = 1;
+                psy = 1;
+            } else {
+                psx = transform.scale[0];
+                psy = transform.scale[1];
+            }
+            if (!('translate' in transform.transform)) {
+                ctx = 0;
+                cty = 0;
+            } else {
+                ctx = transform.transform.translate[0];
+                cty = transform.transform.translate[1];
+            }
+            if (!('rotate' in transform.transform)) {
+                cr = 0;
+            } else {
+                cr = transform.transform.rotate;
+            }
+            if (!('scale' in transform.transform)) {
+                csx = 1;
+                csy = 1;
+            } else {
+                csx = transform.transform.scale[0];
+                csy = transform.transform.scale[1];
+            }
+            let pform = `transform="translate(${ptx},${pty})rotate(${pr})scale(${psx},${psy})" `;
+            usestr = `<g ${pform}>` + usestr + '</g>';
+        }
+        xform = `transform="translate(${ctx},${cty})rotate(${cr})scale(${csx},${csy})" `;
+        usestr = usestr.replace(/<use /, `<use ${xform}`);
+        if (!(base in uses)) {
+            uses[base] = [];
+        }
+        uses[base].push(usestr);
+
     }
     function placeUse(name, translate, rotate, scale, base) {
         if (typeof (translate) === 'undefined') {
