@@ -28,7 +28,6 @@
                 let extrude = param.extrude;
                 let thick = param.thick;
 
-                let extluded = 100 * extrude;
                 let div = 6;
                 let angle = Math.PI / div;
                 let rot = 180 / div;
@@ -61,99 +60,113 @@
                 for (let ti = 0; ti < thick; ti++) {
                     let res = (Math.random() > 0.5);
                     randList.push(res);
-                    for (let tj = 0; tj < ti + 1; tj++) {
-                        let xx = 2 * cs2 * ti + (-cs2 + cs3) * tj;
-                        let yy = (sn2 + sn3) * tj;
-                        let xxx = 2 * cs2 * (ti - 1) + (-cs2 + cs3) * tj;
-                        let yyy = (sn2 + sn3) * tj;
-                        if (res) {
-                            Tess.place(proto,{
-                                translate: [xx, yy], 
-                                rotate:-15, 
-                                scale:[1, 1]
-                            }, name);
-                            if (tj !== ti) {
-                                Tess.place(proto, {
-                                    translate: [xxx + (4 * cs2 - cs4), yyy + sn4],
-                                    rotate: 45,
-                                    scale: [-1, 1]
-                                }, name);
-                            }
+
+                    for (let mi = 0; mi < 2 * div; mi++) {
+
+                        if (mi < div) {
+                            extrude = 0;
                         } else {
-                            Tess.place(proto, {
-                                translate: [xx, yy],
-                                rotate: 180 + 45, 
-                                scale: [-1, 1]
-                            }, name);
-                            if (tj !== ti) {
+                            extrude = param.extrude;
+                        }
+                        let rotangle = 180 / div * mi;
+                        for (let tj = 0; tj < ti + 1; tj++) {
+                            let xx = 2 * cs2 * ti + (-cs2 + cs3) * tj;
+                            let yy = (sn2 + sn3) * tj;
+                            let xxx = 2 * cs2 * (ti - 1) + (-cs2 + cs3) * tj;
+                            let yyy = (sn2 + sn3) * tj;
+                            if (res) {
                                 Tess.place(proto, {
-                                    translate: [xxx + (4 * cs2 - cs4), yyy + sn4],
-                                    rotate: 180 - 15,
-                                    scale: [1, 1]
-                                }, name);
+                                    translate: [-cs4 * extrude, sn4 * extrude],
+                                    rotate: 180 + rotangle,
+                                    transform: {
+                                        translate: [xx, yy],
+                                        rotate: -15,
+                                        scale: [1, 1]
+                                    }
+                                });
+                                if (tj !== ti) {
+                                    Tess.place(proto, {
+                                        translate: [-cs4 * extrude, sn4 * extrude],
+                                        rotate: 180 + rotangle,
+                                        transform: {
+                                            translate: [xxx + (4 * cs2 - cs4), yyy + sn4],
+                                            rotate: 45,
+                                            scale: [-1, 1]
+                                        }
+                                    });
+                                }
+                            } else {
+                                Tess.place(proto, {
+                                    translate: [-cs4 * extrude, sn4 * extrude],
+                                    rotate: 180 + rotangle,
+                                    transform: {
+                                        translate: [xx, yy],
+                                        rotate: 180 + 45,
+                                        scale: [-1, 1]
+                                    }
+                                });
+                                if (tj !== ti) {
+                                    Tess.place(proto, {
+                                        translate: [-cs4 * extrude, sn4 * extrude],
+                                        rotate: 180 + rotangle,
+                                        transform: {
+                                            translate: [xxx + (4 * cs2 - cs4), yyy + sn4],
+                                            rotate: 180 - 15,
+                                            scale: [1, 1]
+                                        }
+                                    });
+                                }
                             }
                         }
                     }
                 }
-                Tess.register(name, Tess.getUses(name));
 
                 name = 'belt';
-                for (let ti = -thick; ti < thick; ti++) {
-                    let xx = 2 * cs2 * ti;
-                    let rand;
-                    if (ti >= 0) {
-                        rand = randList[ti];
-                    } else {
-                        rand = !randList[-ti - 1];
-                    }
-                    if (rand) {
-                        Tess.place(proto, {
-                            translate: [xx, 0],
-                            rotate: -15,
-                            scale: [1, 1]
-                        }, name);
-                        Tess.place(proto, {
-                            translate: [xx + (2 * cs2 - cs4), sn4],
-                            rotate: 45,
-                            scale: [-1, 1]
-                        }, name);
-                    } else {
-                        Tess.place(proto, {
-                            translate: [-cs4 + xx + 2 * cs2, sn4],
-                            rotate: 180 - 15,
-                            scale: [1, 1]
-                        }, name);
-                        Tess.place(proto, {
-                            translate: [xx, 0],
-                            rotate: 180 + 45,
-                            scale: [-1, 1]
-                        }, name);
-                    }
-                }
-                Tess.register(name, Tess.getUses(name));
-
-                proto = 'sword';
-                name = 'up';
-                for (let mi = 0; mi < div; mi++) {
-                    let rotangle = 180 / div * mi;
-                    Tess.place(proto, {
-                        translate: [0, 0],
-                        rotate: 180 + rotangle,
-                        scale: [1, 1]
-                    }, name);
-                }
-                Tess.register(name, Tess.getUses(name));
-                Tess.place('up', {
-                    translate: [0, 0]
-                });
-                Tess.place('up', {
-                    translate: [-cs4 * extrude, sn4 * extrude],
-                    rotate: 180
-                });
                 for (let ai = 0; ai < extrude; ai++) {
-                    Tess.place('belt', {
-                        translate: [ai * (-cs4), ai * sn4]
-                    });
+                    for (let ti = -thick; ti < thick; ti++) {
+                        let xx = 2 * cs2 * ti;
+                        let rand;
+                        if (ti >= 0) {
+                            rand = randList[ti];
+                        } else {
+                            rand = !randList[-ti - 1];
+                        }
+                        if (rand) {
+                            Tess.place(proto, {
+                                translate: [ai * (-cs4), ai * sn4],
+                                transform: {
+                                    translate: [xx, 0],
+                                    rotate: -15,
+                                    scale: [1, 1]
+                                }
+                            });
+                            Tess.place(proto, {
+                                translate: [ai * (-cs4), ai * sn4],
+                                transform: {
+                                    translate: [xx + (2 * cs2 - cs4), sn4],
+                                    rotate: 45,
+                                    scale: [-1, 1]
+                                }
+                            });
+                        } else {
+                            Tess.place(proto, {
+                                translate: [ai * (-cs4), ai * sn4],
+                                transform: {
+                                    translate: [-cs4 + xx + 2 * cs2, sn4],
+                                    rotate: 180 - 15,
+                                    scale: [1, 1]
+                                }
+                            });
+                            Tess.place(proto, {
+                                translate: [ai * (-cs4), ai * sn4],
+                                transform: {
+                                    translate: [xx, 0],
+                                    rotate: 180 + 45,
+                                    scale: [-1, 1]
+                                }
+                            });
+                        }
+                    }
                 }
                 let svgstr = `<svg width="2000" height="2000">
                         <g transform="translate(400,300)scale(0.4)">${Tess.getUses()}</g></svg>`;
