@@ -39,9 +39,11 @@
                 transformed.push(SvgPath(red).rotate(180).translate(0, move).rotate(240).toString());
                 transformed.push(SvgPath(red).rotate(0).translate(0, move).rotate(300).toString());
 
-                Tess.register(name, Tess.makePath(transformed, '#000000', null, '#ff0000', 0.4));
+                let trans = Tess.makePath(transformed, '#000000', null, '#ff0000', 0.4);
 
                 if (param.size === 0) {
+
+                    Tess.register(name, trans);
                     for (let xi = 0; xi < 10; xi++) {
                         for (let yi = 0; yi < 10; yi++) {
                             let rot = 30;
@@ -69,8 +71,8 @@
                         { dx: 1.5, dy: -sqrt3 / 2, dr: -120 },
                         { dx: 0, dy: sqrt3, dr: 0 }
                     ];
-                    Tess.placeUse(name, [0, 0], 0, [1, 1], name);
-                    last_name = Tess.substitute(size, name, Tess.getUses(name), ex, xy, factor);
+                    
+                    last_name = Tess.substitute(size, name, trans, ex, xy, factor);
                 }
                 let svgstr = `<svg id="ev" width="2000" height="2000">
                         <g transform="translate(${100 * (size / 2 + 1)},${100 * (size / 2 + 1)})scale(${0.5 / (size + 1)})">${Tess.getUses(last_name)}</g></svg>`;
