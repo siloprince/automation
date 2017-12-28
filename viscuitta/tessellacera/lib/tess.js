@@ -16,6 +16,7 @@ let Tess = (function (console, document) {
         getUseFromHash: function (id) {
             return useHash[id];
         },
+        reg: reg,
         register: register,
         place: place,
         placeUse: placeUse,
@@ -65,6 +66,11 @@ let Tess = (function (console, document) {
         return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" fill-opacity="${opacity}" vectorEffect="non-scaling-stroke"/>`;
     }
     function register(name, svgstr) {
+        let symbols = document.querySelector('svg.symbols');
+        symbols.insertAdjacentHTML('beforeend', `<defs><g id="${name}">${svgstr}</g></defs>`);
+        useHash[name] = `<use xlink:href="#${name}"/>`;
+    }
+    function reg(name, svgstr) {
         let symbols = document.querySelector('svg.symbols');
         let tmp = document.querySelector('svg.tmp');
         tmp.innerHTML = '<g class="bbox">' + svgstr + '</g>';
