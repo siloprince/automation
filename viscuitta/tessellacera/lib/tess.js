@@ -100,17 +100,25 @@ let Tess = (function (console, document) {
             base = '_';
         }
         // TODO: transform to be recursive
-        let ctx, cty, cr, csx, csy;
-        let ptx, pty, pr, psx, psy;
+        let ctx, cty, cr, csx, csy, ccx, ccy;
+        let ptx, pty, pr, psx, psy, pcx, pcy;
         let xform, pform;
         if (typeof (transform) === 'undefined') {
-            trasform = {
+            transform = {
+                center: [0, 0],
                 translate: [0, 0],
                 rotate: 0,
                 scale: [1, 1]
             };
         }
         if (!('transform' in transform)) {
+            if (!('center' in transform)) {
+                ccx = 0;
+                ccy = 0;
+            } else {
+                ccx = transform.center[0];
+                ccy = transform.center[1];
+            }
             if (!('translate' in transform)) {
                 ctx = 0;
                 cty = 0;
@@ -138,6 +146,13 @@ let Tess = (function (console, document) {
                 ptx = transform.translate[0];
                 pty = transform.translate[1];
             }
+            if (!('center' in transform)) {
+                pcx = 0;
+                pcy = 0;
+            } else {
+                pcx = transform.center[0];
+                pcy = transform.center[1];
+            }
             if (!('rotate' in transform)) {
                 pr = 0;
             } else {
@@ -149,6 +164,13 @@ let Tess = (function (console, document) {
             } else {
                 psx = transform.scale[0];
                 psy = transform.scale[1];
+            }
+            if (!('center' in transform.transform)) {
+                ccx = 0;
+                ccy = 0;
+            } else {
+                ccx = transform.transform.center[0];
+                ccy = transform.transform.center[1];
             }
             if (!('translate' in transform.transform)) {
                 ctx = 0;
@@ -169,10 +191,10 @@ let Tess = (function (console, document) {
                 csx = transform.transform.scale[0];
                 csy = transform.transform.scale[1];
             }
-            let pform = `transform="translate(${ptx},${pty})rotate(${pr})scale(${psx},${psy})" `;
+            pform = `transform="translate(${ptx},${pty})translate(${pcx},${pcy})rotate(${pr})scale(${psx},${psy})translate(${-pcx},${-pcy})" `;
             usestr = `<g ${pform}>` + usestr + '</g>';
         }
-        xform = `transform="translate(${ctx},${cty})rotate(${cr})scale(${csx},${csy})" `;
+        xform = `transform="translate(${ctx},${cty})translate(${ccx},${ccy})rotate(${cr})scale(${csx},${csy})translate(${-ccx},${-ccy})" `;
         usestr = usestr.replace(/class="new"/, `class="done" ${xform}`);
         if (!(base in uses)) {
             uses[base] = [];
