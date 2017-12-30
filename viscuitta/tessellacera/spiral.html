@@ -1,0 +1,60 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <input id="height" class="update" type="range" min="10" value="20" max="200" step="1" />: 高さ<br/>
+        <input id="decenter" class="update" type="range" min="0" value="30" max="200" step="1" />: ずれ<br/>
+        <input id="scale" class="update" type="range" min="0.05" value="0.7" max="1" step="0.05" />: スケール<br/>
+        <input id="size" class="update" type="range" min="1" value="3" max="100" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            let unit = 100;
+            Update.update = update;
+            function update(param) {
+                let height = param.height;
+                let decenter = param.decenter;
+                let scale = param.scale;
+                let size = param.size;
+
+                let red = `M 0,0 ${unit},0`;
+                let tile = [];
+                tile.push(red);
+                tile.push(`M 0,0 ${unit/2+decenter} ${height}`);
+                tile.push(`M ${unit},0 ${unit/2+decenter} ${height}`);
+                
+                let lena = Math.sqrt(height*height+(unit/2-decenter)*(unit/2-decenter));
+                let lenb = unit;
+                let lenc = Math.sqrt(height*height+(unit/2+decenter)*(unit/2+decenter));
+                let angle = Math.acos((lenb*lenb+lenc*lenc-lena*lena)/(2*lenb*lenc))*180/Math.PI;
+                
+                Tess.register('tile',Tess.makePath(tile));
+                Tess.place('tile');
+                Tess.place('tile',{
+                    translate: [unit-scale*lenc,0],
+                    rotate: -angle,
+                    scale: [scale,scale]
+                });
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(300,300)scale(1)">${Tess.getUses()}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>
