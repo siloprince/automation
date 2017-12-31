@@ -21,9 +21,7 @@ let Tess = (function (console, document) {
         register: register,
         place: place,
         placeUse: placeUse,
-        sub: sub,
         substitute: substitute,
-        substitute2: substitute2,
         svg: function (me, svgstr) {
             if (!svgdiv) {
                 svgdiv = document.createElement('div');
@@ -223,7 +221,7 @@ let Tess = (function (console, document) {
             uses[base].push(useHash[name].replace(/class="new" /, `class="old" transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale[0]},${scale[1]})" `));
         }
     }
-    function substitute2(size, name, svgstr, ex, xy, factor) {
+    function substitute(size, name, svgstr, ex, xy, factor) {
         let last_name;
         for (let si = 0; si < size; si++) {
             let level = 1 + si;
@@ -289,126 +287,6 @@ let Tess = (function (console, document) {
             let y = opt.y + ylen * opt.dy/ss;
             let rot = opt.rot + opt.dr;
             Tess.placeUse(opt.name, [x, y], rot, [opt.dsx/opt.factor, opt.dsy/opt.factor], opt.name2);
-
-        }
-        function dupOpt(_opt, update) {
-            let opt = JSON.parse(JSON.stringify(_opt));
-            for (let key in update) {
-                opt[key] = update[key];
-            }
-            return opt;
-        }
-
-    }
-    function substitute(size, name, svgstr, ex, xy, factor) {
-        let last_name;
-        for (let si = 0; si < size; si++) {
-            let level = 1 + si;
-            let _name = name + '_' + level;
-            if (si === 0) {
-                Tess.register(_name, svgstr);
-                Tess.placeUse(_name, [0, 0], 0, [1, 1], _name);
-            } else {
-                let opt = { level: level, xy: xy, name: last_name, name2: _name, ex: ex, factor: factor };
-                for (let ei = 0; ei < ex.length; ei++) {
-                    expand(dupOpt(opt, ex[ei]));
-                }
-                Tess.add(_name, Tess.getUses(_name));
-            }
-            last_name = _name;
-        }
-        return last_name;
-
-        function expand(opt) {
-            if (!('x' in opt)) {
-                opt.x = 0;
-            }
-            if (!('y' in opt)) {
-                opt.y = 0;
-            }
-            if (!('dx' in opt)) {
-                opt.dx = 0;
-            }
-            if (!('dy' in opt)) {
-                opt.dy = 0;
-            }
-            if (!('rot' in opt)) {
-                opt.rot = 0;
-            }
-            if (!('dr' in opt)) {
-                opt.dr = 0;
-            }
-            if (!('factor' in opt)) {
-                opt.factor = 2;
-            }
-
-            let scale = Math.pow(opt.factor, opt.level - 2);
-            let xlen = opt.xy[0] * scale;
-            let ylen = opt.xy[1] * scale;
-            let x = opt.x + xlen * opt.dx;
-            let y = opt.y + ylen * opt.dy;
-            let rot = opt.rot + opt.dr;
-            Tess.placeUse(opt.name, [x, y], rot, [1, 1], opt.name2);
-
-        }
-        function dupOpt(_opt, update) {
-            let opt = JSON.parse(JSON.stringify(_opt));
-            for (let key in update) {
-                opt[key] = update[key];
-            }
-            return opt;
-        }
-
-    }
-    function sub(size, name, svgstr, ex, xy, factor) {
-        let last_name;
-        for (let si = 0; si < size; si++) {
-            let level = 1 + si;
-            let _name = name + '_' + level;
-            if (si === 0) {
-                Tess.register(_name, svgstr);
-                Tess.placeUse(_name, [0, 0], 0, [1, 1], _name);
-            } else {
-                let opt = { level: level, xy: xy, name: last_name, name2: _name, ex: ex, factor: factor };
-                for (let ei = 0; ei < ex.length; ei++) {
-                    expand(dupOpt(opt, ex[ei]));
-                }
-                Tess.register(_name, Tess.getUses(_name));
-            }
-            last_name = _name;
-        }
-        return last_name;
-
-        function expand(opt) {
-            if (!('x' in opt)) {
-                opt.x = 0;
-            }
-            if (!('y' in opt)) {
-                opt.y = 0;
-            }
-            if (!('dx' in opt)) {
-                opt.dx = 0;
-            }
-            if (!('dy' in opt)) {
-                opt.dy = 0;
-            }
-            if (!('rot' in opt)) {
-                opt.rot = 0;
-            }
-            if (!('dr' in opt)) {
-                opt.dr = 0;
-            }
-            if (!('factor' in opt)) {
-                opt.factor = 2;
-            }
-
-            let scale = Math.pow(opt.factor, opt.level - 2);
-            let xlen = opt.xy[0] * scale;
-            let ylen = opt.xy[1] * scale;
-            let x = opt.x + xlen * opt.dx;
-            let y = opt.y + ylen * opt.dy;
-            let rot = opt.rot + opt.dr;
-            Tess.placeUse(opt.name, [x, y], rot, [1, 1], opt.name2);
 
         }
         function dupOpt(_opt, update) {
