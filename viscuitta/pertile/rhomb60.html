@@ -1,0 +1,65 @@
+
+<script type="text/javascript">
+var a_angle = Math.PI/3;
+var ac = Math.cos(a_angle);
+var as = Math.sin(a_angle);
+var AC = Math.cos(a_angle/2);
+var AS = Math.sin(a_angle/2);
+var len = 320;
+var sc = 0.5;
+</script>
+<script type="text/javascript" src="./vis.js">{
+        "id": "xxx",
+        "stage": {
+            "width": 1200,
+            "height":1200
+        },
+        "iteration": {
+            "dt": 1000,
+            "scaleLimit": 0.01,
+            "stepLimit": 10,
+            "objectLimit": 40000,            
+            "shapeCount": true
+        },
+        "polygons": [
+            // 
+            `<polygon class='square' points='0 0, ${len/2} 0, ${len*4/5} ${len/4}, ${len*2/3} 0,${len} 0, ${len*(1+ac)} ${len*as},${len*ac} ${len*as}' stroke='#0000ff'/>`
+        ],
+        "rules": [
+            { 
+                "pattern":[
+                    ".square"
+                ],
+                "next":[ 
+                    {
+                        "polygon": 0,
+                        "dx": len*sc*(0.5*ac+0.5),
+                        "dy": len*sc*(0.5*as),
+                        "dr": 0,
+                        "ds": sc      
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": len*sc*(0.5*ac-0.5),
+                        "dy": len*sc*(0.5*as),
+                        "dr": 0,
+                        "ds": sc      
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": len*sc*(-1.5*ac-0.5),
+                        "dy": len*sc*(-1.5*as),
+                        "dr": 240,
+                        "ds": sc      
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": len*sc*(2*ac-2.5),
+                        "dy": len*sc*(2*as),
+                        "dr": 60,
+                        "ds": sc      
+                    },
+                ]  
+            }
+        ]
+    }</script>
