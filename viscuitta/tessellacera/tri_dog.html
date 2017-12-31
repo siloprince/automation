@@ -12,7 +12,7 @@
 <body>
 
     <div style="margin:10px;">
-        <input id="size" class="update" type="range" min="1" value="1" max="7" step="1" />: サイズ
+        <input id="size" class="update" type="range" min="1" value="1" max="10" step="1" />: サイズ
         <br/>
         <a class="download">ダウンロード</a>
         <br/>サイズに応じた置換ルールでタイルされます
@@ -32,10 +32,12 @@
                 let red = 'M 0,0 100,0';
                 let transformed = [];
 
+                let sqrt3 = Math.sqrt(3);
+
                 transformed.push(SvgPath(red).rotate(0).translate(0, 0).toString());
-                transformed.push(SvgPath(red).rotate(60).translate(unit,0).toString());
-                transformed.push(SvgPath(red).rotate(60).translate(-cs, sn).toString());
-                transformed.push(SvgPath(red).rotate(120).translate(unit+cs,sn).toString());
+                transformed.push(SvgPath(red).scale(1/sqrt3).rotate(90).translate(unit,0).toString());
+                transformed.push(SvgPath(red).scale(2/sqrt3).rotate(150).translate(unit, unit/sqrt3).toString());
+                transformed.push(SvgPath(red).rotate(30).translate(-unit/2,sn).toString());
                 transformed.push(SvgPath(red).rotate(120).translate(0, 0).toString());
                 transformed.push(SvgPath(red).rotate(0).translate(0, 2*sn).toString());
 
@@ -43,18 +45,17 @@
 
                 let factor = Math.sqrt(3);
                 let xy = [100, 100];
-                let sqrt3 = Math.sqrt(3);
                 let ex = [
-                    { dx:  0, dy: 0, dr: 30 },
-                    { dx: sqrt3, dy: 0, dr: 30 },
-                    { dx:  sqrt3/2, dy: 3/2, dr: 30 },
+                    { dx:  0, dy: 0, dr: -90, dsx: -1, dsy: 1 },
+                    { dx: sqrt3, dy: 1, dr: 180-90, dsx: -1, dsy: 1 },
+                    { dx:  0, dy: 2, dr: 180-30, dsx: -1, dsy: 1 },
                 ];
 
                 last_name = Tess.substitute2(size, name, trans, ex, xy, factor);
                 let tx = 300;
-                let ty = 300;
+                let ty = 200;
                 let svgstr = `<svg id="ev" width="2000" height="2000">
-                        <g transform="translate(${tx},${ty})scale(2,2)">${Tess.getUses(last_name)}</g></svg>`;
+                        <g transform="translate(${tx},${ty})scale(3,3)">${Tess.getUses(last_name)}</g></svg>`;
 
                 Tess.svg(me, svgstr);
             }

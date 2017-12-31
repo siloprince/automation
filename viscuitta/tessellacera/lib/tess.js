@@ -249,6 +249,22 @@ let Tess = (function (console, document) {
             if (!('y' in opt)) {
                 opt.y = 0;
             }
+            if (!('dsx' in opt)) {
+                opt.dsx = 1;
+            }
+            if (opt.dsx>=1) {
+                opt.dsx = 1;
+            } else {
+                opt.dsx = -1;
+            }
+            if (!('dsy' in opt)) {
+                opt.dsy = 1;
+            }
+            if (opt.dsy>=1) {
+                opt.dsy = 1;
+            } else {
+                opt.dsy = -1;
+            }
             if (!('dx' in opt)) {
                 opt.dx = 0;
             }
@@ -272,7 +288,7 @@ let Tess = (function (console, document) {
             let x = opt.x + xlen * opt.dx/ss;
             let y = opt.y + ylen * opt.dy/ss;
             let rot = opt.rot + opt.dr;
-            Tess.placeUse(opt.name, [x, y], rot, [1/opt.factor, 1/opt.factor], opt.name2);
+            Tess.placeUse(opt.name, [x, y], rot, [opt.dsx/opt.factor, opt.dsy/opt.factor], opt.name2);
 
         }
         function dupOpt(_opt, update) {
