@@ -12,6 +12,9 @@
 <body>
 
     <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="100" style="border: 1px solid #aaaaff;" />
+        <br/>
         <input id="size" class="update" type="range" min="1" value="1" max="10" step="1" />: サイズ
         <br/>
         <a class="download">ダウンロード</a>
@@ -29,17 +32,20 @@
                 let size = param.size;
                 let name = 'limhex';
                 let last_name = name;
-                let red = 'M 0,0 100,0';
+
+                let red = Draw.getData('red');
+                let blue = Draw.getData('blue');
+                //let red = 'M -50,0 50,0';
                 let transformed = [];
 
                 let sqrt3 = Math.sqrt(3);
 
-                transformed.push(SvgPath(red).rotate(0).translate(0, 0).toString());
-                transformed.push(SvgPath(red).scale(1/sqrt3).rotate(90).translate(unit,0).toString());
-                transformed.push(SvgPath(red).scale(2/sqrt3).rotate(150).translate(unit, unit/sqrt3).toString());
-                transformed.push(SvgPath(red).rotate(30).translate(-unit/2,sn).toString());
-                transformed.push(SvgPath(red).rotate(120).translate(0, 0).toString());
-                transformed.push(SvgPath(red).rotate(0).translate(0, 2*sn).toString());
+                transformed.push(SvgPath(red).translate(unit/2,0).rotate(0).translate(0, 0).toString());
+                transformed.push(SvgPath(blue).translate(unit/2,0).scale(1/sqrt3).rotate(90).translate(unit,0).toString());
+                transformed.push(SvgPath(blue).rotate(180).translate(unit/2,0).scale(1/sqrt3).rotate(150).translate(unit, unit/sqrt3).toString());
+                transformed.push(SvgPath(blue).rotate(180).translate(unit/2,0).scale(1/sqrt3).rotate(150+180).translate(0,2*unit/sqrt3).toString());
+                transformed.push(SvgPath(blue).translate(unit/2,0).scale(1/sqrt3).rotate(30).translate(-unit/2,sn).toString());
+                transformed.push(SvgPath(red).translate(unit/2,0).rotate(120).translate(0, 0).toString());
 
                 let trans = Tess.makePath(transformed, '#000000', null, '#ff0000', 0.4);
 
