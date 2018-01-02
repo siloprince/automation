@@ -17,7 +17,7 @@
         <br/>
         <input id="extrude" class="update" type="range" min="50" value="100" max="400" step="1" />: 引き伸ばし
         <br/>
-        <input id="size" class="update" type="range" min="1" value="1" max="4" step="1" />: サイズ
+        <input id="size" class="update" type="range" min="1" value="2" max="4" step="1" />: サイズ
         <br/>
         <a class="download">ダウンロード</a>
         <br/>
@@ -77,8 +77,8 @@
                     atile.push(SvgPath(acap).rotate(90).toString());
                     atile.push(SvgPath(acap).rotate(180).toString());
 
-                    Tess.register(base, Tess.makePath(atile,'#000000',2,'#ff0000',0.4));
-                    Tess.register(base+'2', Tess.makePath(atile,'#000000',2,'#00ff00',0.4));
+                    Tess.register(base, Tess.makePath(atile,{ fill:'#ff0000',opacity: 0.4} ));
+                    Tess.register(base+'2', Tess.makePath(atile,{ fill: '#00ff00',opacity: 0.4}));
 
                 }
 
@@ -129,24 +129,11 @@
                     tile.push(SvgPath(small).rotate(90).toString());
                     tile.push(SvgPath(small).rotate(180).toString());
 
-                    Tess.register(base, Tess.makePath(tile,'#000000',2,'#0000ff',0.4));
+                    Tess.register(base, Tess.makePath(tile,{fill: '#0000ff',opacity: 0.4}));
                 }
 
                 
                 let name = 'Lshape';
-               /*
-                Tess.placeUse('tile', [-len * 2, 0], -90,[1,1],name);
-                Tess.placeUse('tile', [0, len * 2], 180,[1,1],name);
-                Tess.placeUse('tile', [-len * 2, len * 4], 180,[1,1],name);
-                Tess.placeUse('tile', [len * 2, len * 4], 90,[1,1],name);
-                Tess.placeUse('atile', [-len * 2, len * 2], 0,[1,1],name);
-                Tess.placeUse('atile', [0, 0], 0,[1,1],name);
-                Tess.placeUse('atile', [len * 2, len * 2], 180,[1,1],name);
-                Tess.placeUse('atile', [0, len * 4], 180,[1,1],name);
-                Tess.placeUse('atile2', [len * 4, len * 2], 180,[1,1],name);
-                Tess.placeUse('atile2', [-len*2, -len*2], 90,[1,1],name);
-           */  
-
                 let mm = 2*move*scale;
                 let mw = (6*len+3*mm);
                 let mx = -(len+mm);

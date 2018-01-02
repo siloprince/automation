@@ -37,7 +37,7 @@
                 transformed.push(SvgPath(red).rotate(0).scale(1).translate(0, 50).translate(50, 50).toString());
                 transformed.push(SvgPath(blue).rotate(90).translate(-50, 0).translate(50, 50).toString());
 
-                let trans = Tess.makePath(transformed, '#000000', null, '#ff0000', 0.4);
+                let trans = Tess.makePath(transformed, { fill: '#ff0000', opacity: 0.4} );
                 let sqrt2 = Math.sqrt(2);
                 let factor = Math.sqrt(2);
                 let xy = [100, 100];

@@ -39,7 +39,7 @@
                 transformed.push(SvgPath(red).rotate(180).translate(0, move).rotate(240).toString());
                 transformed.push(SvgPath(red).rotate(0).translate(0, move).rotate(300).toString());
 
-                let trans = Tess.makePath(transformed, '#000000', null, '#ff0000', 0.4);
+                let trans = Tess.makePath(transformed, { fill: '#ff0000', opacity: 0.4} );
                 let sx=0.5;
                 let sy=0.5;
                 let tx = 200;
@@ -78,7 +78,7 @@
                     ty = 400;
                     sx = 3;
                     sy = 3;
-                    last_name = Tess.substitute2(size, name, trans, ex, xy, factor);
+                    last_name = Tess.substitute(size, name, trans, ex, xy, factor);
                 }
                 let svgstr = `<svg id="ev" width="2000" height="2000">
                         <g transform="translate(${tx},${ty})scale(${sx},${sy})">${Tess.getUses(last_name)}</g></svg>`;

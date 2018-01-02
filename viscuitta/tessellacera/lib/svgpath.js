@@ -1456,7 +1456,6 @@ const pathListMerge = function (transformed) {
     findNear(body, hash, idHash, path);
     break;
   }
-  path.push(' Z');
   return path.join('');
 
   function findNear(body, hash, idHash, path) {

@@ -63,7 +63,7 @@
 
 
                 let proto = 'tile';
-                Tess.register(proto, Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4));
+                Tess.register(proto, Tess.makePath(tile, { fill: '#ff0000', opacity: 0.4} ));
 
                 for (let ti = 0; ti < thick; ti++) {
                     for (let mi = 0; mi < div; mi++) {

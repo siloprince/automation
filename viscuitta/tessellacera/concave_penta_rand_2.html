@@ -51,7 +51,7 @@
                 tile.push(SvgPath(red).rotate(4 * rot).translate(cs + unit, sn).toString());
 
                 let proto = 'tile';
-                Tess.register(proto, Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4));
+                Tess.register(proto, Tess.makePath(tile, { fill: '#ff0000', opacity: 0.4} ));
 
                 let randList = [];
                 for (let ti = 0; ti < thick; ti++) {

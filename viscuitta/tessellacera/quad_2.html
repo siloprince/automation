@@ -50,7 +50,7 @@
                 tile.push(SvgPath(red).rotate(rot).translate(0, 0).toString());
                 tile.push(SvgPath(red).rotate(rot / 2).translate(unit, 0).toString());
                 tile.push(SvgPath(red).rotate(-rot / 4).translate(unit / 2, unit * Math.sqrt(3) / 2).toString());
-                let single = Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4)
+                let single = Tess.makePath(tile, { fill: '#ff0000', opacity: 0.4} );
                 let proto = 'tile';
                 Tess.register(proto, single + `<g transform="translate(${cx},${cy})rotate(180)translate(${-cx},${-cy})">${single}</g>`);
 

@@ -66,7 +66,7 @@ let Tess = (function (console, document) {
         if (!('opacity' in opt)) {
             opt.opacity = '1';
         }
-        let pathStr = pathListMerge(pathStrList);
+        let pathStr = pathListMerge(pathStrList)+' Z';
         return `<path d="${pathStr}" fill="${opt.fill}" stroke="${opt.stroke}" stroke-width="${opt.width}" fill-opacity="${opt.opacity}" vectorEffect="non-scaling-stroke"/>`;
     }
     function add(name, svgstr) {
