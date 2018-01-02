@@ -50,21 +50,24 @@ let Tess = (function (console, document) {
             document.querySelector('svg.tmp').innerHTML = '';
         }
     }
-    function makePath(pathStrList, stroke, width, fill, opacity) {
-        if (typeof (fill) === 'undefined') {
-            fill = 'none';
+    function makePath(pathStrList, opt) {
+        if (!opt) {
+            opt = {};
         }
-        if (typeof (stroke) === 'undefined') {
-            stroke = '#000000';
+        if (!('fill' in opt)) {
+            opt.fill = 'none';
         }
-        if (typeof (width) === 'undefined') {
-            width = '2';
+        if (!('stroke' in opt)) {
+            opt.stroke = '#000000';
         }
-        if (typeof (opacity) === 'undefined') {
-            opacity = '1';
+        if (!('width' in opt)) {
+            opt.width = '2';
+        }
+        if (!('opacity' in opt)) {
+            opt.opacity = '1';
         }
         let pathStr = pathListMerge(pathStrList);
-        return `<path d="${pathStr}" fill="${fill}" stroke="${stroke}" stroke-width="${width}" fill-opacity="${opacity}" vectorEffect="non-scaling-stroke"/>`;
+        return `<path d="${pathStr}" fill="${opt.fill}" stroke="${opt.stroke}" stroke-width="${opt.width}" fill-opacity="${opt.opacity}" vectorEffect="non-scaling-stroke"/>`;
     }
     function add(name, svgstr) {
         useHash[name] = `<g class="new" >${svgstr}</g>`;
