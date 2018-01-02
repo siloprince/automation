@@ -36,35 +36,27 @@
                 tile.push(`M ${aaa[0]},${aaa[1]} ${bbb[0]},${bbb[1]}`);
                 tile.push(`M ${aaa[0]},${aaa[1]} ${ccc[0]} ${ccc[1]}`);
                 tile.push(`M ${ccc[0]},${ccc[1]} ${bbb[0]} ${bbb[1]}`);
-
+                
                 let lena = Math.sqrt(height * height + (unit / 2 - decenter) * (unit / 2 - decenter));
                 let lenb = unit;
                 let lenc = Math.sqrt(height * height + (unit / 2 + decenter) * (unit / 2 + decenter));
-                let angle = Math.acos((lenb * lenb + lenc * lenc - lena * lena) / (2 * lenb * lenc)) * 180 / Math.PI;
+                
+                let angleRad = Math.acos((lenb * lenb + lenc * lenc - lena * lena) / (2 * lenb * lenc));
+                let angle = angleRad * 180 / Math.PI;
                 let tilepath = Tess.makePath(tile);
+                
                 let tx = unit - scale * lenc;
                 let ty = 0;
-
-                let svglist =[tilepath];
-                /*
-                let mat = new Matrix().translate(tx, ty).scale(scale,scale).rotate(-angle,0,0);
-
+                
+                let svglist =[];
+                let mat = new Matrix().translate(tx,ty).rotate(-angle,0,0).scale(scale,scale);
+                let matarray = mat.toArray();
+                let b = new Matrix();
                 for (let si = 0; si < size; si++) {
-                    svglist.push(tilepath);
-                    let tile = [];
-                    aaa = mat.calc(aaa[0], aaa[1]);
-                    bbb = mat.calc(bbb[0], bbb[1]);
-                    ccc = mat.calc(ccc[0], ccc[1]);
-                    tile.push(`M ${aaa[0]},${aaa[1]} ${bbb[0]},${bbb[1]}`);
-                    tile.push(`M ${aaa[0]},${aaa[1]} ${ccc[0]} ${ccc[1]}`);
-                    tile.push(`M ${ccc[0]},${ccc[1]} ${bbb[0]} ${bbb[1]}`);
-                    tilepath = Tess.makePath(tile);
-                }
-                */
-                for (let si = 0; si < size; si++) {
-                    tilepath = `<g transform="translate(${tx},${ty})rotate(${-angle})scale(${scale})">`+tilepath+`</g>`;
-                    svglist.push(tilepath);
-
+                    
+                    b = b.matrix(matarray);
+                    let c = b.toArray();
+                    svglist.push(`<g transform="matrix(${c[0]},${c[1]},${c[2]},${c[3]},${c[4]},${c[5]})">`+tilepath+'</g>');
                 }
                 let svgstr = `<svg width="2000" height="2000">
                         <g transform="translate(200,700)scale(4)">${svglist.join('')}</g></svg>`;
