@@ -16,11 +16,8 @@ let Tess = (function (console, document) {
         getUseFromHash: function (id) {
             return useHash[id];
         },
-        add: add,
-        reg: reg,
         register: register,
         place: place,
-        placeUse: placeUse,
         substitute: substitute,
         svg: function (me, svgstr) {
             if (!svgdiv) {
@@ -69,6 +66,7 @@ let Tess = (function (console, document) {
         let pathStr = pathListMerge(pathStrList)+' Z';
         return `<path d="${pathStr}" fill="${opt.fill}" stroke="${opt.stroke}" stroke-width="${opt.width}" fill-opacity="${opt.opacity}" vectorEffect="non-scaling-stroke"/>`;
     }
+
     function add(name, svgstr) {
         useHash[name] = `<g class="new" >${svgstr}</g>`;
     }
@@ -76,22 +74,6 @@ let Tess = (function (console, document) {
         let symbols = document.querySelector('svg.symbols');
         symbols.insertAdjacentHTML('beforeend', `<defs><g id="${name}">${svgstr}</g></defs>`);
         useHash[name] = `<use class="new" xlink:href="#${name}"/>`;
-    }
-    function reg(name, svgstr) {
-        let symbols = document.querySelector('svg.symbols');
-        let tmp = document.querySelector('svg.tmp');
-        tmp.innerHTML = '<g class="bbox">' + svgstr + '</g>';
-
-        let bbox = tmp.querySelector('g.bbox').getBBox();
-
-        tmp.innerHTML = '';
-        let eps = 0;
-        bbox.x += -eps;
-        bbox.y += -eps;
-        bbox.width += 2 * eps;
-        bbox.height += 2 * eps;
-        symbols.insertAdjacentHTML('beforeend', `<symbol id="${name}" viewbox="${bbox.x} ${bbox.y} ${bbox.width} ${bbox.height}">${svgstr}</symbol>`);
-        useHash[name] = `<use class="new" xlink:href="#${name}" width="${bbox.width}" height="${bbox.height}" x="${bbox.x}" y="${bbox.y}"/>`;
     }
     function place(name, transform, base) {
         if (!(name in useHash)) {
@@ -204,26 +186,6 @@ let Tess = (function (console, document) {
         uses[base].push(usestr);
 
     }
-    function placeUse(name, translate, rotate, scale, base) {
-        if (typeof (translate) === 'undefined') {
-            translate = [0, 0];
-        }
-        if (typeof (rotate) === 'undefined') {
-            rotate = 0;
-        }
-        if (typeof (scale) === 'undefined') {
-            scale = [1, 1];
-        }
-        if (typeof (base) === 'undefined') {
-            base = '_';
-        }
-        if (name in useHash) {
-            if (!(base in uses)) {
-                uses[base] = [];
-            }
-            uses[base].push(useHash[name].replace(/class="new" /, `class="old" transform="translate(${translate[0]},${translate[1]})rotate(${rotate})scale(${scale[0]},${scale[1]})" `));
-        }
-    }
     function substitute(size, name, svgstr, ex, xy, factor) {
         let last_name;
         for (let si = 0; si < size; si++) {
@@ -231,13 +193,13 @@ let Tess = (function (console, document) {
             let _name = name + '_' + level;
             if (si === 0) {
                 Tess.register(_name, svgstr);
-                Tess.placeUse(_name, [0, 0], 0, [1, 1], _name);
+                Tess.place(_name, {translate: [0, 0], rotate: 0, scale: [1, 1]}, _name);
             } else {
                 let opt = { level: level, xy: xy, name: last_name, name2: _name, ex: ex, factor: factor };
                 for (let ei = 0; ei < ex.length; ei++) {
                     expand(dupOpt(opt, ex[ei]));
                 }
-                Tess.add(_name, Tess.getUses(_name));
+                add(_name, Tess.getUses(_name));
             }
             last_name = _name;
         }
@@ -289,7 +251,7 @@ let Tess = (function (console, document) {
             let x = opt.x + xlen * opt.dx/ss;
             let y = opt.y + ylen * opt.dy/ss;
             let rot = opt.rot + opt.dr;
-            Tess.placeUse(opt.name, [x, y], rot, [opt.dsx/opt.factor, opt.dsy/opt.factor], opt.name2);
+            Tess.place(opt.name, {translate:[x, y], rotate:rot, scale:[opt.dsx/opt.factor, opt.dsy/opt.factor]}, opt.name2);
 
         }
         function dupOpt(_opt, update) {

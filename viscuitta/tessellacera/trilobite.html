@@ -49,19 +49,19 @@
 
                 base = 'atile';
                 if (mode) {
-                    Tess.placeUse('l0', [0, -len], 0, [1,1], base);
-                    Tess.placeUse('l0', [len, 0], 90, [1,1], base);
-                    Tess.placeUse('l0', [0, len], 0, [1,1], base);
-                    Tess.placeUse('l0', [-len, 0], 90, [1,1], base);
+                    Tess.place('l0', { translate: [0, -len],rotate:  0}, base);
+                    Tess.place('l0', { translate: [len, 0], rotate: 90}, base);
+                    Tess.place('l0', { translate: [0, len],rotate:  0}, base);
+                    Tess.place('l0', { translate: [-len, 0],rotate:  90}, base);
 
                     let acap = Tess.getUseFromHash('l1');
                     acap = acap.replace(/^<use /,`<use transform="translate(${-len},${-len})scale(${scale})translate(${move},${move})rotate(135)" `);
 
                     Tess.register('acap', acap);
-                    Tess.placeUse('acap', [0, 0], -90, [1,1], base);
-                    Tess.placeUse('acap', [0, 0], 0, [1,1], base);
-                    Tess.placeUse('acap', [0, 0], 90, [1,1], base);
-                    Tess.placeUse('acap', [0, 0], 180, [1,1], base);
+                    Tess.place('acap', { translate: [0, 0],rotate:  -90}, base);
+                    Tess.place('acap', { translate: [0, 0],rotate:  0}, base);
+                    Tess.place('acap', { translate: [0, 0],rotate:  90}, base);
+                    Tess.place('acap', { translate: [0, 0],rotate:  180}, base);
 
                     Tess.register(base, Tess.getUses(base));
                 } else {
@@ -84,27 +84,27 @@
 
                 base = 'tile';
                 if (mode) {
-                    Tess.placeUse('l0', [0, -len], 0, [1,1], base);
-                    Tess.placeUse('l0', [len, 0], -90, [1,1], base);
-                    Tess.placeUse('l0', [0, len], 180, [1,1], base);
-                    Tess.placeUse('l0', [-len, 0], 90, [1,1], base);
+                    Tess.place('l0', { translate: [0, -len],rotate:  0}, base);
+                    Tess.place('l0', { translate: [len, 0],rotate:  -90}, base);
+                    Tess.place('l0', { translate: [0, len],rotate:  180}, base);
+                    Tess.place('l0', { translate: [-len, 0],rotate:  90}, base);
 
                     let cap = Tess.getUseFromHash('l1');
                     cap = cap.replace(/^<use /,`<use transform="translate(${-len},${-len})scale(${scale})translate(${move},${move})rotate(135)" `);
                     Tess.register('cap', cap);
-                    Tess.placeUse('cap', [0, 0], -90, [1,1],base);
+                    Tess.place('cap', [0, 0], -90,base);
 
                     let small = 'small';
-                    Tess.placeUse('l1', [-move, move], 225, [1,1], small);
-                    Tess.placeUse('l1', [-move, -move], -45, [1,1], small);
-                    Tess.placeUse('l1', [move, -move], 45, [1,1], small);
+                    Tess.place('l1', { translate: [-move, move], rotate:225}, small);
+                    Tess.place('l1', { translate: [-move, -move], rotate:-45}, small);
+                    Tess.place('l1', { translate: [move, -move], rotate:45}, small);
 
                     let smallstr = `<g transform="translate(${-len},${-len})scale(${scale})">` + Tess.getUses(small) + `</g>`;
                     Tess.register(small, smallstr);
 
-                    Tess.placeUse(small, [0, 0], 0, [1,1],base);
-                    Tess.placeUse(small, [0, 0], 90, [1,1],base);
-                    Tess.placeUse(small, [0, 0], 180, [1,1],base);
+                    Tess.place(small, { translate: [0, 0], rotate:0},base);
+                    Tess.place(small, { translate: [0, 0], rotate:90},base);
+                    Tess.place(small, { translate: [0, 0], rotate:180},base);
 
                     Tess.register(base, Tess.getUses(base));
                 } else {
@@ -138,17 +138,17 @@
                 let mw = (6*len+3*mm);
                 let mx = -(len+mm);
                 let my = mx;
-                Tess.placeUse('tile', [0-mx, 0-my], 270,[1,1],name);
-                Tess.placeUse('tile', [4*len-mx, 0-my], 0,[1,1],name);
-                Tess.placeUse('tile', [2*len-mx, 2*len-my], 270,[1,1],name);
-                Tess.placeUse('tile', [0-mx, 4*len-my], 180,[1,1],name);
+                Tess.place('tile', { translate: [0-mx, 0-my],rotate: 270},name);
+                Tess.place('tile', { translate:[4*len-mx, 0-my],rotate:  0},name);
+                Tess.place('tile', { translate:[2*len-mx, 2*len-my],rotate:  270},name);
+                Tess.place('tile', { translate:[0-mx, 4*len-my],rotate:  180},name);
                 
-                Tess.placeUse('atile', [4*len-mx, 2*len-my], 90,[1,1],name);
-                Tess.placeUse('atile', [2*len-mx, 0-my], 90,[1,1],name);
-                Tess.placeUse('atile', [0-mx, 2*len-my], 270,[1,1],name);
-                Tess.placeUse('atile', [2*len-mx, 4*len-my], 270,[1,1],name);
-                Tess.placeUse('atile2', [2*len-mx, 6*len-my], 270,[1,1],name);
-                Tess.placeUse('atile2', [6*len-mx, 0-my], 180,[1,1],name);
+                Tess.place('atile', { translate:[4*len-mx, 2*len-my],rotate:  90},name);
+                Tess.place('atile', { translate:[2*len-mx, 0-my],rotate:  90},name);
+                Tess.place('atile', { translate:[0-mx, 2*len-my],rotate:  270},name);
+                Tess.place('atile', { translate:[2*len-mx, 4*len-my],rotate:  270},name);
+                Tess.place('atile2', { translate:[2*len-mx, 6*len-my],rotate:  270},name);
+                Tess.place('atile2', { translate:[6*len-mx, 0-my],rotate:  180},name);
                
                 let factor = 2;
                 let xy = [mw,mw];

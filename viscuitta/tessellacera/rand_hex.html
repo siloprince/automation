@@ -61,7 +61,14 @@
                             if (yi % 2 === 0) {
                                 delta = unit * Math.sqrt(3) / 2;
                             }
-                            Tess.placeUse(name, [unit * Math.sqrt(3) * xi + delta, unit * 1.5 * yi], rot, [1, 1], last_name);
+                            Tess.place(name, {
+                                translate: [
+                                    unit * Math.sqrt(3) * xi + delta, 
+                                    unit * 1.5 * yi
+                                    ],
+                                rotate: rot,
+                                scale: [1, 1]
+                            }, last_name);
                         }
                     }
                 } else {
