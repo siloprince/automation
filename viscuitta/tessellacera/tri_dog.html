@@ -1,0 +1,72 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="100" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="size" class="update" type="range" min="1" value="1" max="10" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+        <br/>サイズに応じた置換ルールでタイルされます
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            let unit = 100;
+            let angle = Math.PI/3;
+            let cs = unit*Math.cos(angle);
+            let sn = unit*Math.sin(angle);
+            Update.update = update;
+            function update(param) {
+                let size = param.size;
+                let name = 'limhex';
+                let last_name = name;
+
+                let red = Draw.getData('red');
+                let blue = Draw.getData('blue');
+                //let red = 'M -50,0 50,0';
+                let transformed = [];
+
+                let sqrt3 = Math.sqrt(3);
+
+                transformed.push(SvgPath(red).translate(unit/2,0).rotate(0).translate(0, 0).toString());
+                transformed.push(SvgPath(blue).translate(unit/2,0).scale(1/sqrt3).rotate(90).translate(unit,0).toString());
+                transformed.push(SvgPath(blue).rotate(180).translate(unit/2,0).scale(1/sqrt3).rotate(150).translate(unit, unit/sqrt3).toString());
+                transformed.push(SvgPath(blue).rotate(180).translate(unit/2,0).scale(1/sqrt3).rotate(150+180).translate(0,2*unit/sqrt3).toString());
+                transformed.push(SvgPath(blue).translate(unit/2,0).scale(1/sqrt3).rotate(30).translate(-unit/2,sn).toString());
+                transformed.push(SvgPath(red).translate(unit/2,0).rotate(120).translate(0, 0).toString());
+
+                let trans = Tess.makePath(transformed, { fill: '#ff0000', opacity: 0.4} );
+
+                let factor = Math.sqrt(3);
+                let xy = [100, 100];
+                let ex = [
+                    { dx:  0, dy: 0, dr: -90, dsx: -1, dsy: 1 },
+                    { dx: sqrt3, dy: 1, dr: 180-90, dsx: -1, dsy: 1 },
+                    { dx:  0, dy: 2, dr: 180-30, dsx: -1, dsy: 1 },
+                ];
+
+                last_name = Tess.substitute(size, name, trans, ex, xy, factor);
+                let tx = 300;
+                let ty = 200;
+                let svgstr = `<svg id="ev" width="2000" height="2000">
+                        <g transform="translate(${tx},${ty})scale(3,3)">${Tess.getUses(last_name)}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>

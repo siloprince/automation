@@ -1,0 +1,89 @@
+
+<script type="text/javascript">
+var g_angle = Math.PI/5;
+var g_angle1 = 2*Math.PI/5;
+var g_ac = Math.cos(g_angle);
+var g_as = Math.sin(g_angle);
+var g_ac1 = Math.cos(g_angle1);
+var g_as1 = Math.sin(g_angle1);
+var g_scale = 1/(1+2*Math.sin(g_angle/2));
+var g_len = 320;
+var g_a = [ 1/g_scale, -1-1/g_scale, -36*3];
+var g_b = [ 0, 0, -36];
+var g_c = [ 0,-2, 210];
+var g_a1 = [ -1, -1 ,180+36];
+var g_b1 = [ 0, 1, 36];
+var g_c1 = [ -1-1/g_scale,1/g_scale, 36*3];
+
+</script>
+<script type="text/javascript" src="./vis.js">{
+        "id": "xxx",
+        "stage": {
+            "width": 2000,
+            "height":2000
+        },
+        "iteration": {
+            "dt": 1000,
+            "scaleLimit": 0.001,
+            "stepLimit": 10,
+            "objectLimit": 40000,            
+            "shapeCount": true
+        },
+        "polygons": [
+            `<polygon class='r1' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac1)} ${g_len*g_as1},${g_len*g_ac1} ${g_len*g_as1}' stroke='#0000ff'/>`
+            ,
+            `<polygon class='r0' opacity="0.3"  points='0 0, ${g_len/2} 0, ${g_len*4/5} ${g_len/4}, ${g_len*2/3} 0, ${g_len} 0, ${g_len*(1+g_ac)} ${g_len*g_as},${g_len*g_ac} ${g_len*g_as}' stroke='#0000ff'/>`
+            ,
+        ],
+        "rules": [
+            { 
+                "pattern":[
+                    ".r0"
+                ],
+                "next":[
+                    {
+                        "polygon": 1,
+                        "dx": g_A[0],
+                        "dy": g_A[1],
+                        "dr": g_a[2]+g_z[2],
+                        "ds": g_scale      
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": g_B[0],
+                        "dy": g_B[1],                    
+                        "dr": g_b[2]+g_z[2],
+                        "ds": g_scale          
+                    }
+                ]  
+            },
+            { 
+                "pattern":[
+                    ".r1"
+                ],
+                "next":[
+                    {
+                        "polygon": 0,
+                        "dx": g_A1[0],
+                        "dy": g_A1[1],
+                        "dr": g_a1[2]+g_z[2],
+                        "ds": g_scale      
+                    },
+                    {
+                        "polygon": 1,
+                        "dx": g_B1[0],
+                        "dy": g_B1[1],                    
+                        "dr": g_b1[2]+g_z[2],
+                        "ds": g_scale          
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": g_C1[0],
+                        "dy": g_C1[1],                      
+                        "dr": g_c1[2]+g_z[2],
+                        "ds": g_scale        
+                    }
+                ]  
+            }
+        ]
+    }</script>

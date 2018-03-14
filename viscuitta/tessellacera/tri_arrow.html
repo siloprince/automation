@@ -1,0 +1,65 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <input id="size" class="update" type="range" min="1" value="1" max="7" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+        <br/>サイズに応じた置換ルールでタイルされます
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            let unit = 100;
+            let rot = 60;
+            let rad = rot*Math.PI/180;
+            let cs = unit*Math.cos(rad);
+            let sn = unit*Math.sin(rad);
+            Update.update = update;
+            function update(param) {
+                let size = param.size;
+                let name = 'limhex';
+                let last_name = name;
+                let red = `M 0,0 ${unit},0`;
+                let transformed = [];
+                transformed.push(SvgPath(red).rotate(0).translate(0, 0).toString());
+                transformed.push(SvgPath(red).rotate(rot).translate(0, 0).toString());
+                transformed.push(SvgPath(red).rotate(0).translate(0, 2*sn).toString());
+                transformed.push(SvgPath(red).rotate(rot).translate(unit, 0).toString());
+                transformed.push(SvgPath(red).rotate(2*rot).translate(cs, sn).toString());
+                transformed.push(SvgPath(red).rotate(2*rot).translate(unit+cs, sn).toString());
+
+                let trans = Tess.makePath(transformed, { fill: '#ff0000', opacity: 0.4} );
+
+                let factor = Math.sqrt(3);
+                let xy = [100, 100];
+                let sqrt3 = Math.sqrt(3);
+                let ex = [
+                    { dx: 0, dy: 0, dr: -rot/2 },
+                    { dx: sqrt3/2, dy: 3/2, dr: -rot/2 },
+                    { dx: 0, dy: 3, dr: -3*rot/2 },
+                ];
+
+                last_name = Tess.substitute(size, name, trans, ex, xy, factor);
+                let tx = 300;
+                let ty = 200;
+                let svgstr = `<svg id="ev" width="2000" height="2000">
+                        <g transform="translate(${tx},${ty})scale(2,2)">${Tess.getUses(last_name)}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>

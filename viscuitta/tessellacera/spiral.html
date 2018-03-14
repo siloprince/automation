@@ -1,0 +1,70 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <input id="height" class="update" type="number" min="10" value="20" value2="40" max="200.000000000000" step="15" />: 高さ<br/>
+        <input id="decenter" class="update" type="number" min="0" value="33.7" value2="27.999" max="200.000000000000" size="15" step="10" />: ずれ<br/>
+        <input id="scale" class="update" type="number" min="0.7" value="0.97882" value2="0.9236" max="1.000000000000" size="15" />: スケール<br/>
+        <input id="size" class="update" type="range" min="1" value="130" max="500" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            let unit = 100;
+            Update.update = update;
+            function update(param) {
+                let height = param.height;
+                let decenter = param.decenter;
+                let scale = param.scale;
+                let size = param.size;
+                let aaa = [0, 0];
+                let bbb = [unit, 0];
+                let ccc = [unit / 2 + decenter, height];
+                let tile = [];
+                tile.push(`M ${aaa[0]},${aaa[1]} ${bbb[0]},${bbb[1]}`);
+                tile.push(`M ${aaa[0]},${aaa[1]} ${ccc[0]} ${ccc[1]}`);
+                tile.push(`M ${ccc[0]},${ccc[1]} ${bbb[0]} ${bbb[1]}`);
+                
+                let lena = Math.sqrt(height * height + (unit / 2 - decenter) * (unit / 2 - decenter));
+                let lenb = unit;
+                let lenc = Math.sqrt(height * height + (unit / 2 + decenter) * (unit / 2 + decenter));
+                
+                let angleRad = Math.acos((lenb * lenb + lenc * lenc - lena * lena) / (2 * lenb * lenc));
+                let angle = angleRad * 180 / Math.PI;
+                let tilepath = Tess.makePath(tile,{ width : 0.1 });
+                
+                let tx = unit - scale * lenc;
+                let ty = 0;
+                
+                let svglist =[tilepath];
+                let mat = new Matrix().translate(tx,ty).rotate(-angle,0,0).scale(scale,scale);
+                let matarray = mat.toArray();
+                let b = new Matrix();
+                for (let si = 0; si < size; si++) {
+                    
+                    b = b.matrix(matarray);
+                    let c = b.toArray();
+                    svglist.push(`<g transform="matrix(${c[0]},${c[1]},${c[2]},${c[3]},${c[4]},${c[5]})">`+tilepath+'</g>');
+                }
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(400,650)scale(4)">${svglist.join('')}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>

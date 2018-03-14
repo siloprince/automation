@@ -1,0 +1,29 @@
+<html>
+<header>
+    <svg style="display:none;">
+        <defs>
+            <polygon id="x" points="0,0 1,0 1,1 0,1"/>
+        </defs>
+    </svg>
+</header>
+<body>
+    <input type="range" min="0" max="100" value="50" oninput="
+   let val = parseInt(event.target.value,10)/100;
+   let xobj = document.querySelector('polygon#x');
+   xobj.setAttribute('points', `0,0 ${val},0 ${val},${val} 0,${val}`);
+    "/>
+    <p/>
+    <svg height="1000" width="1000">
+
+        <g transform="translate(100,100)scale(100,100)">
+                <use  xlink:href="#x"/>
+            <g transform="translate(1,2)">
+                <use  xlink:href="#x"/>
+            </g>
+            <g transform="translate(2,2)"> 
+                <use xlink:href="#x"/>
+            </g>
+        </g>
+    </svg>
+</body>
+</html>

@@ -47,56 +47,41 @@
                 tile.push(SvgPath(red).rotate(4 * rot).translate(cs + unit, sn).toString());
 
                 let proto = 'tile';
-                Tess.register(proto, Tess.makePath(tile, '#000000', 2, '#ff0000', 0.4));
-
-                let name;
-                name = 'sword';
+                Tess.register(proto, Tess.makePath(tile, { fill: '#ff0000', opacity: 0.4} ));
                 let xx, yy;
                 for (let ti = 0; ti < thick; ti++) {
-                    for (let tj = 0; tj <= ti; tj++) {
-                        if (tj === 0) {
-                            if (ti === 0) {
-                                Tess.placeUse(proto, [0, 0], -15, [1, 1], name);
-                                Tess.placeUse(proto, [0, 0], 30 - 15, [1, 1], name);
-                                continue;
-                            }
-                        }
-                        if (tj < ti) {
+
+                    for (let mi = 0; mi < 2 * div; mi += 2) {
+                        let rotangle = 180 / div * mi;
+                        for (let tj = 0; tj <= ti; tj++) {
                             if (tj === 0) {
-                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti - 1) * cs2], 90 - 15, [1, 1], name);
-                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti + 1) * cs2], 120 + 45, [-1, 1], name);
-                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2, (ti + 1) * cs2], 90 + 45, [-1, 1], name);
-                                Tess.placeUse(proto, [ti * cs2 * 2 - (ti - 1) * sn2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit + (ti - 1) * cs2], 90 + 15, [1, 1], name);
-                                Tess.placeUse(proto, [ti * cs2 * 2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit], 90 + 15, [-1, 1], name);
-                                Tess.placeUse(proto, [ti * cs2 * 2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit], 60 + 15, [-1, 1], name);
+                                if (ti === 0) {
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [0, 0], rotate: -15, scale: [1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [0, 0], rotate: 30 - 15, scale: [1, 1] } });
+                                    continue;
+                                }
+                            }
+                            if (tj < ti) {
+                                if (tj === 0) {
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [ti * cs2 * 2 - (ti - 1) * sn2, (ti - 1) * cs2], rotate: 90 - 15, scale: [1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [ti * cs2 * 2 - (ti - 1) * sn2, (ti + 1) * cs2], rotate: 120 + 45, scale: [-1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [ti * cs2 * 2 - (ti - 1) * sn2, (ti + 1) * cs2], rotate: 90 + 45, scale: [-1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [ti * cs2 * 2 - (ti - 1) * sn2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit + (ti - 1) * cs2], rotate: 90 + 15, scale: [1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [ti * cs2 * 2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit], rotate: 90 + 15, scale: [-1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [ti * cs2 * 2 + 2 * cs2 * cs / unit, 2 * cs2 * sn / unit], rotate: 60 + 15, scale: [-1, 1] } });
 
-                            } else {
-
-                                xx = -sn2 * (tj - 1);
-                                yy = cs2 * (tj - 1);
-                                Tess.placeUse(proto, [xx + ti * cs2 * 2 + 2 * cs2 * cs / unit, yy + 2 * cs2 * sn / unit], 30 + 15, [-1, 1], name);
-                                Tess.placeUse(proto, [-xx + ti * cs2 * 2 - (ti - 1) * sn2, -yy + (ti - 1) * cs2], 0 - 15, [1, 1], name);
-                                Tess.placeUse(proto, [xx + ti * cs2 * 2 + 2 * cs2 * cs / unit, -yy + 2 * cs2 * sn / unit - cs2 * 2], 15, [-1, 1], name);
-                                Tess.placeUse(proto, [xx -2*cs2+ ti * cs2 * 2 + 2 * cs2 * cs / unit, -yy + 2 * cs2 * sn / unit - cs2 * 2],-60+ 15, [1, 1], name);
+                                } else {
+                                    xx = -sn2 * (tj - 1);
+                                    yy = cs2 * (tj - 1);
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [xx + ti * cs2 * 2 + 2 * cs2 * cs / unit, yy + 2 * cs2 * sn / unit], rotate: 30 + 15, scale: [-1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [-xx + ti * cs2 * 2 - (ti - 1) * sn2, -yy + (ti - 1) * cs2], rotate: 0 - 15, scale: [1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [xx + ti * cs2 * 2 + 2 * cs2 * cs / unit, -yy + 2 * cs2 * sn / unit - cs2 * 2], rotate: 15, scale: [-1, 1] } });
+                                    Tess.place(proto, { rotate: 180 + rotangle, transform: { translate: [xx - 2 * cs2 + ti * cs2 * 2 + 2 * cs2 * cs / unit, -yy + 2 * cs2 * sn / unit - cs2 * 2], rotate: -60 + 15, scale: [1, 1] } });
+                                }
                             }
                         }
                     }
                 }
-                Tess.register(name, Tess.getUses(name));
-
-                proto = 'sword';
-                name = 'up';
-                for (let mi = 0; mi < div; mi += 2) {
-                    let rotangle = 180 / div * mi;
-                    Tess.placeUse(proto, [0, 0], 180 + rotangle, [1, 1], name);
-
-                }
-                Tess.register(name, Tess.getUses(name));
-                Tess.placeUse('up', [0, 0]);
-                Tess.placeUse('up', [0, 0], 180);
-
-
-
                 let svgstr = `<svg width="2000" height="2000">
                         <g transform="translate(400,400)scale(0.3)">${Tess.getUses()}</g></svg>`;
 

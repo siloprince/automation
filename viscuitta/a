@@ -1,1 +1,0 @@
-($1.name===name?:argv[(""==="$4"?"$2".length-1:$4)%argv.length]:$1.prev((""==="$4")?"$2".length:$4))

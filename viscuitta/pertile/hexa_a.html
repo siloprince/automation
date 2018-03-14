@@ -1,0 +1,71 @@
+
+<script type="text/javascript">
+var g_angle = Math.PI/3;
+var g_ac = Math.cos(g_angle);
+var g_as = Math.sin(g_angle);
+var g_scale = 0.5;
+var g_len = 80;
+
+var cc = Math.sqrt(3);
+
+var g_a = [ 2/g_scale, 0, 0];
+var g_b = [ 0, 1/g_scale, 0];
+var g_c = [ 0, 0, 60];
+var g_d = [ 4/g_scale, -4/g_scale, -120];
+
+
+</script>
+<script type="text/javascript" src="./hexa.js">{
+        "id": "xxx",
+        "stage": {
+            "width": 2000,
+            "height":2000
+        },
+        "iteration": {
+            "dt": 1000,
+            "scaleLimit": 0.001,
+            "stepLimit": 10,
+            "objectLimit": 40000,            
+            "shapeCount": true
+        },
+        "polygons": [
+            `<polygon opacity="0.3" class='square' points='0 0, ${g_len*2} 0, ${g_len*3} ${g_len*cc}, ${g_len*2} ${g_len*cc*2},${g_len*1.5} ${g_len*cc*2},${g_len} ${g_len*cc*1.5},${g_len} ${g_len*cc*2}, 0 ${g_len*cc*2}, ${-g_len} ${g_len*cc}' stroke='#0000ff'/>`
+        ],
+        "rules": [
+            { 
+                "pattern":[
+                    ".square"
+                ],
+                "next":[
+                    {
+                        "polygon": 0,
+                        "dx": g_A[0],
+                        "dy": g_A[1],
+                        "dr": g_a[2]+g_z[2],
+                        "ds": g_scale      
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": g_B[0],
+                        "dy": g_B[1],                    
+                        "dr": g_b[2]+g_z[2],
+                        "ds": g_scale          
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": g_C[0],
+                        "dy": g_C[1],                      
+                        "dr": g_c[2]+g_z[2],
+                        "ds": g_scale        
+                    },
+                    {
+                        "polygon": 0,
+                        "dx": g_D[0],
+                        "dy": g_D[1],                      
+                        "dr": g_d[2]+g_z[2],
+                        "ds": g_scale        
+                    }
+                ]  
+            }
+        ]
+    }</script>

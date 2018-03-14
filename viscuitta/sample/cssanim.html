@@ -1,0 +1,76 @@
+<!DOCTYPE html>
+<html>
+
+<head>
+    <meta charset="UTF-8">
+    <style type="text/css">
+        <!-- .box {
+            width: 100px;
+            height: 100px;
+            background: #000;
+  animation-name: rotation;
+  animation-duration: 2s;
+  animation-timing-function: ease;
+  animation-delay: 0s;
+  animation-iteration-count: infinite;
+  animation-direction: alternate;
+  animation-fill-mode: none;
+  animation-play-state: running;
+        }
+        
+        .active {
+            background: #ccc;
+            width: 300px;
+        }
+        
+        @keyframes rotation {
+            0% {
+                transform: scale(.3);
+            }
+            50% {
+                transform: scale(.6) rotate(-45deg);
+                background: red;
+            }
+            100% {
+                transform: scale(1) rotate(180deg);
+                background: blue;
+            }
+        }
+        
+        --->
+    </style>
+</head>
+
+<body>
+    <svg width="600" height="400" viewBox="0 0 600 400">
+    <rect class="box"></rect>
+    
+    </svg>
+</body>
+<button class="button">active</button>
+<span class="state">0</span>
+
+<script type="text/javascript">
+    (function (console, document, window) {
+        let box = document.querySelector('.box');
+        let button = document.querySelector('.button');
+        button.addEventListener('click',
+            function () {
+                box.classList.toggle('active');
+            }
+        );
+
+        let state = document.querySelector('.state');
+        console.dir(state);
+
+        box.addEventListener('transitionend',
+            function (e) {
+                if (e.propertyName === 'width') {
+                    state.textContent = parseInt(state.textContent, 10) + 1;
+                }
+            });
+    })(console, document, window);
+
+</script>
+
+</html>
