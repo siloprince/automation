@@ -1,0 +1,86 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+    <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="100" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="100" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="angleA" class="update" type="range" min="60" value="80" max="89" step="0.5" />: 角A<br/>
+        <input id="angleB" class="update" type="range" min="60" value="80" max="89" step="0.5" />: 角B<br/>
+        <input id="size" class="update" type="range" min="1" value="130" max="500" step="1" />: サイズ
+        <br/>
+        <a class="download">ダウンロード</a>
+    </div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            let unit = 100;
+            Update.update = update;
+            function update(param) {
+                let angleA = param.angleA;
+                let angleB = param.angleB;
+                let size = param.size;
+                let i = 2;
+                let j = 3;
+                let angleC = (angleA*j + angleB* (j - i) + Math.PI *(i - j + 2))/i;
+                let edgeBC = ;
+                let edgeAD = 
+
+                let red = Draw.getData('red');
+                let blue = Draw.getData('blue');
+                let tile = [];
+                tile.push(SvgPath(red).translate(unit/2,0).toString());
+                tile.push(SvgPath(blue).translate(unit/2,0).scale(edgeBC/unit).rotate(angleB).toString());
+                tile.push(SvgPath(red).translate(unit/2,0).rotate(0).scale(scale).translate(0, 50).toString());
+                tile.push(SvgPath(blue).translate(unit/2,0).scale(edgeAD/unit).rotate(180-angleA).translate(unit, 0).toString());
+
+
+                let aaa = [0, 0];
+                let bbb = [unit, 0];
+                let ccc = [unit / 2 + decenter, height];
+                let tile = [];
+                tile.push(`M ${aaa[0]},${aaa[1]} ${bbb[0]},${bbb[1]}`);
+                tile.push(`M ${aaa[0]},${aaa[1]} ${ccc[0]} ${ccc[1]}`);
+                tile.push(`M ${ccc[0]},${ccc[1]} ${bbb[0]} ${bbb[1]}`);
+                
+                let lena = Math.sqrt(height * height + (unit / 2 - decenter) * (unit / 2 - decenter));
+                let lenb = unit;
+                let lenc = Math.sqrt(height * height + (unit / 2 + decenter) * (unit / 2 + decenter));
+                
+                let angleRad = Math.acos((lenb * lenb + lenc * lenc - lena * lena) / (2 * lenb * lenc));
+                let angle = angleRad * 180 / Math.PI;
+                let tilepath = Tess.makePath(tile,{ width : 0.1 });
+                
+                let tx = unit - scale * lenc;
+                let ty = 0;
+                
+                let svglist =[tilepath];
+                let mat = new Matrix().translate(tx,ty).rotate(-angle,0,0).scale(scale,scale);
+                let matarray = mat.toArray();
+                let b = new Matrix();
+                for (let si = 0; si < size; si++) {
+                    
+                    b = b.matrix(matarray);
+                    let c = b.toArray();
+                    svglist.push(`<g transform="matrix(${c[0]},${c[1]},${c[2]},${c[3]},${c[4]},${c[5]})">`+tilepath+'</g>');
+                }
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(400,650)scale(4)">${svglist.join('')}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>
