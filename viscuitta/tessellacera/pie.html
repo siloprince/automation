@@ -1,0 +1,146 @@
+<html>
+
+<head>
+    <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/draw.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/svgdownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+    <div style="margin:10px;">
+        <svg id="red" class="draw update" width="200" height="150" style="border: 1px solid #ffaaaa;" />
+        <svg id="blue" class="draw update" width="200" height="150" style="border: 1px solid #aaaaff;" />
+        <br/>
+        <input id="divide" class="update" type="range" min="1" value="1" max="3" step="1" />: 分割<br/>
+        <input id="slide" class="update" type="range" min="0" value="0" max="1" step="0.05" />: スライド<br/>
+        <input id="divide2" class="update" type="range" min="2" value="2" max="4" step="1" />: 再分割<br/>
+        <a class="download">ダウンロード</a>
+        <br/>
+    </div>
+    <div id="svg"></div>
+    <script type="text/javascript">
+        'use strict';
+        (function (console, document, me) {
+            Update.update = update;
+            function update(param) {
+
+                let divide = param.divide;
+                let slide = param.slide;
+                let divide2 = param.divide2;
+
+                let div = divide * 6;
+                let angle = Math.PI * 2 / div;
+                
+                let ang = 360 / div;
+
+                let unit = 100;
+
+                let ax = unit * Math.sin(angle/2);
+                let ay = unit * Math.cos(angle/2);
+                let arcstr = `M 0,0 L ${ax},${ay}`
+                let arclist = [];
+                for (let ai=0;ai<div*2;ai++) {
+                    arclist.push(SvgPath(arcstr).rotate(angle*div/2).toString());
+                }
+                
+                let redstr = Draw.getData('red');
+                let red = SvgPath(redstr).translate(50, 0).scale(1,1);
+                let retlist = [];
+                for (let ri=0;ri<=div;ri++) {
+                    redlist.push(red.rotate(ang*ri/2).toString());
+                }
+                let tile = [];
+                let match1List = [];
+                match1List.push(redlist[0]);
+                match1List.push(redlist[1]);
+                match1List.push(arclist[2]);
+                match1List.push(redlist[3]);
+                match1List.push(redlist[5]);
+                match1List.push(redlist[5]);
+                match1List.push(redlist[3]);
+                match1List.push(arclist[1]);
+                match1List.push(arclist[0]);
+                let match1 = SvgPath(pathListMerge(match1List)).toString();
+
+                let match2List = [];
+                match2List.push(SvgPath(blue).rotate(180).translate(bx, 0).toString());
+                match2List.push(SvgPath(blue).rotate(0).translate(0, 0).toString());
+                let match2 = SvgPath(pathListMerge(match2List)).scale(len2).rotate(rot).translate(bx, 0).toString();
+
+                tile.push(SvgPath(match1).rotate(ang).toString());
+                tile.push(SvgPath(match1).rotate(0).toString());
+                tile.push(SvgPath(match2).rotate(0).toString());
+
+
+                let proto = 'tile';
+                Tess.register(proto, Tess.makePath(tile, { fill: '#ff0000', opacity: 0.4} ));
+
+                for (let ti = 0; ti < thick; ti++) {
+                    for (let mi = 0; mi < div; mi++) {
+                        let ptx, pty;
+                        let rotangle = 360 / div * mi;
+                        if (mi < div/2) {
+                            ptx = 200 * slide;
+                            pty = 0;
+                        } else {
+                            ptx = extrude * (cx - 200);
+                            pty = extrude * cy;
+                        }
+                        for (let tj = 0; tj < ti + 1; tj++) {
+                            let xx = bx * (ti - tj) + cx * tj;
+                            let yy = cy * tj;
+                            Tess.place(proto, {
+                                translate: [ptx, pty],
+                                rotate: 180 + rotangle,
+                                transform: { translate: [xx, yy], rotate: 0, scale: [1, 1] }
+                            });
+                            if (ti !== thick - 1) {
+                                Tess.place(proto,
+                                    {
+                                        translate: [ptx, pty],
+                                        rotate: 180 + rotangle,
+                                        transform: { translate: [xx + bx + cx, yy + cy], rotate: 180, scale: [1, 1] }
+                                    });
+                            }
+                        }
+                    }
+                }
+                for (let ai = 0; ai < extrude; ai++) {
+                    let ptx = ai * (cx - 200);
+                    let pty = ai * cy;
+                    for (let ti = 0; ti < thick + slide; ti++) {
+                        let xx = bx * ti;
+                        let yy = 0;
+                        Tess.place(proto, {
+                            translate: [ptx, pty],
+                            transform: { translate: [xx, yy], rotate: 0, scale: [1, 1] }
+                        });
+                        Tess.place(proto, {
+                            translate: [ptx, pty],
+                            transform: { translate: [cx + xx, cy + yy], rotate: 180, scale: [1, 1] }
+                        });
+                        if (ti < thick) {
+                            Tess.place(proto, {
+                                translate: [ptx, pty],
+                                transform: { translate: [-bx - xx, -yy], rotate: 0, scale: [1, 1] }
+                            });
+                            Tess.place(proto, {
+                                translate: [ptx, pty],
+                                transform: { translate: [-bx + cx - xx, cy - yy], rotate: 180, scale: [1, 1] }
+                            });
+                        }
+                    }
+                }
+                let svgstr = `<svg width="2000" height="2000">
+                        <g transform="translate(400,300)scale(0.4)">${Tess.getUses()}</g></svg>`;
+
+                Tess.svg(me, svgstr);
+            }
+        })(console, document, document.currentScript);
+    </script>
+</body>
+
+</html>
