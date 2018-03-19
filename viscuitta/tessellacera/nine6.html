@@ -1,0 +1,268 @@
+<html>
+
+<head>
+  <meta charset="UTF-8" />
+    <script type="text/javascript" src="./lib/svgpath.js"></script>
+    <script type="text/javascript" src="./lib/update.js"></script>
+    <script type="text/javascript" src="./lib/htmldownload.js"></script>
+    <script type="text/javascript" src="./lib/tess.js"></script>
+</head>
+
+<body>
+
+  <div style="margin:10px;">
+    <a class="download" style="
+        font-size:0.75em;
+        display:block;
+        width:100px;
+        padding-top:10px;
+        padding-bottom:10px;
+        text-align:center;
+        border:2px solid;
+        border-color:#aaaaaa #444444 #444444 #aaaaaa;
+        background:#cccccc;">保存</a>
+    <br/>ボタンを押すと「ダウンロード」フォルダにファイルが保存されます
+    <br/>クリックしてタイルを回転/裏返しできます
+  </div>
+  <script type="text/javascript">
+    'use strict';
+    (function (console, document, window, me) {
+      document.head.insertAdjacentHTML('beforeend',`<style type="text/css">
+      g.hide {
+        display: none;
+      }
+      </stlye>`);
+
+      let idcount = 0;
+      let idarray = [];
+
+      getHash();
+
+      function getHash() {
+        let hash = window.location.hash;  
+        if (hash && /^#/.test(hash)) {
+           // nop
+        } else {
+          hash = localStorage.getItem('hash');
+          if (hash && /^#/.test(hash)) {
+            window.location.hash = hash;  
+          } else {
+             hash = '#';
+          }
+        }
+        for (let hi=0;hi<hash.length;hi++) {
+          if (hi===0) {
+             // #
+             continue;
+          }
+          let val = hash.charCodeAt(hi)-'0'.charCodeAt(0);
+          idarray.push((val%6));
+        }
+      }
+      function updateTile() {
+        for (let ii=0;ii<idarray.length;ii++) {
+          let force=1;
+          if (idarray[ii]>2) {
+            force=2;
+          }
+          sync('t'+ii, idarray[ii], force);
+        }
+      }
+
+      let unit = 100;
+      Update.update = update;
+      function update(param) {
+        let red = 'M 0,0 L 0,100 L 0,100';
+        let transformed = [];
+        let small = [];
+        let ymove = -unit / 2;
+        let xmove = -Math.sqrt(3) * unit / 6;
+        let yymove = ymove*2*3;
+        let xxmove = xmove*3*3;
+        transformed.push(SvgPath(red).scale(1, 1).rotate(0).translate(0, 0).toString());
+        transformed.push(SvgPath(red).scale(1, 1).rotate(-60).translate(0, 0).toString());
+        transformed.push(SvgPath(red).scale(1, 1).rotate(-120).translate(0, unit).toString());
+        small.push(SvgPath(red).scale(0.5, 0.5).rotate(0).translate(0, 0).toString());
+        small.push(SvgPath(red).scale(0.5, 0.5).rotate(-60).translate(0, 0).toString());
+        small.push(SvgPath(red).scale(0.5, 0.5).rotate(-120).translate(0, unit / 2).toString());
+        let t3 = `<g><g class="fuji"  transform="translate(${xmove},${ymove})">`
+          + Tess.makePath(transformed, { fill: '#ffffff', opacity: 1 })
+          + Tess.makePath(small, { opacity: 1 })
+          + `</g><g class="kaki hide" transform="translate(${xmove},${ymove})">`
+          + Tess.makePath(transformed, {  opacity: 1 })
+          + Tess.makePath(small, { fill: '#ffffff', opacity: 1 })
+          + `</g></g>`;
+        Tess.add('t3', t3);
+
+        let size = 3;
+        t3unit('in',unit,size);
+        t3unit('mid',unit,size);
+        function t3unit(base, unit,size) {
+          let xunit = unit * Math.sqrt(3) / 2;
+          for (let xi = 0; xi < size; xi++) {
+            for (let yi = 0; yi < 2 * size; yi++) {
+              if (yi + xi >= size) {
+                continue;
+              }
+              let scale = 1;
+              if (xi % 2 === 0) {
+                if (1) {
+                  Tess.place('t3',
+                    { translate: [xunit * xi, unit * (yi + xi / 2)], transform: { translate: [0, 0], rotate: 0 , scale: [1, 1] } }
+                  ,base, 't'+(idcount++));
+                }
+                if (yi + xi < size - 1) {
+                  Tess.place('t3',
+                    { translate: [xunit * xi, unit * (yi + xi / 2)], transform: { translate: [-xmove, -ymove], rotate: 0 , scale: [-1,1] } }
+                    ,base, 't'+(idcount++));
+                }
+              } else {
+                if (1) {
+                  Tess.place('t3', {
+                    translate: [xunit * xi, unit * (yi + xi / 2)], transform: { translate: [0, 0], rotate: 0 , scale: [1, 1] }
+                  }
+                  ,base, 't'+(idcount++));
+                }
+                if (yi + xi < size - 1) {
+                  Tess.place('t3', {
+                    translate: [xunit * xi, unit * (yi + xi / 2)], transform: { translate: [-xmove, -ymove], rotate: 0 , scale: [-1, 1] }
+                  }
+                  ,base, 't'+(idcount++));
+                }
+              }
+            }
+          }
+        }
+        let instr = `<g fill="#00aa00">
+                          <g transform="translate(${-xmove},${-ymove})">${Tess.getUses('in')}</g>
+                        </g>
+                      `;
+        let outstr = `
+                          <g fill="#00aa00">
+                            <g transform="translate(${-xmove},${-ymove})">${Tess.getUses('mid')}</g>
+                          </g>
+                        `;
+        let basestr = `
+        <g id="base">
+<g transform="translate(${xxmove},${yymove/2})">
+                            <g transform="translate(0,0)rotate(0)scale(1,1)">${instr}</g>
+
+                            <g transform="translate(${2*xxmove},0)rotate(-120)scale(1,1)">${instr}</g>
+
+                            <g transform="translate(${xxmove},${-yymove*3/2})rotate(120)scale(1,1)">${instr}</g>
+                            <g transform="translate(${xxmove},${unit*3/2})">
+
+                            <g  transform="translate(0,0)rotate(0)scale(-1,1)">${outstr}</g>
+                            <g  transform="translate(0,0)rotate(120)scale(1,1)">${outstr}</g>
+                            <g  transform="translate(0,0)rotate(120)scale(-1,1)">${outstr}</g>
+                            <g  transform="translate(0,0)rotate(240)scale(1,1)">${outstr}</g>
+                            <g  transform="translate(0,0)rotate(240)scale(-1,1)">${outstr}</g>
+                            <g  transform="translate(0,0)rotate(0)scale(1,1)">${outstr}</g>
+                            </g>
+</g></g>
+        `;
+        let svgstr = `<svg id="ev" width="2000" height="2000">
+
+                                                                                     
+                        <g transform="translate(300,280)scale(0.30)">
+
+
+<g>
+
+  <g transform="translate(0,0)rotate(0)scale(1,1)">${basestr}</g>
+  <g transform="translate(0,0)rotate(0)scale(-1,1)">${basestr}</g>
+  <g transform="translate(0,0)rotate(120)scale(1,1)">${basestr}</g>
+  <g transform="translate(0,0)rotate(120)scale(-1,1)">${basestr}</g>
+  <g transform="translate(0,0)rotate(240)scale(1,1)">${basestr}</g>
+  <g transform="translate(0,0)rotate(240)scale(-1,1)">${basestr}</g>
+                      </g>
+
+                        </svg>`;
+
+        Tess.svg(me, svgstr);
+
+        updateTile();
+
+        document.querySelector('svg#ev').addEventListener('click', function (ev) {
+
+          let target = ev.target;
+          if (/path/i.test(target.tagName)) {
+            let type = target.parentNode.parentNode.parentNode.parentNode;
+            let typeval = type.className.baseVal;
+            let xform = target.parentNode.parentNode.parentNode;
+            let fuji = xform.querySelector('g.fuji');
+            let kaki = xform.querySelector('g.kaki');
+            let transform = xform.getAttribute('transform');
+            let prev=0;
+            if (/rotate\(0\)/.test(transform)) {
+               prev = 0;
+            } else if (/rotate\(120\)/.test(transform)) {
+               prev = 1;
+            } else if (/rotate\(240\)/.test(transform)) {
+               prev = 2;
+            }
+            let val=0;
+            if( fuji.classList.contains('hide')) {
+              val = 3;
+            }
+            if( kaki.classList.contains('hide')) {
+              val = 0;
+            }
+console.log(val+' '+prev);
+            sync(typeval,val+prev);
+          }
+        }
+        );
+      }
+      function sync(typeval,val,force) {
+        let nextval = (val+1)%6;
+        let ang = (val*120)%360;
+        let nextang = (nextval*120)%360;
+        let angreg = new RegExp(`rotate\\(${ang}\\)`);
+        let anyreg = new RegExp(`rotate\\([0-9]+\\)`);
+        let ev = document.querySelector('svg#ev');
+        let sameType = ev.querySelectorAll(`g.${typeval} g.done`);
+        for (let si=0;si<sameType.length;si++) {
+          let xform = sameType[si];
+          let fuji = xform.querySelector('g.fuji');
+          let kaki = xform.querySelector('g.kaki');
+          let transform = xform.getAttribute('transform');
+          if (force) {
+            if (force===2) {
+              fuji.classList.add('hide');
+              kaki.classList.remove('hide');
+            } else {
+              fuji.classList.remove('hide');
+              kaki.classList.add('hide');
+            }
+            transform = transform.replace(anyreg, `rotate(${ang})`);
+          } else {
+            if (val===2 || val===5) {
+             fuji.classList.toggle('hide');
+             kaki.classList.toggle('hide');
+            }
+            transform = transform.replace(angreg, `rotate(${nextang})`);
+          }
+          xform.setAttribute('transform', transform);
+        }
+        if (!force) {
+          let index = 1+ parseInt(typeval.replace(/^t/,''),10);
+          let hash = window.location.hash;
+          if (index < hash.length) {
+            hash= hash.substr(0,index)+nextval+hash.substr(index+1);
+          } else {
+            let ar=['#'];
+            for(let ai=0;ai<index-1;ai++){
+              ar.push(0);
+            }
+            hash= ar.join('')+nextval;
+          }
+          window.location.hash = hash;
+          localStorage.setItem('hash',hash);
+        }
+      }
+    })(console, document, window, document.currentScript);
+  </script>
+</body>
+
+</html>

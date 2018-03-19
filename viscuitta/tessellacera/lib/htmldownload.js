@@ -1,0 +1,56 @@
+    'use strict';
+    (function (console, document, window, Blob) {
+
+      document.addEventListener('DOMContentLoaded', downloadInit);
+      return;
+
+      function downloadInit() {
+        let downloads = document.querySelectorAll('a.download');
+        let filename = getFileName();
+        for (let di = 0; di < downloads.length; di++) {
+          let download = downloads[di];
+          download.href = '#';
+          download.download = filename + getDateStr() + '.html';
+          download.addEventListener('click', click);
+        }
+        function getSvgContent() {
+          let style = '<style type="text/css">'+document.head.querySelector('style').textContent+"</style>";
+          let symbols = document.querySelector('svg.symbols').innerHTML;
+          let contents = document.querySelector('div.svg svg').innerHTML;
+          return '<svg width="2000" height="2000">' + style + symbols + contents + '</svg>';
+        }
+        function click(ev) {
+          let content = getSvgContent();
+          let blob = new Blob([content], { 'type': 'image/svg+xml' });
+          ev.target.href = window.URL.createObjectURL(blob);
+        }
+        function getFileName() {
+          let pathname = document.location.pathname;
+          let name = '_';
+          if (/([^\/]+)$/.exec(pathname)) {
+            pathname = RegExp.$1;
+            if (/^([^\?#.]+)/.exec(pathname)) {
+              name = RegExp.$1;
+            }
+          }
+          return name;
+        }
+        function getDateStr() {
+          let date = new Date();
+          let year = date.getFullYear();
+          let month = date.getMonth() + 1;
+          let day = date.getDate();
+          let hours = date.getHours();
+          let minutes = date.getMinutes();
+          let seconds = date.getSeconds();
+          return `${year}${pad(month)}${pad(day)}${pad(hours)}${pad(minutes)}${pad(seconds)}`;
+
+          function pad(val) {
+            if (val < 10) {
+              val = '0' + val;
+            }
+            return val;
+          }
+        }
+      }
+    })(console, document, window, Blob);
