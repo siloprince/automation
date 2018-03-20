@@ -1508,6 +1508,7 @@ const pathListMerge = function (transformed) {
   function register(transformed, hash, idx) {
     let pathstr = transformed.toString();
     let pstate = pathParse(pathstr);
+    console.log(pstate);
     let sx = Math.round(pstate.segments[0][1]);
     let sy = Math.round(pstate.segments[0][2]);
     let ss = `${sx},${sy}`;
@@ -1547,30 +1548,46 @@ const pathListMerge = function (transformed) {
     }
     return ret.join(' ');
   }
-  function reverse(pathstr) {
-    let pstate = pathParse(pathstr);
-    let segments = pstate.segments;
-    let ret = [];
-    if (segments[0][0] !== 'M') {
-      throw 'invalid path:' + pathstr;
-    }
-    let cmd;
-    let data = ['M'];
-    for (let si = 0; si < segments.length; si++) {
-      let sj = segments.length - 1 - si;
-      let seg = segments[sj];
-      cmd = seg[0];
-      let scount = 0;
-      for (let sk = seg.length - 2; sk > 0; sk -= 2) {
-        let xx = seg[sk];
-        let yy = seg[sk + 1];
-        if (sj !== 0 && scount === 1) {
-          data.push(cmd);
-        }
-        data.push(`${xx},${yy} `);
-        scount++;
-      }
-    }
-    return data.join('');
+
+}
+
+const pathListMergeRelative = function (initx, inity, transformed) {
+  let path = [`M ${initx},${inity} `];
+  for (let ti = 0; ti < transformed.length; ti++) {
+    path.push(transformed[ti].toString().toLowerCase());
   }
+  return path.join('');
+}  
+function reverse(pathstr,relative) {
+  let pstate = pathParse(pathstr);
+  let segments = pstate.segments;
+  
+  let ret = [];
+  if (!(/^M$/i.test(segments[0][0]))) {
+    throw 'invalid path:' + pathstr;
+  }
+  let cmd;
+  let data = [segments[0][0]];
+  let inix=0;
+  let iniy=0;
+  if (relative) {
+    inix = segments[segments.length - 1][segments[segments.length - 1].length - 2];
+    iniy = segments[segments.length - 1][segments[segments.length - 1].length - 1];
+  }
+  for (let si = 0; si < segments.length; si++) {
+    let sj = segments.length - 1 - si;
+    let seg = segments[sj];
+    cmd = seg[0];
+    let scount = 0;
+    for (let sk = seg.length - 2; sk > 0; sk -= 2) {
+      let xx = seg[sk] - inix;
+      let yy = seg[sk + 1] -iniy;
+      if (sj !== 0 && scount === 1) {
+        data.push(cmd);
+      }
+      data.push(`${xx},${yy} `);
+      scount++;
+    }
+  }
+  return data.join('');
 }

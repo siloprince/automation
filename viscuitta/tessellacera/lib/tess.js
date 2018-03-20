@@ -6,6 +6,7 @@ let Tess = (function (console, document) {
     return {
         init: init,
         makePath: makePath,
+        makePathRelative: makePathRelative,
         getUses: function (base) {
             if (typeof (base) === 'undefined') {
                 base = '_';
@@ -66,7 +67,25 @@ let Tess = (function (console, document) {
         let pathStr = pathListMerge(pathStrList) + ' Z';
         return `<path d="${pathStr}" fill="${opt.fill}" stroke="${opt.stroke}" stroke-width="${opt.width}" fill-opacity="${opt.opacity}" vectorEffect="non-scaling-stroke"/>`;
     }
-
+    function makePathRelative(inix, iniy, pathStrList, opt) {
+        if (!opt) {
+            opt = {};
+        }
+        if (!('fill' in opt)) {
+            //opt.fill = 'none';
+        }
+        if (!('stroke' in opt)) {
+            opt.stroke = '#000000';
+        }
+        if (!('width' in opt)) {
+            opt.width = '2';
+        }
+        if (!('opacity' in opt)) {
+            opt.opacity = '1';
+        }
+        let pathStr = pathListMergeRelative(inix, iniy, pathStrList) + ' Z';
+        return `<path d="${pathStr}" fill="${opt.fill}" stroke="${opt.stroke}" stroke-width="${opt.width}" fill-opacity="${opt.opacity}" vectorEffect="non-scaling-stroke"/>`;
+    }
     function add(name, svgstr) {
         useHash[name] = `<g class="new" >${svgstr}</g>`;
     }
